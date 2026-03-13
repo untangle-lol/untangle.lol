@@ -1,16 +1,10 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 
 // ─── Config ──────────────────────────────────────────────────────────────────
-const API_URL = "https://api.anthropic.com/v1/messages";
-const MODEL   = "claude-sonnet-4-20250514";
-
-// For Claude OAuth: register your app at console.anthropic.com
-// Set OAUTH_CLIENT_ID to your client_id, and set redirect URI to this app's URL
-const OAUTH_CLIENT_ID   = "YOUR_CLIENT_ID"; // replace before deploying
-const OAUTH_AUTH_URL    = "https://claude.ai/oauth/authorize";
-const OAUTH_TOKEN_URL   = "https://claude.ai/oauth/token";   // needs a small proxy; see README
-const OAUTH_SCOPE       = "org:read_write";
-const OAUTH_REDIRECT    = typeof window !== "undefined" ? window.location.origin + window.location.pathname : "";
+const ANTHROPIC_URL  = "https://api.anthropic.com/v1/messages";
+const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+const MODEL_ANTHROPIC   = "claude-haiku-4-5";
+const MODEL_OPENROUTER  = "anthropic/claude-haiku-4-5";
 
 // ─── localStorage helpers (replaces window.storage) ─────────────────────────
 const ls = {
@@ -23,55 +17,45 @@ const KEYS = {
   theme:    "untangle_theme",
   session:  "untangle_session",
   apiKey:   "untangle_apikey",
-  oaToken:  "untangle_oauth_token",
-  oaVerif:  "untangle_oauth_verifier",
-  oaState:  "untangle_oauth_state",
 };
 
 function eKey(email) { return "untangle_hist_" + email.toLowerCase().replace(/[^a-z0-9]/g,"_"); }
 
 // ─── Auth helpers ─────────────────────────────────────────────────────────────
+function keyProvider(key){ return key?.startsWith("sk-or-")?"openrouter":"anthropic"; }
 function getCredential() {
   const key = ls.get(KEYS.apiKey);
-  const tok = ls.get(KEYS.oaToken);
-  return { key, tok, valid: !!(key || tok) };
+  return { key, valid: !!key, provider: key?keyProvider(key):null };
 }
-function buildHeaders() {
-  const { key, tok } = getCredential();
-  const h = {
+function buildHeaders(key) {
+  const provider = keyProvider(key);
+  if(provider==="openrouter"){
+    return {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${key}`,
+      "HTTP-Referer": "https://untangle.lol",
+      "X-Title": "untangle.lol",
+    };
+  }
+  return {
     "Content-Type": "application/json",
     "anthropic-version": "2023-06-01",
     "anthropic-dangerous-direct-browser-access": "true",
+    "x-api-key": key,
   };
-  if (key) h["x-api-key"] = key;
-  if (tok) h["Authorization"] = `Bearer ${tok}`;
-  return h;
 }
-
-// ─── PKCE helpers ─────────────────────────────────────────────────────────────
-function genVerifier() {
-  const arr = new Uint8Array(32);
-  crypto.getRandomValues(arr);
-  return btoa(String.fromCharCode(...arr)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=/g,"");
-}
-async function genChallenge(v) {
-  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(v));
-  return btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=/g,"");
-}
-function genState() { return Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2); }
-
 // ─── Languages ───────────────────────────────────────────────────────────────
 const LANGS = [
-  {code:"nl",label:"Nederlands",flag:"🇳🇱",ph:"Bijv. 'Ik wil beter slapen' of 'Ik wil leren gitaarspelen' 🎸",hero:"Wat wil je bereiken?",heroS:"Typ het maar in.",go:"Laten we beginnen →",back:"← Terug",out:"Uitloggen",clr:"🗑️ Alles wissen",nG:"➕ Nieuw doel",noG:"Nog geen doelen. Tijd om te beginnen!",prog:"voortgang",allD:"🎉 Alles afgerond!",sOf:"van",eth:"🌍 Advies met respect voor mens, planeet en welzijn",err:"Oeps, probeer het nog eens!",resB:"← Terug naar overzicht",dW:"Welkom terug",dS:"Hier zijn je doelen.",byok:"Voer je API-sleutel in",sso:"Inloggen met Claude",byokL:"Anthropic API-sleutel",byokPh:"sk-ant-...",byokSave:"Opslaan & beginnen",byokNote:"Je sleutel wordt lokaal opgeslagen. Nooit gedeeld.",ssoNote:"Vereist OAuth-app bij Anthropic.",chAuth:"Authenticatie wijzigen",rmKey:"Sleutel verwijderen",lSel:"Taal",emL:"E-mailadres",emPh:"jouw@email.nl",svPro:"Wil je dit opslaan?",svD:"Log in om je stappenplan te bewaren.",skip:"Nee, doorgaan",has:"Ik heb al een account",sendM:"Stuur magic link ✉️",chk:"Check je inbox!",magOn:"Magic link onderweg naar",sim:"Simulatie. Klik hieronder 😉",opM:"Open magic link →",welcome:"Welkom!",sub:"Vul je e-mail in voor een magic link."},
-  {code:"en",label:"English",flag:"🇬🇧",ph:"E.g. 'I want to sleep better' or 'I want to learn guitar' 🎸",hero:"What do you want to achieve?",heroS:"Just type it in. No question is too weird.",go:"Let's begin →",back:"← Back",out:"Log out",clr:"🗑️ Clear all",nG:"➕ New goal",noG:"No goals yet. Time to begin!",prog:"progress",allD:"🎉 All done!",sOf:"of",eth:"🌍 Advice with respect for people, planet & wellbeing",err:"Oops, try again!",resB:"← Back to overview",dW:"Welcome back",dS:"Here are your goals.",byok:"Enter your API key",sso:"Sign in with Claude",byokL:"Anthropic API Key",byokPh:"sk-ant-...",byokSave:"Save & continue",byokNote:"Your key is stored locally only. Never shared.",ssoNote:"Requires an OAuth app registered with Anthropic.",chAuth:"Change auth",rmKey:"Remove key",lSel:"Language",emL:"Email",emPh:"you@email.com",svPro:"Save this?",svD:"Log in to keep your plan.",skip:"No, continue",has:"I have an account",sendM:"Send magic link ✉️",chk:"Check your inbox!",magOn:"Magic link on its way to",sim:"Simulation. Click below 😉",opM:"Open magic link →",welcome:"Welcome!",sub:"Enter your email for a magic link."},
-  {code:"de",label:"Deutsch",flag:"🇩🇪",ph:"Z.B. 'Besser schlafen' 🎸",hero:"Was willst du erreichen?",heroS:"Einfach tippen.",go:"Los geht's →",back:"← Zurück",out:"Abmelden",clr:"🗑️ Löschen",nG:"➕ Neues Ziel",noG:"Keine Ziele. Zeit anzufangen!",prog:"Fortschritt",allD:"🎉 Geschafft!",sOf:"von",eth:"🌍 Respekt für Mensch & Planet",err:"Ups!",resB:"← Zurück",dW:"Willkommen zurück",dS:"Deine Ziele.",byok:"API-Schlüssel eingeben",sso:"Mit Claude anmelden",byokL:"Anthropic API-Schlüssel",byokPh:"sk-ant-...",byokSave:"Speichern & loslegen",byokNote:"Lokal gespeichert. Nie weitergegeben.",ssoNote:"Erfordert OAuth-App bei Anthropic.",chAuth:"Auth ändern",rmKey:"Schlüssel entfernen",lSel:"Sprache",emL:"E-Mail",emPh:"du@email.de",svPro:"Speichern?",svD:"Anmelden.",skip:"Nein",has:"Habe Konto",sendM:"Senden ✉️",chk:"Check Postfach!",magOn:"Unterwegs an",sim:"Simulation 😉",opM:"Öffnen →",welcome:"Willkommen!",sub:"E-Mail für Magic Link."},
-  {code:"fr",label:"Français",flag:"🇫🇷",ph:"Ex. 'Mieux dormir' 🎸",hero:"Que veux-tu accomplir ?",heroS:"Tape-le.",go:"Commençons →",back:"← Retour",out:"Déco",clr:"🗑️ Effacer",nG:"➕ Nouveau",noG:"Pas d'objectifs. On commence !",prog:"progrès",allD:"🎉 Fini !",sOf:"de",eth:"🌍 Conseils respectueux",err:"Oups !",resB:"← Retour",dW:"Re-bonjour",dS:"Tes objectifs.",byok:"Entrer la clé API",sso:"Se connecter avec Claude",byokL:"Clé API Anthropic",byokPh:"sk-ant-...",byokSave:"Enregistrer",byokNote:"Stockée localement.",ssoNote:"Nécessite une app OAuth Anthropic.",chAuth:"Changer auth",rmKey:"Supprimer clé",lSel:"Langue",emL:"Email",emPh:"toi@email.com",svPro:"Sauver ?",svD:"Connecte-toi.",skip:"Non",has:"J'ai un compte",sendM:"Envoyer ✉️",chk:"Vérifie !",magOn:"En route vers",sim:"Simulation 😉",opM:"Ouvrir →",welcome:"Bienvenue !",sub:"Email pour lien magique."},
-  {code:"es",label:"Español",flag:"🇪🇸",ph:"Ej. 'Quiero dormir mejor' 🎸",hero:"¿Qué quieres lograr?",heroS:"Solo escríbelo.",go:"Comencemos →",back:"← Volver",out:"Salir",clr:"🗑️ Borrar",nG:"➕ Nueva meta",noG:"Sin metas. ¡Hora de comenzar!",prog:"progreso",allD:"🎉 ¡Listo!",sOf:"de",eth:"🌍 Consejos con respeto",err:"¡Ups!",resB:"← Volver",dW:"Hola de nuevo",dS:"Tus metas.",byok:"Ingresar clave API",sso:"Iniciar con Claude",byokL:"Clave API de Anthropic",byokPh:"sk-ant-...",byokSave:"Guardar",byokNote:"Solo local.",ssoNote:"Requiere app OAuth de Anthropic.",chAuth:"Cambiar auth",rmKey:"Eliminar clave",lSel:"Idioma",emL:"Correo",emPh:"tu@email.com",svPro:"¿Guardar?",svD:"Inicia sesión.",skip:"No",has:"Tengo cuenta",sendM:"Enviar ✉️",chk:"¡Revisa!",magOn:"En camino a",sim:"Simulación 😉",opM:"Abrir →",welcome:"¡Bienvenido!",sub:"Email para enlace mágico."},
+  {code:"nl",label:"Nederlands",flag:"🇳🇱",ph:"Bijv. 'Ik wil beter slapen' of 'Ik wil leren gitaarspelen' 🎸",hero:"Wat wil je bereiken?",heroS:"Typ het maar in.",go:"Laten we beginnen →",back:"← Terug",out:"Uitloggen",clr:"🗑️ Alles wissen",nG:"➕ Nieuw doel",noG:"Nog geen doelen. Tijd om te beginnen!",prog:"voortgang",allD:"🎉 Alles afgerond!",sOf:"van",eth:"🌍 Advies met respect voor mens, planeet en welzijn",err:"Oeps, probeer het nog eens!",resB:"← Terug naar overzicht",dW:"Welkom terug",dS:"Hier zijn je doelen.",byok:"Voer je API-sleutel in",sso:"Inloggen met Claude",byokL:"API-sleutel (Anthropic of OpenRouter)",byokPh:"sk-ant-... of sk-or-...",byokSave:"Opslaan & beginnen",byokNote:"Je sleutel wordt lokaal opgeslagen. Nooit gedeeld. Ondersteunt Anthropic (sk-ant-) en OpenRouter (sk-or-).",ssoNote:"Vereist OAuth-app bij Anthropic.",chAuth:"Authenticatie wijzigen",rmKey:"Sleutel verwijderen",lSel:"Taal",emL:"E-mailadres",emPh:"jouw@email.nl",svPro:"Wil je dit opslaan?",svD:"Log in om je stappenplan te bewaren.",skip:"Nee, doorgaan",has:"Ik heb al een account",sendM:"Stuur magic link ✉️",chk:"Check je inbox!",magOn:"Magic link onderweg naar",sim:"Simulatie. Klik hieronder 😉",opM:"Open magic link →",welcome:"Welkom!",sub:"Vul je e-mail in voor een magic link."},
+  {code:"en",label:"English",flag:"🇬🇧",ph:"E.g. 'I want to sleep better' or 'I want to learn guitar' 🎸",hero:"What do you want to achieve?",heroS:"Just type it in. No question is too weird.",go:"Let's begin →",back:"← Back",out:"Log out",clr:"🗑️ Clear all",nG:"➕ New goal",noG:"No goals yet. Time to begin!",prog:"progress",allD:"🎉 All done!",sOf:"of",eth:"🌍 Advice with respect for people, planet & wellbeing",err:"Oops, try again!",resB:"← Back to overview",dW:"Welcome back",dS:"Here are your goals.",byok:"Enter your API key",sso:"Sign in with Claude",byokL:"API Key (Anthropic or OpenRouter)",byokPh:"sk-ant-... or sk-or-...",byokSave:"Save & continue",byokNote:"Stored locally only, never shared. Supports Anthropic (sk-ant-) and OpenRouter (sk-or-).",ssoNote:"Requires an OAuth app registered with Anthropic.",chAuth:"Change auth",rmKey:"Remove key",lSel:"Language",emL:"Email",emPh:"you@email.com",svPro:"Save this?",svD:"Log in to keep your plan.",skip:"No, continue",has:"I have an account",sendM:"Send magic link ✉️",chk:"Check your inbox!",magOn:"Magic link on its way to",sim:"Simulation. Click below 😉",opM:"Open magic link →",welcome:"Welcome!",sub:"Enter your email for a magic link."},
+  {code:"de",label:"Deutsch",flag:"🇩🇪",ph:"Z.B. 'Besser schlafen' 🎸",hero:"Was willst du erreichen?",heroS:"Einfach tippen.",go:"Los geht's →",back:"← Zurück",out:"Abmelden",clr:"🗑️ Löschen",nG:"➕ Neues Ziel",noG:"Keine Ziele. Zeit anzufangen!",prog:"Fortschritt",allD:"🎉 Geschafft!",sOf:"von",eth:"🌍 Respekt für Mensch & Planet",err:"Ups!",resB:"← Zurück",dW:"Willkommen zurück",dS:"Deine Ziele.",byok:"API-Schlüssel eingeben",sso:"Mit Claude anmelden",byokL:"API-Schlüssel (Anthropic oder OpenRouter)",byokPh:"sk-ant-... oder sk-or-...",byokSave:"Speichern & loslegen",byokNote:"Lokal gespeichert. Nie weitergegeben. Anthropic (sk-ant-) und OpenRouter (sk-or-).",ssoNote:"Erfordert OAuth-App bei Anthropic.",chAuth:"Auth ändern",rmKey:"Schlüssel entfernen",lSel:"Sprache",emL:"E-Mail",emPh:"du@email.de",svPro:"Speichern?",svD:"Anmelden.",skip:"Nein",has:"Habe Konto",sendM:"Senden ✉️",chk:"Check Postfach!",magOn:"Unterwegs an",sim:"Simulation 😉",opM:"Öffnen →",welcome:"Willkommen!",sub:"E-Mail für Magic Link."},
+  {code:"fr",label:"Français",flag:"🇫🇷",ph:"Ex. 'Mieux dormir' 🎸",hero:"Que veux-tu accomplir ?",heroS:"Tape-le.",go:"Commençons →",back:"← Retour",out:"Déco",clr:"🗑️ Effacer",nG:"➕ Nouveau",noG:"Pas d'objectifs. On commence !",prog:"progrès",allD:"🎉 Fini !",sOf:"de",eth:"🌍 Conseils respectueux",err:"Oups !",resB:"← Retour",dW:"Re-bonjour",dS:"Tes objectifs.",byok:"Entrer la clé API",sso:"Se connecter avec Claude",byokL:"Clé API (Anthropic ou OpenRouter)",byokPh:"sk-ant-... ou sk-or-...",byokSave:"Enregistrer",byokNote:"Stockée localement. Anthropic (sk-ant-) et OpenRouter (sk-or-).",ssoNote:"Nécessite une app OAuth Anthropic.",chAuth:"Changer auth",rmKey:"Supprimer clé",lSel:"Langue",emL:"Email",emPh:"toi@email.com",svPro:"Sauver ?",svD:"Connecte-toi.",skip:"Non",has:"J'ai un compte",sendM:"Envoyer ✉️",chk:"Vérifie !",magOn:"En route vers",sim:"Simulation 😉",opM:"Ouvrir →",welcome:"Bienvenue !",sub:"Email pour lien magique."},
+  {code:"es",label:"Español",flag:"🇪🇸",ph:"Ej. 'Quiero dormir mejor' 🎸",hero:"¿Qué quieres lograr?",heroS:"Solo escríbelo.",go:"Comencemos →",back:"← Volver",out:"Salir",clr:"🗑️ Borrar",nG:"➕ Nueva meta",noG:"Sin metas. ¡Hora de comenzar!",prog:"progreso",allD:"🎉 ¡Listo!",sOf:"de",eth:"🌍 Consejos con respeto",err:"¡Ups!",resB:"← Volver",dW:"Hola de nuevo",dS:"Tus metas.",byok:"Ingresar clave API",sso:"Iniciar con Claude",byokL:"Clave API (Anthropic u OpenRouter)",byokPh:"sk-ant-... o sk-or-...",byokSave:"Guardar",byokNote:"Solo local. Anthropic (sk-ant-) y OpenRouter (sk-or-).",ssoNote:"Requiere app OAuth de Anthropic.",chAuth:"Cambiar auth",rmKey:"Eliminar clave",lSel:"Idioma",emL:"Correo",emPh:"tu@email.com",svPro:"¿Guardar?",svD:"Inicia sesión.",skip:"No",has:"Tengo cuenta",sendM:"Enviar ✉️",chk:"¡Revisa!",magOn:"En camino a",sim:"Simulación 😉",opM:"Abrir →",welcome:"¡Bienvenido!",sub:"Email para enlace mágico."},
 ];
 
 const TH = {
-  dark:{bg:"linear-gradient(135deg,#0f172a,#1e293b,#0f172a)",card:"rgba(255,255,255,0.05)",cb:"rgba(255,255,255,0.08)",ib:"rgba(255,255,255,0.06)",ibr:"rgba(255,255,255,0.12)",tx:"#f1f5f9",tm:"#94a3b8",tf:"#64748b",ac:"#facc15",ag:"linear-gradient(135deg,#facc15,#eab308)",ab:"rgba(250,204,21,0.15)",abr:"rgba(250,204,21,0.4)",am:"rgba(250,204,21,0.2)",bt:"#0f172a",gr:"#22c55e",gb:"rgba(34,197,94,0.06)",gbr:"rgba(34,197,94,0.12)",gt:"#6ee7a0",eb:"rgba(239,68,68,0.12)",et:"#fca5a5",ghb:"rgba(255,255,255,0.06)",ghr:"rgba(255,255,255,0.1)",ckb:"rgba(255,255,255,0.06)",ckr:"rgba(255,255,255,0.15)",cm:"#0f172a",dt:"#4a6350",sb:"rgba(255,255,255,0.02)",sr:"rgba(255,255,255,0.06)",dm:"#475569",sh:"none",purp:"#a78bfa",purpb:"rgba(167,139,250,0.15)",purpr:"rgba(167,139,250,0.4)"},
-  light:{bg:"linear-gradient(135deg,#f8fafc,#e2e8f0,#f8fafc)",card:"rgba(255,255,255,0.9)",cb:"rgba(0,0,0,0.08)",ib:"#fff",ibr:"rgba(0,0,0,0.15)",tx:"#1e293b",tm:"#64748b",tf:"#94a3b8",ac:"#b45309",ag:"linear-gradient(135deg,#f59e0b,#d97706)",ab:"rgba(245,158,11,0.12)",abr:"rgba(245,158,11,0.4)",am:"rgba(245,158,11,0.15)",bt:"#fff",gr:"#16a34a",gb:"rgba(22,163,74,0.06)",gbr:"rgba(22,163,74,0.15)",gt:"#16a34a",eb:"rgba(239,68,68,0.08)",et:"#dc2626",ghb:"rgba(0,0,0,0.03)",ghr:"rgba(0,0,0,0.1)",ckb:"#fff",ckr:"rgba(0,0,0,0.2)",cm:"#fff",dt:"#4d7c56",sb:"rgba(0,0,0,0.015)",sr:"rgba(0,0,0,0.06)",dm:"#94a3b8",sh:"0 1px 3px rgba(0,0,0,0.06)",purp:"#7c3aed",purpb:"rgba(124,58,237,0.1)",purpr:"rgba(124,58,237,0.3)"},
+  dark:{bg:"linear-gradient(135deg,#0f172a,#1e293b,#0f172a)",card:"rgba(255,255,255,0.05)",cb:"rgba(255,255,255,0.08)",ib:"rgba(255,255,255,0.06)",ibr:"rgba(255,255,255,0.12)",tx:"#f1f5f9",tm:"#94a3b8",tf:"#64748b",ac:"#facc15",ag:"linear-gradient(135deg,#facc15,#eab308)",ab:"rgba(250,204,21,0.15)",abr:"rgba(250,204,21,0.4)",am:"rgba(250,204,21,0.2)",bt:"#0f172a",gr:"#22c55e",gb:"rgba(34,197,94,0.06)",gbr:"rgba(34,197,94,0.12)",gt:"#6ee7a0",eb:"rgba(239,68,68,0.12)",et:"#fca5a5",ghb:"rgba(255,255,255,0.06)",ghr:"rgba(255,255,255,0.1)",ckb:"rgba(255,255,255,0.06)",ckr:"rgba(255,255,255,0.15)",cm:"#0f172a",dt:"#4a6350",sb:"rgba(255,255,255,0.02)",sr:"rgba(255,255,255,0.06)",dm:"#475569",sh:"none"},
+  light:{bg:"linear-gradient(135deg,#f8fafc,#e2e8f0,#f8fafc)",card:"rgba(255,255,255,0.9)",cb:"rgba(0,0,0,0.08)",ib:"#fff",ibr:"rgba(0,0,0,0.15)",tx:"#1e293b",tm:"#64748b",tf:"#94a3b8",ac:"#b45309",ag:"linear-gradient(135deg,#f59e0b,#d97706)",ab:"rgba(245,158,11,0.12)",abr:"rgba(245,158,11,0.4)",am:"rgba(245,158,11,0.15)",bt:"#fff",gr:"#16a34a",gb:"rgba(22,163,74,0.06)",gbr:"rgba(22,163,74,0.15)",gt:"#16a34a",eb:"rgba(239,68,68,0.08)",et:"#dc2626",ghb:"rgba(0,0,0,0.03)",ghr:"rgba(0,0,0,0.1)",ckb:"#fff",ckr:"rgba(0,0,0,0.2)",cm:"#fff",dt:"#4d7c56",sb:"rgba(0,0,0,0.015)",sr:"rgba(0,0,0,0.06)",dm:"#94a3b8",sh:"0 1px 3px rgba(0,0,0,0.06)"},
 };
 
 const GS=`@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes pulse{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.4);opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}`;
@@ -113,13 +97,12 @@ function CheckItem({done,label,desc,onToggle,c}){
 
 // ─── Auth badge ───────────────────────────────────────────────────────────────
 function AuthBadge({c,onManage}){
-  const {key,tok}=getCredential();
-  const isSSO=!!tok;
+  const {key}=getCredential();
   return(
-    <button onClick={onManage} style={{display:"flex",alignItems:"center",gap:6,background:isSSO?c.purpb:c.ab,border:"1px solid "+(isSSO?c.purpr:c.abr),borderRadius:20,padding:"4px 10px",cursor:"pointer",fontSize:12,color:isSSO?c.purp:c.ac}}>
-      <span>{isSSO?"🔐 Claude SSO":"🔑 API Key"}</span>
+    <button onClick={onManage} style={{display:"flex",alignItems:"center",gap:6,background:c.ab,border:"1px solid "+c.abr,borderRadius:20,padding:"4px 10px",cursor:"pointer",fontSize:12,color:c.ac}}>
+      <span>🔑 API Key</span>
       <span style={{opacity:0.6}}>·</span>
-      <span style={{color:c.tf}}>{isSSO?"connected":key?key.slice(0,10)+"…":"set"}</span>
+      <span style={{color:c.tf}}>{key?key.slice(0,10)+"…":"set"}</span>
     </button>
   );
 }
@@ -165,33 +148,16 @@ export default function App(){
   // Persist history
   const persistHist=useCallback(async(nh)=>{const u=userRef.current;if(u)ls.set(eKey(u),JSON.stringify(nh));},[]);
 
-  // Boot: check OAuth callback, then restore session
+  // Boot: restore session and theme
   useEffect(()=>{(async()=>{
     const sv=ls.get(KEYS.theme);if(sv)setTm(sv);
     const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
-
-    // Handle OAuth callback
-    const params=new URLSearchParams(window.location.search);
-    const code=params.get("code");const state=params.get("state");
-    if(code&&state){
-      const savedState=ls.get(KEYS.oaState);const verifier=ls.get(KEYS.oaVerif);
-      if(savedState===state&&verifier){
-        // Exchange code for token via proxy (or direct if Anthropic supports PKCE public clients)
-        try{
-          const res=await fetch(OAUTH_TOKEN_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({grant_type:"authorization_code",code,redirect_uri:OAUTH_REDIRECT,client_id:OAUTH_CLIENT_ID,code_verifier:verifier})});
-          const d=await res.json();
-          if(d.access_token){ls.set(KEYS.oaToken,d.access_token);ls.del(KEYS.oaVerif);ls.del(KEYS.oaState);}
-        }catch{}
-        // Clean URL
-        window.history.replaceState({},"",window.location.pathname);
-      }
-    }
 
     // Check credentials
     const {valid}=getCredential();
     // Restore session
     const ss=ls.get(KEYS.session);
-    if(ss){try{const p=JSON.parse(ss);if(p.email&&p.lang){setUser(p.email);userRef.current=p.email;setLang(p.lang);ls.set("untangle_lang",p.lang);setAuth("in");const hv=ls.get(eKey(p.email));if(hv)setHist(JSON.parse(hv));setVw(valid?"dash":"auth_setup");setReady(true);return;}}catch{}}
+    if(ss){try{const p=JSON.parse(ss);if(p.email&&p.lang){setUser(p.email);userRef.current=p.email;setLang(p.lang);ls.set("untangle_lang",p.lang);setAuth("in");const hv=ls.get(eKey(p.email));if(hv)setHist(JSON.parse(hv));setVw(valid?"dash":"byok");setReady(true);return;}}catch{}}
 
     setVw(valid?langSv?"home":"lang":"lang");
     setReady(true);
@@ -200,37 +166,32 @@ export default function App(){
   // Save key flow
   const saveApiKey=async()=>{
     const k=apiKeyInput.trim();
-    if(!k.startsWith("sk-ant-")){setApiKeyErr("Key should start with sk-ant-");return;}
-    ls.set(KEYS.apiKey,k);ls.del(KEYS.oaToken);
+    const provider=keyProvider(k);
+    if(!k.startsWith("sk-ant-")&&!k.startsWith("sk-or-")){setApiKeyErr("Key should start with sk-ant- or sk-or-");return;}
+    ls.set(KEYS.apiKey,k);
     setApiKeyErr("");setApiKeyInput("");
     // Test key with a tiny call
     setBusy(true);
     try{
-      const r=await fetch(API_URL,{method:"POST",headers:buildHeaders(),body:JSON.stringify({model:MODEL,max_tokens:10,messages:[{role:"user",content:"hi"}]})});
-      const d=await r.json();
-      if(d.error){ls.del(KEYS.apiKey);setApiKeyErr("Invalid key: "+d.error.message);setBusy(false);return;}
-    }catch{ls.del(KEYS.apiKey);setApiKeyErr("Could not reach API.");setBusy(false);return;}
+      let ok=false;
+      if(provider==="openrouter"){
+        const r=await fetch(OPENROUTER_URL,{method:"POST",headers:buildHeaders(k),body:JSON.stringify({model:MODEL_OPENROUTER,max_tokens:10,messages:[{role:"user",content:"hi"}]})});
+        const d=await r.json();
+        if(d.error){ls.del(KEYS.apiKey);setApiKeyErr("Invalid key: "+d.error.message);setBusy(false);return;}
+        ok=true;
+      }else{
+        const r=await fetch(ANTHROPIC_URL,{method:"POST",headers:buildHeaders(k),body:JSON.stringify({model:MODEL_ANTHROPIC,max_tokens:10,messages:[{role:"user",content:"hi"}]})});
+        const d=await r.json();
+        if(d.error){ls.del(KEYS.apiKey);setApiKeyErr("Invalid key: "+d.error.message);setBusy(false);return;}
+        ok=true;
+      }
+      if(!ok)throw new Error("fail");
+    }catch(e){if(!apiKeyErr){ls.del(KEYS.apiKey);setApiKeyErr("Could not reach API.");}setBusy(false);return;}
     setBusy(false);
     setVw(auth==="in"?"dash":lang?"home":"lang");
   };
 
-  // Claude SSO via PKCE
-  const startSSO=async()=>{
-    if(OAUTH_CLIENT_ID==="YOUR_CLIENT_ID"){alert("Set OAUTH_CLIENT_ID in the source code first.");return;}
-    const verifier=genVerifier();const challenge=await genChallenge(verifier);const state=genState();
-    ls.set(KEYS.oaVerif,verifier);ls.set(KEYS.oaState,state);
-    const url=new URL(OAUTH_AUTH_URL);
-    url.searchParams.set("response_type","code");
-    url.searchParams.set("client_id",OAUTH_CLIENT_ID);
-    url.searchParams.set("redirect_uri",OAUTH_REDIRECT);
-    url.searchParams.set("scope",OAUTH_SCOPE);
-    url.searchParams.set("state",state);
-    url.searchParams.set("code_challenge",challenge);
-    url.searchParams.set("code_challenge_method","S256");
-    window.location.href=url.toString();
-  };
-
-  const removeAuth=()=>{ls.del(KEYS.apiKey);ls.del(KEYS.oaToken);setVw("auth_setup");};
+  const removeAuth=()=>{ls.del(KEYS.apiKey);setVw("byok");};
 
   // Magic link login (simulated)
   const login=async(email)=>{
@@ -242,25 +203,40 @@ export default function App(){
   };
   const logout=()=>{ls.del(KEYS.session);setAuth("out");setUser(null);userRef.current=null;setEm("");setHist([]);setSteps(null);setInp("");setVw("home");setActiveId(null);setPend(null);setLocalComp([]);};
 
-  const pickLang=(code)=>{setLang(code);ls.set("untangle_lang",code);const {valid}=getCredential();setVw(valid?"home":"auth_setup");};
+  const pickLang=(code)=>{setLang(code);ls.set("untangle_lang",code);const {valid}=getCredential();setVw(valid?"home":"byok");};
+
+  // ─── API call helper ──────────────────────────────────────────────────────
+  const callAPI=async(messages,maxTokens=1000)=>{
+    const {key,provider}=getCredential();
+    if(provider==="openrouter"){
+      const r=await fetch(OPENROUTER_URL,{method:"POST",headers:buildHeaders(key),body:JSON.stringify({model:MODEL_OPENROUTER,max_tokens:maxTokens,messages})});
+      if(!r.ok)throw new Error("fail");
+      const d=await r.json();if(d.error)throw new Error(d.error.message);
+      return(d.choices||[]).map(c=>c.message?.content||"").join("");
+    }else{
+      const r=await fetch(ANTHROPIC_URL,{method:"POST",headers:buildHeaders(key),body:JSON.stringify({model:MODEL_ANTHROPIC,max_tokens:maxTokens,messages})});
+      if(!r.ok)throw new Error("fail");
+      const d=await r.json();if(d.error)throw new Error(d.error.message);
+      return(d.content||[]).map(b=>b.text||"").join("");
+    }
+  };
 
   const prompt=(ui)=>`You are a friendly, humorous coach. You are the AI behind Untangle.lol.\nRespond ENTIRELY in ${t.label}.\nGoal: "${ui}"\nPRINCIPLES: Wellbeing, honesty, sustainability.\nSTYLE: doable today/this week, casual, emoji in title, specific, 3-5 steps.\nJSON only, no markdown:\n{"titel":"Summary","stappen":[{"nummer":1,"actie":"Emoji + title","toelichting":"1-2 sentences"}]}`;
 
   const submit=async()=>{
     if(!inp.trim()||busy)return;
     const {valid}=getCredential();
-    if(!valid){setVw("auth_setup");return;}
+    if(!valid){setVw("byok");return;}
     setBusy(true);setErr(null);setSteps(null);setVw("loading");
     try{
-      const r=await fetch(API_URL,{method:"POST",headers:buildHeaders(),body:JSON.stringify({model:MODEL,max_tokens:1000,messages:[{role:"user",content:prompt(inp.trim())}]})});
-      if(!r.ok)throw new Error("fail");const d=await r.json();if(d.error)throw new Error(d.error.message);
-      const tx=(d.content||[]).map(b=>b.text||"").join("");const ps=JSON.parse(tx.replace(/```json\s?|```/g,"").trim());
+      const tx=await callAPI([{role:"user",content:prompt(inp.trim())}],1000);
+      const ps=JSON.parse(tx.replace(/```json\s?|```/g,"").trim());
       if(!ps.titel||!ps.stappen)throw new Error("bad");
       setSteps(ps);
       const comp=ps.stappen.map(()=>false);
       const entry={id:Date.now(),timestamp:new Date().toISOString(),timezone:zone,behoefte:inp.trim(),resultaat:ps,lang,completed:comp};
       if(auth==="in"){const nh=[entry,...hist];setHist(nh);ls.set(eKey(userRef.current),JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
-      else{setPend(entry);setActiveId(entry.id);setLocalComp(comp);setVw("save_prompt");}
+      else{setActiveId(entry.id);setLocalComp(comp);setVw("result");}
     }catch(e){setErr(t.err);setVw(auth==="in"?"new_goal":"home");}finally{setBusy(false);}
   };
 
@@ -287,7 +263,6 @@ export default function App(){
     bo:{width:"100%",marginTop:14,padding:"13px 20px",background:c.ag,color:c.bt,border:"none",borderRadius:10,fontSize:15,fontWeight:600,cursor:"pointer"},
     bd:{width:"100%",marginTop:14,padding:"13px 20px",background:c.am,color:c.tm,border:"none",borderRadius:10,fontSize:15,fontWeight:600,cursor:"not-allowed"},
     bg:{width:"100%",marginTop:12,padding:"12px 20px",background:c.ghb,color:c.tm,border:"1px solid "+c.ghr,borderRadius:10,fontSize:14,fontWeight:500,cursor:"pointer"},
-    purpBtn:{width:"100%",marginTop:12,padding:"13px 20px",background:c.purpb,color:c.purp,border:"1px solid "+c.purpr,borderRadius:10,fontSize:15,fontWeight:600,cursor:"pointer"},
     note:{fontSize:12,color:c.tf,marginTop:8,textAlign:"center"},
     err:{marginTop:10,padding:"10px 14px",background:c.eb,borderRadius:8,color:c.et,fontSize:13},
   };
@@ -300,7 +275,6 @@ export default function App(){
       </div>
       <div style={{display:"flex",gap:8,alignItems:"center"}}>
         <AuthBadge c={c} onManage={()=>setVw("manage_auth")}/>
-        {showLogin&&<button onClick={()=>setVw("magic")} style={{background:"none",border:"none",color:c.ac,fontSize:12,cursor:"pointer",fontWeight:500}}>{t.has}</button>}
         {!showLogin&&user&&<button onClick={logout} style={{background:"none",border:"none",color:c.tf,fontSize:12,cursor:"pointer"}}>{t.out}</button>}
       </div>
     </div>
@@ -326,40 +300,6 @@ export default function App(){
     <style>{GS}</style></div></div>
   );
 
-  // ─── AUTH SETUP ───────────────────────────────────────────────────────────
-  if(vw==="auth_setup")return(
-    <div style={sx.pg}><div style={sx.w}>
-      <div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c} size="large"/><p style={{color:c.tm,fontSize:14,marginTop:8}}>Connect your Anthropic account to continue</p></div>
-      <div style={sx.cd}>
-        <h2 style={{fontSize:16,fontWeight:600,color:c.tx,margin:"0 0 20px 0",textAlign:"center"}}>Choose how to connect</h2>
-
-        {/* BYOK */}
-        <button onClick={()=>setVw("byok")} style={{...sx.cd,width:"100%",cursor:"pointer",display:"flex",alignItems:"center",gap:16,padding:"18px 20px",boxSizing:"border-box",marginBottom:12,textAlign:"left"}}
-          onMouseEnter={e=>{e.currentTarget.style.borderColor=c.abr;}}
-          onMouseLeave={e=>{e.currentTarget.style.borderColor=c.cb;}}>
-          <div style={{fontSize:36}}>🔑</div>
-          <div>
-            <div style={{fontSize:15,fontWeight:600,color:c.tx,marginBottom:2}}>{t.byok}</div>
-            <div style={{fontSize:13,color:c.tm}}>{t.byokNote}</div>
-          </div>
-        </button>
-
-        {/* SSO */}
-        <button onClick={startSSO} style={{...sx.cd,width:"100%",cursor:"pointer",display:"flex",alignItems:"center",gap:16,padding:"18px 20px",boxSizing:"border-box",textAlign:"left",borderColor:c.purpr,background:c.purpb}}
-          onMouseEnter={e=>{e.currentTarget.style.opacity="0.85";}}
-          onMouseLeave={e=>{e.currentTarget.style.opacity="1";}}>
-          <div style={{fontSize:36}}>🔐</div>
-          <div>
-            <div style={{fontSize:15,fontWeight:600,color:c.purp,marginBottom:2}}>{t.sso}</div>
-            <div style={{fontSize:13,color:c.tm}}>{t.ssoNote}</div>
-          </div>
-        </button>
-
-        {lang&&<button onClick={()=>setVw(lang?"home":"lang")} style={sx.bg}>{t.back}</button>}
-      </div>
-    <style>{GS}</style></div></div>
-  );
-
   // ─── BYOK FORM ────────────────────────────────────────────────────────────
   if(vw==="byok")return(
     <div style={sx.pg}><div style={sx.w}>
@@ -370,28 +310,24 @@ export default function App(){
         {apiKeyErr&&<div style={sx.err}>{apiKeyErr}</div>}
         <p style={sx.note}>{t.byokNote} <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noreferrer" style={{color:c.ac}}>Get a key →</a></p>
         <button onClick={saveApiKey} disabled={busy||!apiKeyInput.trim()} style={!apiKeyInput.trim()||busy?sx.bd:sx.bo}>{busy?"Checking...":t.byokSave}</button>
-        <button onClick={()=>setVw("auth_setup")} style={sx.bg}>{t.back}</button>
+        <button onClick={()=>setVw(lang?"home":"lang")} style={sx.bg}>{t.back}</button>
       </div>
     <style>{GS}</style></div></div>
   );
 
   // ─── MANAGE AUTH ──────────────────────────────────────────────────────────
   if(vw==="manage_auth"){
-    const {key,tok}=getCredential();
+    const {key,provider}=getCredential();
+    const providerLabel=provider==="openrouter"?"OpenRouter":"Anthropic";
     return(
       <div style={sx.pg}><div style={sx.w}>
         <div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>{t.chAuth}</h1></div>
         <div style={sx.cd}>
           {key&&<div style={{padding:"14px 16px",background:c.ab,borderRadius:10,marginBottom:12}}>
-            <div style={{fontSize:13,color:c.tm,marginBottom:4}}>API Key</div>
+            <div style={{fontSize:13,color:c.tm,marginBottom:4}}>API Key · <span style={{fontWeight:600,color:c.ac}}>{providerLabel}</span></div>
             <div style={{fontSize:14,fontWeight:500,color:c.ac,fontFamily:"monospace"}}>{key.slice(0,14)}…</div>
           </div>}
-          {tok&&<div style={{padding:"14px 16px",background:c.purpb,borderRadius:10,border:"1px solid "+c.purpr,marginBottom:12}}>
-            <div style={{fontSize:13,color:c.tm,marginBottom:4}}>Claude SSO</div>
-            <div style={{fontSize:14,fontWeight:500,color:c.purp}}>Connected ✓</div>
-          </div>}
           <button onClick={()=>setVw("byok")} style={sx.bo}>🔑 {t.byok}</button>
-          <button onClick={startSSO} style={sx.purpBtn}>🔐 {t.sso}</button>
           <button onClick={removeAuth} style={{...sx.bg,color:"#ef4444",borderColor:"rgba(239,68,68,0.3)",marginTop:12}}>{t.rmKey}</button>
           <button onClick={()=>setVw(auth==="in"?"dash":"home")} style={sx.bg}>{t.back}</button>
         </div>
@@ -402,45 +338,9 @@ export default function App(){
   // ─── LOADING ──────────────────────────────────────────────────────────────
   if(vw==="loading")return(<div style={sx.pg}><div style={sx.w}><div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/></div><div style={sx.cd}><Loader c={c}/></div><style>{GS}</style></div></div>);
 
-  // ─── MAGIC LINK ───────────────────────────────────────────────────────────
-  if(vw==="magic"||vw==="magic_link")return(
-    <div style={sx.pg}><div style={sx.w}>
-      <div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>{t.welcome}</h1><p style={{color:c.tm,fontSize:14,marginTop:4}}>{t.sub}</p></div>
-      <div style={sx.cd}>
-        {vw==="magic"?(<>
-          <label style={{fontSize:13,color:c.tm,fontWeight:500,display:"block",marginBottom:8}}>{t.emL}</label>
-          <input type="email" value={em} onChange={e=>setEm(e.target.value)} onKeyDown={e=>e.key==="Enter"&&em.includes("@")&&setVw("magic_link")} placeholder={t.emPh} style={sx.ip}/>
-          <button onClick={()=>em.includes("@")&&setVw("magic_link")} disabled={!em.includes("@")} style={!em.includes("@")?sx.bd:sx.bo}>{t.sendM}</button>
-          <button onClick={goHome} style={sx.bg}>{t.back}</button>
-        </>):(<>
-          <div style={{textAlign:"center"}}><div style={{fontSize:40,marginBottom:8}}>✉️</div><h3 style={{color:c.tx,margin:"0 0 6px"}}>{t.chk}</h3><p style={{color:c.tm,fontSize:14}}>{t.magOn} <span style={{color:c.ac}}>{em}</span></p><p style={{color:c.tf,fontSize:12,marginTop:8}}>{t.sim}</p></div>
-          <button onClick={()=>login(em)} style={sx.bo}>{t.opM}</button>
-          <button onClick={()=>setVw("magic")} style={sx.bg}>{t.back}</button>
-        </>)}
-      </div>
-    <style>{GS}</style></div></div>
-  );
-
-  // ─── SAVE PROMPT ──────────────────────────────────────────────────────────
-  if(vw==="save_prompt"&&steps)return(
-    <div style={sx.pg}><div style={sx.w}>
-      <div style={{textAlign:"center",marginBottom:16}}><BrandMark c={c}/></div>
-      <div style={{...sx.cd,marginBottom:14}}>
-        <h2 style={{fontSize:17,fontWeight:600,color:c.ac,margin:"0 0 14px"}}>{steps.titel}</h2>
-        <div style={{display:"flex",flexDirection:"column",gap:12}}>{steps.stappen.map((s,i)=>(<div key={i} style={{display:"flex",gap:12,alignItems:"flex-start"}}><div style={{width:28,height:28,minWidth:28,borderRadius:"50%",background:c.ab,color:c.ac,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700}}>{s.nummer}</div><div><div style={{fontSize:14,fontWeight:600,color:c.tx,marginBottom:2}}>{s.actie}</div><div style={{fontSize:13,color:c.tm,lineHeight:1.5}}>{s.toelichting}</div></div></div>))}</div>
-      </div>
-      <div style={{...sx.cd,textAlign:"center"}}>
-        <div style={{fontSize:30,marginBottom:8}}>💾</div><h3 style={{fontSize:16,fontWeight:600,color:c.tx,margin:"0 0 4px"}}>{t.svPro}</h3><p style={{color:c.tm,fontSize:13,margin:"0 0 14px"}}>{t.svD}</p>
-        <input type="email" value={em} onChange={e=>setEm(e.target.value)} onKeyDown={e=>e.key==="Enter"&&em.includes("@")&&setVw("magic_link")} placeholder={t.emPh} style={sx.ip}/>
-        <button onClick={()=>em.includes("@")&&setVw("magic_link")} disabled={!em.includes("@")} style={!em.includes("@")?sx.bd:sx.bo}>{t.sendM}</button>
-        <button onClick={()=>{setVw("result");setPend(null);}} style={sx.bg}>{t.skip}</button>
-      </div>
-    <style>{GS}</style></div></div>
-  );
-
   // ─── HOME (guest) ─────────────────────────────────────────────────────────
   if((vw==="home"||vw==="new_goal")&&auth!=="in")return(
-    <div style={sx.pg}><div style={sx.w}><Bar showLogin={true}/>
+    <div style={sx.pg}><div style={sx.w}><Bar showLogin={false}/>
       <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c} size="large"/><h1 style={{fontSize:26,fontWeight:700,color:c.tx,margin:"10px 0 0"}}>{t.hero}</h1><p style={{color:c.tm,fontSize:14,marginTop:4}}>{t.heroS}</p></div>
       <div style={sx.cd}><textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={3} style={{...sx.ip,resize:"none",lineHeight:1.5}}/><button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/></div>
       <div style={{textAlign:"center",marginTop:14,padding:"10px 16px",borderRadius:10,background:c.gb,border:"1px solid "+c.gbr}}><span style={{fontSize:12,color:c.gt}}>{t.eth}</span></div>
