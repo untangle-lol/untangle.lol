@@ -17,6 +17,7 @@ const KEYS = {
   theme:    "untangle_theme",
   session:  "untangle_session",
   apiKey:   "untangle_apikey",
+  recents:  "untangle_recents",
 };
 
 function eKey(email) { return "untangle_hist_" + email.toLowerCase().replace(/[^a-z0-9]/g,"_"); }
@@ -128,6 +129,7 @@ export default function App(){
   const [apiKeyInput,setApiKeyInput]=useState("");
   const [apiKeyErr,setApiKeyErr]=useState("");
   const [ready,setReady]=useState(false);
+  const [recents,setRecents]=useState([]);
   const userRef=useRef(null);
   const zone=useMemo(()=>tz(),[]);
 
@@ -154,6 +156,7 @@ export default function App(){
   useEffect(()=>{(async()=>{
     const sv=ls.get(KEYS.theme);if(sv)setTm(sv);
     const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
+    const rv=ls.get(KEYS.recents);if(rv){try{setRecents(JSON.parse(rv));}catch{}}
 
     // Check credentials
     const {valid}=getCredential();
@@ -235,6 +238,9 @@ export default function App(){
       const ps=JSON.parse(tx.replace(/```json\s?|```/g,"").trim());
       if(!ps.titel||!ps.stappen)throw new Error("bad");
       setSteps(ps);
+      // Save to recents
+      const trimmed=inp.trim();
+      setRecents(prev=>{const next=[trimmed,...prev.filter(r=>r!==trimmed)].slice(0,5);ls.set(KEYS.recents,JSON.stringify(next));return next;});
       const comp=ps.stappen.map(()=>false);
       const entry={id:Date.now(),timestamp:new Date().toISOString(),timezone:zone,behoefte:inp.trim(),resultaat:ps,lang,completed:comp};
       if(auth==="in"){const nh=[entry,...hist];setHist(nh);ls.set(eKey(userRef.current),JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
@@ -346,7 +352,11 @@ export default function App(){
   if((vw==="home"||vw==="new_goal")&&auth!=="in")return(
     <div style={sx.pg}><div style={sx.w}><Bar showLogin={false}/>
       <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c} size="large"/><h1 style={{fontSize:26,fontWeight:700,color:c.tx,margin:"10px 0 0"}}>{t.hero}</h1><p style={{color:c.tm,fontSize:14,marginTop:4}}>{t.heroS}</p></div>
-      <div style={sx.cd}><textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={3} style={{...sx.ip,resize:"none",lineHeight:1.5}}/><button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/></div>
+      <div style={sx.cd}>
+        <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={3} style={{...sx.ip,resize:"none",lineHeight:1.5}}/>
+        {recents.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:10}}>{recents.map((r,i)=>(<button key={i} onClick={()=>setInp(r)} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:20,padding:"4px 12px",fontSize:12,color:c.tm,cursor:"pointer",maxWidth:"100%",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r}</button>))}</div>}
+        <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
+      </div>
       <div style={{textAlign:"center",marginTop:14,padding:"10px 16px",borderRadius:10,background:c.gb,border:"1px solid "+c.gbr}}><span style={{fontSize:12,color:c.gt}}>{t.eth}</span></div>
     <style>{GS}</style></div></div>
   );
@@ -379,7 +389,11 @@ export default function App(){
   if(vw==="new_goal"&&auth==="in")return(
     <div style={sx.pg}><div style={sx.w}><Bar showLogin={false}/>
       <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/><h1 style={{fontSize:22,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>{t.hero}</h1><p style={{color:c.tm,fontSize:13,marginTop:2}}>{t.heroS}</p></div>
-      <div style={sx.cd}><textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={3} style={{...sx.ip,resize:"none",lineHeight:1.5}}/><button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/></div>
+      <div style={sx.cd}>
+        <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={3} style={{...sx.ip,resize:"none",lineHeight:1.5}}/>
+        {recents.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:10}}>{recents.map((r,i)=>(<button key={i} onClick={()=>setInp(r)} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:20,padding:"4px 12px",fontSize:12,color:c.tm,cursor:"pointer",maxWidth:"100%",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r}</button>))}</div>}
+        <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
+      </div>
       <button onClick={()=>setVw("dash")} style={sx.bg}>{t.back}</button>
     <style>{GS}</style></div></div>
   );
