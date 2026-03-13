@@ -258,8 +258,8 @@ export default function App(){
 
   // ─── Shared styles ────────────────────────────────────────────────────────
   const sx={
-    pg:{minHeight:"100dvh",background:c.bg,display:"flex",alignItems:"center",justifyContent:"center",padding:20,paddingBottom:"calc(20px + env(safe-area-inset-bottom))",fontFamily:"'Inter',-apple-system,sans-serif",transition:"background 0.4s"},
-    w:{width:"100%",maxWidth:540},
+    pg:{minHeight:"100dvh",background:c.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-start",padding:"12px 20px",paddingTop:"calc(12px + env(safe-area-inset-top))",paddingBottom:"calc(20px + env(safe-area-inset-bottom))",fontFamily:"'Inter',-apple-system,sans-serif",transition:"background 0.4s"},
+    w:{width:"100%",maxWidth:540,flex:1,display:"flex",flexDirection:"column",justifyContent:"center"},
     cd:{background:c.card,borderRadius:16,padding:24,border:"1px solid "+c.cb,boxShadow:c.sh,transition:"all 0.3s"},
     ip:{width:"100%",background:c.ib,border:"1px solid "+c.ibr,borderRadius:10,padding:"13px 16px",color:c.tx,fontSize:15,outline:"none",boxSizing:"border-box"},
     bo:{width:"100%",marginTop:14,padding:"13px 20px",background:c.ag,color:c.bt,border:"none",borderRadius:10,fontSize:15,fontWeight:600,cursor:"pointer"},
@@ -269,16 +269,16 @@ export default function App(){
     err:{marginTop:10,padding:"10px 14px",background:c.eb,borderRadius:8,color:c.et,fontSize:13},
   };
 
-  const Bar=({showLogin})=>(
+  const Bar=({showLogin,showAuth=true})=>(
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,flexWrap:"wrap",gap:8}}>
       <div style={{display:"flex",alignItems:"center",gap:8}}>
         <button onClick={()=>setVw("lang")} style={{background:"none",border:"none",color:c.tf,fontSize:12,cursor:"pointer",padding:0}}>🌍 {t.lSel}</button>
         <TTog mode={tm} set={chTm} c={c}/>
       </div>
-      <div style={{display:"flex",gap:8,alignItems:"center"}}>
+      {showAuth&&<div style={{display:"flex",gap:8,alignItems:"center"}}>
         <AuthBadge c={c} onManage={()=>setVw("manage_auth")}/>
         {!showLogin&&user&&<button onClick={logout} style={{background:"none",border:"none",color:c.tf,fontSize:12,cursor:"pointer"}}>{t.out}</button>}
-      </div>
+      </div>}
     </div>
   );
 
@@ -289,7 +289,7 @@ export default function App(){
   // ─── LANG SELECT ─────────────────────────────────────────────────────────
   if(vw==="lang")return(
     <div style={{...sx.pg,direction:"ltr"}}><div style={sx.w}>
-      <div style={{display:"flex",justifyContent:"flex-end",marginBottom:12}}><TTog mode={tm} set={chTm} c={c}/></div>
+      <Bar showLogin={false} showAuth={false}/>
       <div style={{textAlign:"center",marginBottom:28}}><BrandMark c={c} size="large"/><p style={{color:c.tm,fontSize:14,marginTop:10}}>Choose your language</p></div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
         {LANGS.map(l=>(
@@ -305,6 +305,7 @@ export default function App(){
   // ─── BYOK FORM ────────────────────────────────────────────────────────────
   if(vw==="byok")return(
     <div style={sx.pg}><div style={sx.w}>
+      <Bar showLogin={false} showAuth={false}/>
       <div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>🔑 {t.byokL}</h1></div>
       <div style={sx.cd}>
         <label style={{fontSize:13,color:c.tm,fontWeight:500,display:"block",marginBottom:8}}>{t.byokL}</label>
@@ -323,6 +324,7 @@ export default function App(){
     const providerLabel=provider==="openrouter"?"OpenRouter":"Anthropic";
     return(
       <div style={sx.pg}><div style={sx.w}>
+        <Bar showLogin={false} showAuth={false}/>
         <div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>{t.chAuth}</h1></div>
         <div style={sx.cd}>
           {key&&<div style={{padding:"14px 16px",background:c.ab,borderRadius:10,marginBottom:12}}>
@@ -338,7 +340,7 @@ export default function App(){
   }
 
   // ─── LOADING ──────────────────────────────────────────────────────────────
-  if(vw==="loading")return(<div style={sx.pg}><div style={sx.w}><div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/></div><div style={sx.cd}><Loader c={c}/></div><style>{GS}</style></div></div>);
+  if(vw==="loading")return(<div style={sx.pg}><div style={sx.w}><Bar showLogin={false} showAuth={false}/><div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/></div><div style={sx.cd}><Loader c={c}/></div><style>{GS}</style></div></div>);
 
   // ─── HOME (guest) ─────────────────────────────────────────────────────────
   if((vw==="home"||vw==="new_goal")&&auth!=="in")return(
@@ -388,7 +390,7 @@ export default function App(){
     const ae=hist.find(h=>h.id===activeId)||pend;
     return(
       <div style={sx.pg}><div style={sx.w}>
-        {auth==="in"&&<Bar showLogin={false}/>}
+        {auth==="in"?<Bar showLogin={false}/>:<Bar showLogin={false} showAuth={false}/>}
         <div style={{animation:"fadeIn 0.4s ease"}}>
           <div style={sx.cd}>
             <h2 style={{fontSize:17,fontWeight:600,color:all?c.gr:c.ac,margin:"0 0 6px"}}>{all?"✅ ":""}{steps.titel}</h2>
