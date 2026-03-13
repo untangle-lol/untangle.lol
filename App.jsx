@@ -402,7 +402,7 @@ export default function App(){
             {all&&<div style={{textAlign:"center",padding:"10px 0 16px",fontSize:14,color:c.gr,fontWeight:600,animation:"pop 0.4s ease"}}>{t.allD}</div>}
             <div style={{display:"flex",flexDirection:"column",gap:10}}>
               {steps.stappen.map((s,i)=>(
-                <CheckItem key={i} done={localComp[i]||false} label={s.actie} desc={s.toelichting} onToggle={auth==="in"&&activeId?()=>toggleStep(i):undefined} c={c}/>
+                <CheckItem key={i} done={localComp[i]||false} label={s.actie} desc={s.toelichting} onToggle={activeId?()=>toggleStep(i):undefined} c={c}/>
               ))}
             </div>
           </div>
