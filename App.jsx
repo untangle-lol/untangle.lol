@@ -154,6 +154,14 @@ export default function App(){
 
   const chTm=async(m)=>{setTm(m);ls.set(KEYS.theme,m);};
 
+  // Sync browser theme-color meta tag with resolved theme
+  useEffect(()=>{
+    const color=rt==="dark"?"#0f172a":"#f8fafc";
+    let tag=document.querySelector("meta[name='theme-color']");
+    if(!tag){tag=document.createElement("meta");tag.name="theme-color";document.head.appendChild(tag);}
+    tag.content=color;
+  },[rt]);
+
   // Persist history
   const persistHist=useCallback(async(nh)=>{const u=userRef.current;if(u)ls.set(eKey(u),JSON.stringify(nh));},[]);
 
