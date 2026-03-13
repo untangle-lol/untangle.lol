@@ -137,12 +137,14 @@ export default function App(){
 
   const chTm=async(m)=>{setTm(m);ls.set(KEYS.theme,m);};
 
-  // Sync browser theme-color meta tag with resolved theme
+  // Sync browser theme-color, html/body background with resolved theme
   useEffect(()=>{
     const color=rt==="dark"?"#0f172a":"#f8fafc";
     let tag=document.querySelector("meta[name='theme-color']");
     if(!tag){tag=document.createElement("meta");tag.name="theme-color";document.head.appendChild(tag);}
     tag.content=color;
+    document.documentElement.style.background=color;
+    document.body.style.background=color;
   },[rt]);
 
   // Persist history
@@ -256,7 +258,7 @@ export default function App(){
 
   // ─── Shared styles ────────────────────────────────────────────────────────
   const sx={
-    pg:{minHeight:"100vh",background:c.bg,display:"flex",alignItems:"center",justifyContent:"center",padding:20,fontFamily:"'Inter',-apple-system,sans-serif",transition:"background 0.4s"},
+    pg:{minHeight:"100dvh",background:c.bg,display:"flex",alignItems:"center",justifyContent:"center",padding:20,paddingBottom:"calc(20px + env(safe-area-inset-bottom))",fontFamily:"'Inter',-apple-system,sans-serif",transition:"background 0.4s"},
     w:{width:"100%",maxWidth:540},
     cd:{background:c.card,borderRadius:16,padding:24,border:"1px solid "+c.cb,boxShadow:c.sh,transition:"all 0.3s"},
     ip:{width:"100%",background:c.ib,border:"1px solid "+c.ibr,borderRadius:10,padding:"13px 16px",color:c.tx,fontSize:15,outline:"none",boxSizing:"border-box"},
@@ -282,7 +284,7 @@ export default function App(){
 
   const Err=()=>err?(<div style={sx.err}>{err}</div>):null;
 
-  if(!ready)return (<div style={{minHeight:"100vh",background:c.bg}}><style>{GS}</style></div>);
+  if(!ready)return (<div style={{minHeight:"100dvh",background:c.bg}}><style>{GS}</style></div>);
 
   // ─── LANG SELECT ─────────────────────────────────────────────────────────
   if(vw==="lang")return(
