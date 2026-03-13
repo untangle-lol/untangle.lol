@@ -1,0 +1,28 @@
+services:
+  web:
+    build: .
+    container_name: untangle_web
+    restart: unless-stopped
+    networks:
+      - proxy
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      - "traefik.enable=true"
+      # Apex domain
+      - "traefik.http.routers.untangle.rule=Host(`untangle.lol`)"
+      - "traefik.http.routers.untangle.entrypoints=websecure"
+      - "traefik.http.routers.untangle.tls.certresolver=letsencrypt"
+      - "traefik.http.services.untangle.loadbalancer.server.port=3000"
+      # www → apex redirect
+      - "traefik.http.routers.untangle-www.rule=Host(`www.untangle.lol`)"
+      - "traefik.http.routers.untangle-www.entrypoints=websecure"
+      - "traefik.http.routers.untangle-www.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.untangle-www.middlewares=untangle-www-redirect"
+      - "traefik.http.middlewares.untangle-www-redirect.redirectregex.regex=^https?://www\\.untangle\\.lol(.*)"
+      - "traefik.http.middlewares.untangle-www-redirect.redirectregex.replacement=https://untangle.lol$${1}"
+      - "traefik.http.middlewares.untangle-www-redirect.redirectregex.permanent=true"
+
+networks:
+  proxy:
+    external: true
