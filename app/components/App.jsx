@@ -332,17 +332,6 @@ export default function App(){
     return()=>clearInterval(id);
   },[inp,t]);
 
-  const detectAltruism=async(goalText,key)=>{
-    const dp=`You are a classification assistant. Decide if the following goal is primarily about helping, supporting, or benefiting OTHER people (not just the person themselves). Examples: volunteering, caregiving, teaching others, charity work, supporting a loved one, community projects. Reply with JSON only: {"altruistic": true} or {"altruistic": false}. Goal: "${goalText}"`;
-    try{
-      const r=await fetch(ANTHROPIC_URL,{method:"POST",headers:buildHeaders(key),body:JSON.stringify({model:MODEL_ANTHROPIC,max_tokens:20,messages:[{role:"user",content:dp}]})});
-      const d=await r.json();
-      const txt=(d.content||[]).map(b=>b.text||"").join("").trim();
-      const parsed=JSON.parse(txt.replace(/```json\s?|```/g,"").trim());
-      return parsed.altruistic===true;
-    }catch{return false;}
-  };
-
   const callAPI=async(messages,maxTokens=1000)=>{
     const {key,provider}=getCredential();
     if(provider==="openrouter"){
@@ -351,18 +340,18 @@ export default function App(){
       const d=await r.json();if(d.error)throw new Error(d.error.message);
       const text=(d.choices||[]).map(ch=>ch.message?.content||"").join("");
       const u=d.usage||{};
-      return{text,inputTokens:u.prompt_tokens||0,outputTokens:u.completion_tokens||0,isAltruistic:false};
+      return{text,inputTokens:u.prompt_tokens||0,outputTokens:u.completion_tokens||0};
     }else{
       const r=await fetch(ANTHROPIC_URL,{method:"POST",headers:buildHeaders(key),body:JSON.stringify({model:MODEL_ANTHROPIC,max_tokens:maxTokens,messages})});
       if(!r.ok)throw new Error("fail");
       const d=await r.json();if(d.error)throw new Error(d.error.message);
       const text=(d.content||[]).map(b=>b.text||"").join("");
       const u=d.usage||{};
-      return{text,inputTokens:u.input_tokens||0,outputTokens:u.output_tokens||0,isAltruistic:false};
+      return{text,inputTokens:u.input_tokens||0,outputTokens:u.output_tokens||0};
     }
   };
 
-  const prompt=(ui)=>`You are a friendly, humorous coach. You are the AI behind Untangle.lol.\nRespond ENTIRELY in ${t.label}.\nGoal: "${ui}"\nPRINCIPLES: Wellbeing, honesty, sustainability.\nSTYLE: doable today/this week, casual, emoji in title, specific, 3-5 steps.\nJSON only, no markdown:\n{"titel":"Summary","stappen":[{"nummer":1,"actie":"Emoji + title","toelichting":"1-2 sentences"}]}`;
+  const prompt=(ui)=>`You are a friendly, humorous coach. You are the AI behind Untangle.lol.\nRespond ENTIRELY in ${t.label}.\nGoal: "${ui}"\nPRINCIPLES: Wellbeing, honesty, sustainability.\nSTYLE: doable today/this week, casual, emoji in title, specific, 3-5 steps.\nAlso set "altruistic":true if the goal is primarily about helping or benefiting OTHER people (volunteering, caregiving, charity, supporting others) — otherwise false.\nJSON only, no markdown:\n{"titel":"Summary","altruistic":false,"stappen":[{"nummer":1,"actie":"Emoji + title","toelichting":"1-2 sentences"}]}`;
 
   const deductCredit=()=>{
     setCredits(prev=>{const next=Math.max(0,prev-1);ls.set(KEYS.credits,String(next));return next;});
@@ -379,22 +368,19 @@ export default function App(){
     setBusy(true);setErr(null);setSteps(null);setVw("loading");
     utrack("goal_submitted",{lang,mode:valid?"byok":"free"});
     try{
-      let tx,inputTokens,outputTokens,isAltruistic=false;
+      let tx,inputTokens,outputTokens;
       if(valid){
-        const {key}=getCredential();
-        const [apiResult,isAlt]=await Promise.all([
-          callAPI([{role:"user",content:prompt(inp.trim())}],1000),
-          detectAltruism(inp.trim(),key),
-        ]);
-        tx=apiResult.text;inputTokens=apiResult.inputTokens;outputTokens=apiResult.outputTokens;isAltruistic=isAlt;
+        const r=await callAPI([{role:"user",content:prompt(inp.trim())}],1000);
+        tx=r.text;inputTokens=r.inputTokens;outputTokens=r.outputTokens;
       }else{
         const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:prompt(inp.trim())}],lang})});
         if(!r.ok)throw new Error("proxy fail");
         const d=await r.json();if(d.error)throw new Error(d.error);
-        tx=d.text;inputTokens=d.inputTokens||0;outputTokens=d.outputTokens||0;isAltruistic=d.isAltruistic||false;
+        tx=d.text;inputTokens=d.inputTokens||0;outputTokens=d.outputTokens||0;
       }
       const ps=JSON.parse(tx.replace(/```json\s?|```/g,"").trim());
       if(!ps.titel||!ps.stappen)throw new Error("bad");
+      const isAltruistic=ps.altruistic===true;
       setSteps(ps);
       if(!valid)deductCredit();
       setUsage(prev=>{const next={calls:prev.calls+1,inputTokens:prev.inputTokens+inputTokens,outputTokens:prev.outputTokens+outputTokens,costUsd:prev.costUsd+calcCost(inputTokens,outputTokens)};ls.set(KEYS.usage,JSON.stringify(next));return next;});
