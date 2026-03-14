@@ -8,6 +8,7 @@ NEW_CONTAINER="untangle_web_new"
 OLD_CONTAINER="untangle_web"
 
 echo "[deploy] pulling latest code..."
+export GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/github_actions_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 git -C "$REPO_DIR" pull origin main
 
 echo "[deploy] building new image..."
