@@ -203,7 +203,7 @@ export default function App(){
   const [auth,setAuth]=useState("out");
   const [user,setUser]=useState(null);
   const [inp,setInp]=useState("");
-  const setInpPersist=(v)=>{setInp(v);if(lang)ls.set("untangle_inp_"+lang,v);};
+
   const [steps,setSteps]=useState(null);
   const [busy,setBusy]=useState(false);
   const [err,setErr]=useState(null);
@@ -249,7 +249,7 @@ export default function App(){
   const taClearTimer=useRef(null);
   const handleTaClear=()=>{
     if(!taClearConfirm){setTaClearConfirm(true);clearTimeout(taClearTimer.current);taClearTimer.current=setTimeout(()=>setTaClearConfirm(false),2000);}
-    else{clearTimeout(taClearTimer.current);setTaClearConfirm(false);setInpPersist("");}
+    else{clearTimeout(taClearTimer.current);setTaClearConfirm(false);setInp("");}
   };
   const userRef=useRef(null);
   const zone=useMemo(()=>tz(),[]);
@@ -270,8 +270,7 @@ export default function App(){
     document.body.style.background=color;
   },[rt]);
 
-  // Restore last typed input for this language
-  useEffect(()=>{if(lang){const saved=ls.get("untangle_inp_"+lang);setInp(saved||"");};},[lang]);
+
 
   // Boot
   useEffect(()=>{(async()=>{
@@ -437,7 +436,6 @@ export default function App(){
       if(credits<=0){setVw("no_credits");return;}
     }
     setBusy(true);setErr(null);setSteps(null);setVw("loading");setLoadingAltruistic(false);
-    ls.del("untangle_inp_"+lang);
     utrack("goal_submitted",{lang,mode:valid?"byok":"free"});
     try{
       let tx,inputTokens,outputTokens;
@@ -569,7 +567,7 @@ export default function App(){
         else{setHist(ph=>{const nh=markClaimed(ph);ls.set(KEYS.guestHist,JSON.stringify(nh));return nh;});}
       }
     }
-    setInpPersist("");setSteps(null);setErr(null);setActiveId(null);setLocalComp([]);setShareOpen(false);setVw(auth==="in"?"dash":"home");
+    setInp("");setSteps(null);setErr(null);setActiveId(null);setLocalComp([]);setShareOpen(false);setVw(auth==="in"?"dash":"home");
   };
   const prog=(e)=>{const tt=e.resultaat?.stappen?.length||0;const dn=(e.completed||[]).filter(Boolean).length;return{dn,tt,pct:tt>0?Math.round(dn/tt*100):0};};
 
@@ -929,7 +927,7 @@ export default function App(){
           <HoneypotField/>
           <div style={{marginBottom:12,padding:"8px 12px",borderRadius:10,background:c.ab,border:"1px solid "+c.abr}}><span style={{fontSize:12,color:c.ac}}>{canEarnAltruismBonus?t.altruismTeaser:t.altruismPopupMsgRepeat}</span></div>
           <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
-          <div className={"ta-glow"+(taFocused?" ta-glow-focused":"")} style={{"--ta-tc":rt==="dark"?"rgba(255,255,255,0.12)":"rgba(180,120,0,0.25)","position":"relative"}}>            <textarea value={inp} onChange={e=>setInpPersist(e.target.value)} onFocus={()=>setTaFocused(true)} onBlur={()=>{setTaFocused(false);setTaClearConfirm(false);}} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={cyclePh} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6,background:rt==="dark"?"#162032":"#ffffff",border:"none",paddingRight:inp.trim()?"36px":undefined}}/>
+          <div className={"ta-glow"+(taFocused?" ta-glow-focused":"")} style={{"--ta-tc":rt==="dark"?"rgba(255,255,255,0.12)":"rgba(180,120,0,0.25)","position":"relative"}}>            <textarea value={inp} onChange={e=>setInp(e.target.value)} onFocus={()=>setTaFocused(true)} onBlur={()=>{setTaFocused(false);setTaClearConfirm(false);}} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={cyclePh} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6,background:rt==="dark"?"#162032":"#ffffff",border:"none",paddingRight:inp.trim()?"36px":undefined}}/>
             {inp.trim()&&<button onMouseDown={e=>{e.preventDefault();handleTaClear();}} title={t.rmTip} style={{position:"absolute",top:"50%",right:8,transform:"translateY(-50%)",zIndex:2,background:taClearConfirm?"rgba(239,68,68,0.12)":"transparent",border:"1px solid "+(taClearConfirm?"rgba(239,68,68,0.35)":"transparent"),borderRadius:6,color:taClearConfirm?"#ef4444":c.tf,fontSize:taClearConfirm?11:16,fontWeight:600,width:24,height:24,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"all 0.18s",lineHeight:1,opacity:taFocused||taClearConfirm?1:0.4}}>{taClearConfirm?(t.taClrConfirm||"clear?"):"×"}</button>}
           </div>
           <SuggChips/>
@@ -1000,7 +998,7 @@ export default function App(){
         <div style={{...sx.cd,position:"relative"}}>
           <HoneypotField/>
           <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
-          <textarea value={inp} onChange={e=>setInpPersist(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={cyclePh} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
+          <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={cyclePh} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
           <SuggChips/>
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button>
           <div style={{display:"flex",alignItems:"center",gap:8,marginTop:10,marginBottom:10}}>
