@@ -59,7 +59,7 @@ export async function DELETE(request) {
 
   const store = load();
   const list = store[lang] ?? [];
-  store[lang] = list.filter((s) => s.toLowerCase() !== text.trim().toLowerCase());
+  store[lang] = list.filter((s) => s.trim().toLowerCase() !== text.trim().toLowerCase());
   save(store);
 
   return NextResponse.json({ ok: true });
