@@ -582,26 +582,24 @@ export default function App(){
       if(ai<altPick.length&&interleaved.length<4)interleaved.push({text:altPick[ai++],kind:"alt"});
     }
     if(recents.length===0&&interleaved.length===0)return null;
-    const chipBase={display:"inline-flex",alignItems:"center",gap:4,borderRadius:20,fontSize:12,cursor:"pointer",maxWidth:"100%",overflow:"hidden",whiteSpace:"nowrap"};
+    const chipRow={display:"flex",alignItems:"center",width:"100%",borderRadius:8,overflow:"hidden"};
     return(
-      <div style={{marginTop:10}}>
-        {recents.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+      <div style={{marginTop:10,border:"1px solid "+c.cb,borderRadius:10,overflow:"hidden"}}>
+        <div style={{padding:"8px 12px 6px",fontSize:12,fontWeight:600,color:c.tf,borderBottom:"1px solid "+c.cb,background:c.sb}}>{t.suggLabel||"💡 Pick a suggestion"}</div>
+        <div style={{display:"flex",flexDirection:"column",gap:0}}>
           {recents.map((r,i)=>(
-            <span key={"l"+i} style={{...chipBase,background:c.ab,border:"1px solid "+c.abr}}>
-              <button onClick={()=>setInp(r)} style={{background:"none",border:"none",padding:"4px 0 4px 12px",color:c.ac,cursor:"pointer",fontSize:12,overflow:"hidden",textOverflow:"ellipsis",maxWidth:200}}>{r}</button>
-              <button onClick={()=>delRecent(r)} style={{background:"none",border:"none",padding:"4px 10px 4px 2px",color:c.ac,cursor:"pointer",fontSize:14,opacity:0.6,lineHeight:1}} title="Remove">×</button>
-            </span>
+            <div key={"l"+i} style={{...chipRow,borderTop:i>0?"1px solid "+c.cb:"none",background:c.ab}}>
+              <button onClick={()=>setInp(r)} style={{flex:1,background:"none",border:"none",padding:"9px 12px",color:c.ac,cursor:"pointer",fontSize:13,textAlign:"left",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r}</button>
+              <button onClick={()=>delRecent(r)} style={{flexShrink:0,background:"none",border:"none",padding:"9px 12px",color:c.ac,cursor:"pointer",fontSize:15,opacity:0.5,lineHeight:1}} title="Remove">×</button>
+            </div>
           ))}
-        </div>}
-        {interleaved.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:recents.length>0?6:0}}>
           {interleaved.map((s,i)=>(
-            <span key={"m"+i} style={{...chipBase,background:s.kind==="alt"?"rgba(251,191,36,0.08)":c.ghb,border:"1px solid "+(s.kind==="alt"?"rgba(251,191,36,0.25)":c.ghr)}}>
-              <button onClick={()=>setInp(s.text)} style={{background:"none",border:"none",padding:"4px 0 4px 12px",color:s.kind==="alt"?c.ac:c.tm,cursor:"pointer",fontSize:12,overflow:"hidden",textOverflow:"ellipsis",maxWidth:200}}>{s.kind==="alt"?"💛 ":"💡 "}{s.text}</button>
-              {s.kind==="global"&&<button onClick={()=>delGlobal(s.text)} style={{background:"none",border:"none",padding:"4px 10px 4px 2px",color:c.tm,cursor:"pointer",fontSize:14,opacity:0.5,lineHeight:1}} title="Remove">×</button>}
-              {s.kind==="alt"&&<span style={{padding:"4px 10px 4px 2px"}}/>}
-            </span>
+            <div key={"m"+i} style={{...chipRow,borderTop:(recents.length>0||i>0)?"1px solid "+c.cb:"none",background:s.kind==="alt"?"rgba(251,191,36,0.06)":"transparent"}}>
+              <button onClick={()=>setInp(s.text)} style={{flex:1,background:"none",border:"none",padding:"9px 12px",color:s.kind==="alt"?c.ac:c.tm,cursor:"pointer",fontSize:13,textAlign:"left",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{s.kind==="alt"?"💛 ":"💡 "}{s.text}</button>
+              {s.kind==="global"&&<button onClick={()=>delGlobal(s.text)} style={{flexShrink:0,background:"none",border:"none",padding:"9px 12px",color:c.tm,cursor:"pointer",fontSize:15,opacity:0.5,lineHeight:1}} title="Remove">×</button>}
+            </div>
           ))}
-        </div>}
+        </div>
       </div>
     );
   };
@@ -913,7 +911,7 @@ export default function App(){
           <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
           <div className="ta-glow">            <textarea value={inp} onChange={e=>setInpPersist(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={cyclePh} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6,background:rt==="dark"?"#162032":"#ffffff",border:"none"}}/>
           </div>
-          <details style={{marginTop:10}}><summary style={{fontSize:13,color:c.tm,cursor:"pointer",userSelect:"none",marginBottom:4}}>{t.suggLabel||"💡 Pick a suggestion"}</summary><SuggChips/></details>
+          <SuggChips/>
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button>
           <div style={{display:"flex",alignItems:"center",gap:8,marginTop:10,marginBottom:10}}>
             <div style={{flex:1,height:1,background:c.cb}}/>
@@ -983,7 +981,7 @@ export default function App(){
           <HoneypotField/>
           <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
           <textarea value={inp} onChange={e=>setInpPersist(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={cyclePh} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
-          <details style={{marginTop:10}}><summary style={{fontSize:13,color:c.tm,cursor:"pointer",userSelect:"none",marginBottom:4}}>{t.suggLabel||"💡 Pick a suggestion"}</summary><SuggChips/></details>
+          <SuggChips/>
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button>
           <div style={{display:"flex",alignItems:"center",gap:8,marginTop:10,marginBottom:10}}>
             <div style={{flex:1,height:1,background:c.cb}}/>
