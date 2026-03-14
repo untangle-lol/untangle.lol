@@ -216,36 +216,39 @@ export default function App(){
     document.body.style.background=color;
   },[rt]);
 
-  // Load reCAPTCHA v2 script
+  // Load reCAPTCHA v2 script once
   useEffect(()=>{
     if(typeof window==="undefined")return;
     window.__recaptchaOnLoad=()=>setRecaptchaReady(true);
-    if(window.grecaptcha){setRecaptchaReady(true);return;}
+    if(window.grecaptcha&&window.grecaptcha.render){setRecaptchaReady(true);return;}
     const s=document.createElement("script");
     s.src="https://www.google.com/recaptcha/api.js?onload=__recaptchaOnLoad&render=explicit";
     s.async=true;s.defer=true;
     document.head.appendChild(s);
   },[]);
 
-  // Render reCAPTCHA widget when container is visible and grecaptcha is ready
+  // Render or reset widget whenever the container ref is live and grecaptcha is ready
   useEffect(()=>{
-    if(!recaptchaReady||!recaptchaContainerRef.current)return;
-    if(recaptchaWidgetId.current!=null)return; // already rendered
+    if(!recaptchaReady)return;
+    const el=recaptchaContainerRef.current;
+    if(!el)return;
+    // If already rendered into this exact element, just reset it
+    if(recaptchaWidgetId.current!=null){
+      try{window.grecaptcha.reset(recaptchaWidgetId.current);}catch{}
+      setRecaptchaToken(null);
+      return;
+    }
+    // Fresh element — render new widget
     try{
-      recaptchaWidgetId.current=window.grecaptcha.render(recaptchaContainerRef.current,{
+      recaptchaWidgetId.current=window.grecaptcha.render(el,{
         sitekey:RECAPTCHA_SITE_KEY,
         theme:rt==="dark"?"dark":"light",
         callback:(token)=>setRecaptchaToken(token),
         "expired-callback":()=>setRecaptchaToken(null),
+        "error-callback":()=>setRecaptchaToken(null),
       });
     }catch(e){}
   },[recaptchaReady,vw,rt]);
-
-  // Reset reCAPTCHA widget on view change so token is fresh
-  useEffect(()=>{
-    setRecaptchaToken(null);
-    recaptchaWidgetId.current=null;
-  },[vw]);
 
   // Boot
   useEffect(()=>{(async()=>{
@@ -498,17 +501,6 @@ export default function App(){
     </div>
   );
 
-  // reCAPTCHA widget container
-  const RecaptchaBox=()=>{
-    const {valid}=getCredential();
-    if(valid)return null; // BYOK users skip captcha
-    return(
-      <div style={{marginTop:14,display:"flex",justifyContent:"center"}}>
-        <div ref={recaptchaContainerRef}/>
-      </div>
-    );
-  };
-
   const sx={
     pg:{minHeight:"100dvh",height:"100dvh",background:c.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-start",padding:"12px 20px",paddingTop:"calc(48px + env(safe-area-inset-top))",paddingBottom:"calc(68px + env(safe-area-inset-bottom))",fontFamily:"'Inter',-apple-system,sans-serif",transition:"background 0.4s",overflowY:"auto"},
     w:{width:"100%",maxWidth:540,flex:1,display:"flex",flexDirection:"column",justifyContent:"center"},
@@ -703,7 +695,7 @@ export default function App(){
           <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
           <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
           <SuggChips/>
-          <RecaptchaBox/>
+          {!getCredential().valid&&<div style={{marginTop:14,display:"flex",justifyContent:"center"}}><div ref={recaptchaContainerRef}/></div>}
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
         </div>
         <div style={{textAlign:"center",marginTop:14,padding:"10px 16px",borderRadius:10,background:c.gb,border:"1px solid "+c.gbr}}><span style={{fontSize:12,color:c.gt}}>{t.eth}</span></div>
@@ -757,7 +749,7 @@ export default function App(){
           <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
           <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
           <SuggChips/>
-          <RecaptchaBox/>
+          {!getCredential().valid&&<div style={{marginTop:14,display:"flex",justifyContent:"center"}}><div ref={recaptchaContainerRef}/></div>}
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
         </div>
         <button onClick={()=>setVw("dash")} style={sx.bg}>{t.back}</button>
