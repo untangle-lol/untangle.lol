@@ -71,6 +71,7 @@ const LANGS = [
   topUp:"Credits bijkopen",topUpDesc:"10 credits voor €1,00",topUpBtn:"Betalen met Stripe →",topUpSuccess:"Betaling geslaagd! Credits worden bijgeschreven.",topUpPending:"Credits worden verwerkt...",topUpPopupTitle:"Credits bijgeschreven! 🎉",topUpPopupMsg:"untangle.lol is gratis en privé — zonder advertenties of dataverzameling. Met credits houd je de AI aan het draaien en steun je een eerlijk, onafhankelijk product. Dank je wel!",topUpPopupBtn:"Top, laten we beginnen!",
   altruismPopupTitle:"Wat lief van je! 💛",altruismPopupMsg:"Je doel gaat over het helpen van anderen — zoals vrijwilligerswerk, mantelzorg of een goed doel. Dat verdient een beloning: rond álle stappen af en ontvang automatisch 10 gratis credits!",altruismPopupBtn:"Top, ik ga aan de slag!",altruismBonusTitle:"🎁 +10 credits verdiend!",altruismBonusMsg:"Gefeliciteerd! Je hebt je altruïstische doel afgerond. Als dank voor je inzet voor anderen hebben we 10 gratis credits aan je account toegevoegd.",altruismBonusBtn:"Super, bedankt!",altruismTeaser:"💛 Gaat je doel over anderen helpen? Dan verdien je 10 gratis credits als je alle stappen afrondt.",analyticsNote:"We verzamelen anonieme gebruiksstatistieken (geen cookies, geen persoonsgegevens).",
   signIn:"Inloggen met Google",signInSub:"Sla je doelen op via al je apparaten",signOut:"Uitloggen",profile:"Profiel",terms:"Voorwaarden",privacy:"Privacy",stats:"Statistieken",donate:"❤️ Doneer",
+  share:"Delen",shareCopy:"Kopiëren",shareCopied:"Gekopieerd!",shareMsg:"Bekijk mijn stappenplan op untangle.lol:",
   altruismLoadingMsg:"💛 Je bent iets moois aan het doen voor anderen.",
   altruisticSugg:["Ik wil vrijwilligerswerk doen bij een voedselbank","Ik wil mantelzorger worden voor een familielid","Ik wil een buurtmoestuin starten","Ik wil bloed doneren","Ik wil een mentorrol op me nemen voor een jongere"],
   phSugg:["Ik wil beter slapen","Ik wil leren gitaarspelen","Ik wil elke dag sporten","Ik wil een boek schrijven","Ik wil gezonder eten"]},
@@ -79,6 +80,7 @@ const LANGS = [
   topUp:"Top up credits",topUpDesc:"10 credits for €1.00",topUpBtn:"Pay with Stripe →",topUpSuccess:"Payment successful! Credits will be added shortly.",topUpPending:"Processing credits...",topUpPopupTitle:"Credits added! 🎉",topUpPopupMsg:"untangle.lol is free and private — no ads, no data harvesting. Credits keep the AI running and support a fair, independent product. Thank you for your support!",topUpPopupBtn:"Great, let's go!",
   altruismPopupTitle:"How kind of you! 💛",altruismPopupMsg:"Your goal is about helping others — like volunteering, caregiving, or supporting a good cause. That deserves a reward: complete all steps and automatically earn 10 free credits!",altruismPopupBtn:"Great, let's go!",altruismBonusTitle:"🎁 +10 credits earned!",altruismBonusMsg:"Congratulations! You completed your altruistic goal. As a thank-you for your efforts to help others, we've added 10 free credits to your account.",altruismBonusBtn:"Awesome, thank you!",altruismTeaser:"💛 Is your goal about helping others? Then earn 10 free credits when you complete all steps.",analyticsNote:"We collect anonymous usage statistics (no cookies, no personal data).",
   signIn:"Sign in with Google",signInSub:"Save your goals across all devices",signOut:"Sign out",profile:"Profile",terms:"Terms",privacy:"Privacy",stats:"Stats",donate:"❤️ Donate",
+  share:"Share",shareCopy:"Copy",shareCopied:"Copied!",shareMsg:"Check out my action plan on untangle.lol:",
   altruismLoadingMsg:"💛 You're doing something wonderful for others.",
   altruisticSugg:["I want to volunteer at a food bank","I want to become a caregiver for a family member","I want to mentor a young person","I want to donate blood regularly","I want to start a community garden"],
   phSugg:["I want to sleep better","I want to learn guitar","I want to exercise every day","I want to write a book","I want to eat healthier"]},
@@ -87,6 +89,7 @@ const LANGS = [
   topUp:"Credits aufladen",topUpDesc:"10 Credits für €1,00",topUpBtn:"Mit Stripe bezahlen →",topUpSuccess:"Zahlung erfolgreich! Credits werden gutgeschrieben.",topUpPending:"Credits werden verarbeitet...",topUpPopupTitle:"Credits gutgeschrieben! 🎉",topUpPopupMsg:"untangle.lol ist kostenlos und privat — keine Werbung, keine Datenweitergabe. Credits halten die KI am Laufen und unterstützen ein faires, unabhängiges Produkt. Danke!",topUpPopupBtn:"Super, los geht's!",
   altruismPopupTitle:"Wie nett von dir! 💛",altruismPopupMsg:"Dein Ziel geht darum, anderen zu helfen — z. B. Ehrenamt, Pflege oder Unterstützung eines guten Zwecks. Das verdient eine Belohnung: Schließe alle Schritte ab und erhalte automatisch 10 Gratis-Credits!",altruismPopupBtn:"Super, los geht's!",altruismBonusTitle:"🎁 +10 Credits verdient!",altruismBonusMsg:"Glückwunsch! Du hast dein altruistisches Ziel abgeschlossen. Als Dankeschön für deinen Einsatz für andere haben wir 10 Gratis-Credits zu deinem Konto hinzugefügt.",altruismBonusBtn:"Super, danke!",altruismTeaser:"💛 Geht dein Ziel darum, anderen zu helfen? Dann verdienst du 10 Gratis-Credits, wenn du alle Schritte abschließt.",analyticsNote:"Wir erheben anonyme Nutzungsstatistiken (keine Cookies, keine personenbezogenen Daten).",
   signIn:"Mit Google anmelden",signInSub:"Ziele auf allen Geräten speichern",signOut:"Abmelden",profile:"Profil",terms:"AGB",privacy:"Datenschutz",stats:"Statistiken",donate:"❤️ Spenden",
+  share:"Teilen",shareCopy:"Kopieren",shareCopied:"Kopiert!",shareMsg:"Sieh dir meinen Aktionsplan auf untangle.lol an:",
   altruismLoadingMsg:"💛 Du tust gerade etwas Wundervolles für andere.",
   altruisticSugg:["Ich möchte bei einer Tafel ehrenamtlich helfen","Ich möchte einen Angehörigen pflegen","Ich möchte einen Jugendlichen mentoren","Ich möchte regelmäßig Blut spenden","Ich möchte einen Gemeinschaftsgarten starten"],
   phSugg:["Ich möchte besser schlafen","Ich möchte Gitarre lernen","Ich möchte täglich Sport treiben","Ich möchte ein Buch schreiben","Ich möchte gesünder essen"]},
@@ -95,6 +98,7 @@ const LANGS = [
   topUp:"Recharger les crédits",topUpDesc:"10 crédits pour €1,00",topUpBtn:"Payer avec Stripe →",topUpSuccess:"Paiement réussi ! Les crédits seront ajoutés sous peu.",topUpPending:"Traitement des crédits...",topUpPopupTitle:"Crédits ajoutés ! 🎉",topUpPopupMsg:"untangle.lol est gratuit et privé — sans pub ni collecte de données. Les crédits font tourner l'IA et soutiennent un produit équitable et indépendant. Merci !",topUpPopupBtn:"Super, c'est parti !",
   altruismPopupTitle:"Comme c'est gentil ! 💛",altruismPopupMsg:"Ton objectif consiste à aider les autres — bénévolat, aidant·e ou soutien à une bonne cause. Cela mérite une récompense : complète toutes les étapes et gagne automatiquement 10 crédits gratuits !",altruismPopupBtn:"Super, c'est parti !",altruismBonusTitle:"🎁 +10 crédits gagnés !",altruismBonusMsg:"Félicitations ! Tu as accompli ton objectif altruiste. En remerciement de ton engagement envers les autres, nous avons ajouté 10 crédits gratuits à ton compte.",altruismBonusBtn:"Super, merci !",altruismTeaser:"💛 Ton objectif consiste à aider les autres ? Alors gagne 10 crédits gratuits en complétant toutes les étapes.",analyticsNote:"Nous collectons des statistiques d'utilisation anonymes (sans cookies ni données personnelles).",
   signIn:"Se connecter avec Google",signInSub:"Sauvegarde tes objectifs sur tous tes appareils",signOut:"Déconnexion",profile:"Profil",terms:"CGU",privacy:"Confidentialité",stats:"Statistiques",donate:"❤️ Faire un don",
+  share:"Partager",shareCopy:"Copier",shareCopied:"Copié !",shareMsg:"Découvre mon plan d'action sur untangle.lol :",
   altruismLoadingMsg:"💛 Tu fais quelque chose de merveilleux pour les autres.",
   altruisticSugg:["Je veux faire du bénévolat dans une banque alimentaire","Je veux devenir aidant·e pour un proche","Je veux créer un jardin partagé","Je veux donner mon sang régulièrement","Je veux encadrer un jeune en difficulté"],
   phSugg:["Je veux mieux dormir","Je veux apprendre la guitare","Je veux faire du sport chaque jour","Je veux écrire un livre","Je veux manger plus sainement"]},
@@ -103,6 +107,7 @@ const LANGS = [
   topUp:"Recargar créditos",topUpDesc:"10 créditos por €1,00",topUpBtn:"Pagar con Stripe →",topUpSuccess:"¡Pago exitoso! Los créditos se añadirán pronto.",topUpPending:"Procesando créditos...",topUpPopupTitle:"¡Créditos añadidos! 🎉",topUpPopupMsg:"untangle.lol es gratuito y privado — sin anuncios ni recopilación de datos. Los créditos mantienen la IA en marcha y apoyan un producto justo e independiente. ¡Gracias!",topUpPopupBtn:"¡Genial, a por ello!",
   altruismPopupTitle:"¡Qué amable eres! 💛",altruismPopupMsg:"Tu meta consiste en ayudar a otros — como voluntariado, cuidado de personas o apoyo a una buena causa. Eso merece una recompensa: completa todos los pasos y gana automáticamente 10 créditos gratis.",altruismPopupBtn:"¡Genial, a por ello!",altruismBonusTitle:"🎁 ¡+10 créditos ganados!",altruismBonusMsg:"¡Felicitaciones! Completaste tu meta altruista. Como agradecimiento por tu esfuerzo para ayudar a otros, hemos añadido 10 créditos gratuitos a tu cuenta.",altruismBonusBtn:"¡Increíble, gracias!",altruismTeaser:"💛 ¿Tu meta consiste en ayudar a otros? Entonces gana 10 créditos gratis al completar todos los pasos.",analyticsNote:"Recopilamos estadísticas de uso anónimas (sin cookies ni datos personales).",
   signIn:"Iniciar sesión con Google",signInSub:"Guarda tus metas en todos tus dispositivos",signOut:"Cerrar sesión",profile:"Perfil",terms:"Términos",privacy:"Privacidad",stats:"Estadísticas",donate:"❤️ Donar",
+  share:"Compartir",shareCopy:"Copiar",shareCopied:"¡Copiado!",shareMsg:"Mira mi plan de acción en untangle.lol:",
   altruismLoadingMsg:"💛 Estás haciendo algo maravilloso por los demás.",
   altruisticSugg:["Quiero hacer voluntariado en un banco de alimentos","Quiero cuidar a un familiar","Quiero crear un huerto comunitario","Quiero donar sangre regularmente","Quiero ser mentor de un joven"],
   phSugg:["Quiero dormir mejor","Quiero aprender guitarra","Quiero hacer ejercicio cada día","Quiero escribir un libro","Quiero comer más sano"]},
@@ -111,6 +116,7 @@ const LANGS = [
   topUp:"شحن الرصيد",topUpDesc:"10 رصيد مقابل €1.00",topUpBtn:"ادفع عبر Stripe ←",topUpSuccess:"تمت عملية الدفع! سيتم إضافة الرصيد قريباً.",topUpPending:"جارٍ معالجة الرصيد...",topUpPopupTitle:"تمت إضافة الرصيد! 🎉",topUpPopupMsg:"untangle.lol مجاني وخاص — بدون إعلانات أو جمع بيانات. يُبقي الرصيدُ الذكاءَ الاصطناعي يعمل ويدعم منتجاً عادلاً ومستقلاً. شكراً لك!",topUpPopupBtn:"رائع، هيا نبدأ!",
   altruismPopupTitle:"يا له من تصرف رائع! 💛",altruismPopupMsg:"هدفك يتعلق بمساعدة الآخرين — كالتطوع أو رعاية الآخرين أو دعم قضية خيرية. هذا يستحق مكافأة: أكمل جميع الخطوات واحصل تلقائياً على 10 رصيد مجاني!",altruismPopupBtn:"رائع، لنبدأ!",altruismBonusTitle:"🎁 +10 رصيد مكتسب!",altruismBonusMsg:"تهانينا! لقد أكملت هدفك الإيثاري. شكراً على جهودك لمساعدة الآخرين، أضفنا 10 رصيد مجاني إلى حسابك.",altruismBonusBtn:"رائع، شكراً!",altruismTeaser:"💛 هل هدفك يتعلق بمساعدة الآخرين؟ اكسب 10 رصيد مجاني عند إكمال جميع الخطوات.",analyticsNote:"نجمع إحصائيات استخدام مجهولة (بدون كوكيز أو بيانات شخصية).",
   signIn:"تسجيل الدخول بـ Google",signInSub:"احفظ أهدافك على جميع أجهزتك",signOut:"تسجيل الخروج",profile:"الملف الشخصي",terms:"الشروط",privacy:"الخصوصية",stats:"الإحصائيات",donate:"❤️ تبرع",
+  share:"مشاركة",shareCopy:"نسخ",shareCopied:"تم النسخ!",shareMsg:"اطلع على خطة العمل الخاصة بي على untangle.lol:",
   altruismLoadingMsg:"💛 أنت تفعل شيئاً رائعاً للآخرين.",
   altruisticSugg:["أريد التطوع في بنك الطعام","أريد رعاية أحد أفراد العائلة","أريد إنشاء حديقة مجتمعية","أريد التبرع بالدم بانتظام","أريد أن أكون مرشداً لشاب"],
   phSugg:["أريد النوم بشكل أفضل","أريد تعلم العزف على الجيتار","أريد ممارسة الرياضة يومياً","أريد كتابة كتاب","أريد تناول طعام أكثر صحة"]},
@@ -220,6 +226,9 @@ export default function App(){
   const [topUpMsg,setTopUpMsg]=useState(null);
   const [topUpPopup,setTopUpPopup]=useState(null); // { credits: N }
   const [clientRef,setClientRef]=useState(null);
+  // Share sheet
+  const [shareOpen,setShareOpen]=useState(false);
+  const [shareCopied,setShareCopied]=useState(false);
   const userRef=useRef(null);
   const zone=useMemo(()=>tz(),[]);
 
@@ -471,7 +480,7 @@ export default function App(){
     setTopUpBusy(false);
   };
 
-  const openEntry=(entry)=>{setSteps(entry.resultaat);setActiveId(entry.id);setLocalComp(entry.completed||entry.resultaat.stappen.map(()=>false));setVw("result");};
+  const openEntry=(entry)=>{setSteps(entry.resultaat);setActiveId(entry.id);setLocalComp(entry.completed||entry.resultaat.stappen.map(()=>false));setShareOpen(false);setVw("result");};
   const del=(id)=>{const nh=hist.filter(h=>h.id!==id);setHist(nh);if(auth==="in")ls.set(eKey(userRef.current),JSON.stringify(nh));else ls.set(KEYS.guestHist,JSON.stringify(nh));};
   const clrAll=()=>{setHist([]);if(auth==="in")ls.set(eKey(userRef.current),"[]");else ls.set(KEYS.guestHist,"[]");};
   const goHome=()=>{
@@ -493,7 +502,7 @@ export default function App(){
         else{setHist(ph=>{const nh=markClaimed(ph);ls.set(KEYS.guestHist,JSON.stringify(nh));return nh;});}
       }
     }
-    setInp("");setSteps(null);setErr(null);setActiveId(null);setLocalComp([]);setVw(auth==="in"?"dash":"home");
+    setInp("");setSteps(null);setErr(null);setActiveId(null);setLocalComp([]);setShareOpen(false);setVw(auth==="in"?"dash":"home");
   };
   const prog=(e)=>{const tt=e.resultaat?.stappen?.length||0;const dn=(e.completed||[]).filter(Boolean).length;return{dn,tt,pct:tt>0?Math.round(dn/tt*100):0};};
 
@@ -542,8 +551,82 @@ export default function App(){
     );
   };
 
+  // Build plain-text share message from current steps
+  const buildShareText=(ps)=>{
+    if(!ps)return"";
+    const lines=[t.shareMsg||"Check out my action plan on untangle.lol:",'',ps.titel,''];
+    (ps.stappen||[]).forEach((s,i)=>{lines.push((i+1)+'. '+s.actie);lines.push('   '+s.toelichting);lines.push('');});
+    lines.push('https://untangle.lol');
+    return lines.join('\n').trim();
+  };
+
+  // Share sheet component — inline panel below the back button
+  const ShareSheet=({ps})=>{
+    if(!shareOpen)return null;
+    const text=buildShareText(ps);
+    const enc=encodeURIComponent(text);
+    const url=encodeURIComponent('https://untangle.lol');
+    const platforms=[
+      {id:'whatsapp',label:'WhatsApp',color:'#25D366',icon:(
+        <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor"><path d="M16 3C8.82 3 3 8.82 3 16c0 2.36.63 4.57 1.73 6.48L3 29l6.72-1.71A13 13 0 0 0 16 29c7.18 0 13-5.82 13-13S23.18 3 16 3zm6.4 17.88c-.27.76-1.58 1.44-2.16 1.52-.55.08-1.25.11-2.02-.13a18.4 18.4 0 0 1-1.83-.68c-3.22-1.39-5.32-4.62-5.48-4.84-.16-.22-1.3-1.73-1.3-3.3 0-1.57.82-2.35 1.11-2.67.3-.32.65-.4.87-.4h.62c.2 0 .47-.08.73.56.27.65.92 2.24.99 2.4.09.16.14.35.03.56-.11.22-.17.35-.33.54-.16.19-.34.42-.48.57-.16.16-.33.33-.14.65.19.32.84 1.38 1.8 2.24 1.23 1.1 2.27 1.44 2.59 1.6.32.16.51.14.7-.08.19-.22.81-.95 1.02-1.27.22-.32.44-.27.74-.16.3.11 1.89.89 2.22 1.05.32.16.54.24.62.38.08.14.08.8-.19 1.56z"/></svg>
+      ),href:'https://wa.me/?text='+enc},
+      {id:'telegram',label:'Telegram',color:'#229ED9',icon:(
+        <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor"><path d="M16 3C8.82 3 3 8.82 3 16s5.82 13 13 13 13-5.82 13-13S23.18 3 16 3zm6.38 8.9-2.14 10.1c-.16.72-.58.9-1.18.56l-3.26-2.4-1.57 1.51c-.17.17-.32.32-.65.32l.23-3.33 6.02-5.43c.26-.23-.06-.36-.4-.13l-7.44 4.68-3.2-1c-.7-.22-.71-.7.15-1.03l12.5-4.82c.58-.21 1.09.14.94.97z"/></svg>
+      ),href:'https://t.me/share/url?url='+url+'&text='+enc},
+      {id:'x',label:'X / Twitter',color:'#000',icon:(
+        <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor"><path d="M18.24 14.27 26.48 5h-1.96l-7.14 8.3L11.54 5H5l8.64 12.57L5 27h1.96l7.55-8.78L20.46 27H27l-8.76-12.73zm-2.67 3.1-.87-1.25L7.6 6.4h3l5.6 8.01.88 1.25 7.28 10.41h-3l-5.93-8.7z"/></svg>
+      ),href:'https://x.com/intent/tweet?text='+enc},
+      {id:'facebook',label:'Facebook',color:'#1877F2',icon:(
+        <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor"><path d="M16 3C8.82 3 3 8.82 3 16c0 6.47 4.73 11.84 10.94 12.82V19.7h-3.3V16h3.3v-2.86c0-3.25 1.94-5.05 4.9-5.05 1.42 0 2.9.25 2.9.25v3.2h-1.63c-1.61 0-2.1 1-2.1 2.02V16h3.58l-.57 3.7h-3v9.12C24.27 27.84 29 22.47 29 16c0-7.18-5.82-13-13-13z"/></svg>
+      ),href:'https://www.facebook.com/sharer/sharer.php?u='+url+'&quote='+enc},
+      {id:'viber',label:'Viber',color:'#7360F2',icon:(
+        <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor"><path d="M23.7 4.7C21.3 2.6 17.2 2 16 2S10.7 2.6 8.3 4.7C5.5 7.1 4 10.6 4 15c0 2.7.6 5.1 1.7 7l-1 5.4 5.5-1.1c1.8.9 3.8 1.4 5.8 1.4 6.6 0 12-5 12-11.7 0-4.4-1.5-7.9-4.3-10.3zm-2.5 15.6c-.3.8-1.4 1.5-2.4 1.7-.6.1-1.4.2-4.1-1-2.7-1.2-4.6-4.1-4.7-4.3-.1-.2-1.1-1.5-1.1-2.8 0-1.3.7-2 .9-2.2.2-.3.5-.3.7-.3h.5c.2 0 .4-.1.6.5.2.6.8 1.9.9 2 .1.1.1.3 0 .5-.1.2-.1.3-.3.5l-.4.5c-.1.1-.3.3-.1.6.2.3.7 1.2 1.5 1.9 1.1.9 1.9 1.2 2.2 1.3.3.1.4.1.6-.1.2-.2.7-.8.9-1.1.2-.3.4-.2.6-.1.2.1 1.6.8 1.9.9.3.1.5.2.5.3.1.1.1.7-.2 1.3z"/></svg>
+      ),href:'viber://forward?text='+enc},
+      {id:'signal',label:'Signal',color:'#3A76F0',icon:(
+        <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor"><path d="M16 3a13 13 0 1 0 0 26A13 13 0 0 0 16 3zm0 2.6a10.4 10.4 0 1 1 0 20.8A10.4 10.4 0 0 1 16 5.6zM11.3 10a.9.9 0 0 0-.7.3l-1.3 1.3a.9.9 0 0 0 0 1.3c.8.8 1.9 1.7 3.2 2.5l-1.2 1.2a.9.9 0 0 0 0 1.3l1.8 1.8a.9.9 0 0 0 1.3 0l1.2-1.2c.8 1.3 1.7 2.4 2.5 3.2a.9.9 0 0 0 1.3 0l1.3-1.3a.9.9 0 0 0 .3-.7c0-.2-.1-.5-.3-.6-3.2-3.2-7.1-8.8-9-9a.9.9 0 0 0-.4 0z"/></svg>
+      ),href:'https://signal.me/#p/?message='+enc},
+    ];
+
+    const copyText=async()=>{
+      try{await navigator.clipboard.writeText(text);}catch{
+        // fallback
+        const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');}catch{}document.body.removeChild(ta);
+      }
+      setShareCopied(true);
+      setTimeout(()=>setShareCopied(false),2000);
+      utrack('share_copy');
+    };
+
+    return(
+      <div style={{marginTop:10,padding:"14px 16px",background:c.sb,border:"1px solid "+c.sr,borderRadius:12,animation:"fadeIn 0.2s ease"}}>
+        <div style={{display:"flex",flexWrap:"wrap",gap:10,justifyContent:"center"}}>
+          {platforms.map(p=>(
+            <a key={p.id} href={p.href} target="_blank" rel="noreferrer"
+              onClick={()=>utrack('share_platform',{platform:p.id})}
+              style={{display:"flex",flexDirection:"column",alignItems:"center",gap:5,textDecoration:"none",minWidth:52}}>
+              <div style={{width:44,height:44,borderRadius:12,background:p.color,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",flexShrink:0}}>
+                {p.icon}
+              </div>
+              <span style={{fontSize:10,color:c.tm,textAlign:"center",lineHeight:1.2}}>{p.label}</span>
+            </a>
+          ))}
+          <button onClick={copyText}
+            style={{display:"flex",flexDirection:"column",alignItems:"center",gap:5,background:"none",border:"none",cursor:"pointer",minWidth:52}}>
+            <div style={{width:44,height:44,borderRadius:12,background:shareCopied?c.gr:c.ghb,border:"1px solid "+(shareCopied?c.gr:c.ghr),display:"flex",alignItems:"center",justifyContent:"center",transition:"background 0.2s"}}>
+              {shareCopied
+                ?<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                :<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke={c.tm} strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              }
+            </div>
+            <span style={{fontSize:10,color:shareCopied?c.gr:c.tm,textAlign:"center",lineHeight:1.2}}>{shareCopied?(t.shareCopied||'Copied!'):(t.shareCopy||'Copy')}</span>
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   // Honeypot field — visually hidden, bots fill it
-  const HoneypotField=()=>(
+  const HoneypotField=()=>(=>(
     <div style={{position:"absolute",left:"-9999px",top:"-9999px",width:1,height:1,overflow:"hidden"}} aria-hidden="true">
       <input type="text" name="website" tabIndex={-1} autoComplete="off" value={honeypot} onChange={e=>setHoneypot(e.target.value)}/>
     </div>
@@ -920,6 +1003,11 @@ export default function App(){
               </div>
             </div>
             <button onClick={goHome} style={sx.bg}>{t.resB}</button>
+            <button onClick={()=>{setShareOpen(o=>!o);setShareCopied(false);utrack('share_open');}} style={{...sx.bg,marginTop:8,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              {t.share||'Share'}
+            </button>
+            <ShareSheet ps={steps}/>
           </div>
         <BottomBar/><style>{GS}</style></div></div>
       );
