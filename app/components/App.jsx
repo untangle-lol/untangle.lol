@@ -69,6 +69,7 @@ const LANGS = [
   topUp:"Credits bijkopen",topUpDesc:"10 credits voor €1,00",topUpBtn:"Betalen met Stripe →",topUpSuccess:"Betaling geslaagd! Credits worden bijgeschreven.",topUpPending:"Credits worden verwerkt...",topUpPopupTitle:"Credits bijgeschreven! 🎉",topUpPopupMsg:"untangle.lol is gratis en privé — zonder advertenties of dataverzameling. Met credits houd je de AI aan het draaien en steun je een eerlijk, onafhankelijk product. Dank je wel!",topUpPopupBtn:"Top, laten we beginnen!",
   altruismPopupTitle:"Wat lief van je! 💛",altruismPopupMsg:"Je doel gaat over het helpen van anderen — zoals vrijwilligerswerk, mantelzorg of een goed doel. Dat verdient een beloning: rond álle stappen af en ontvang automatisch 10 gratis credits!",altruismPopupBtn:"Top, ik ga aan de slag!",altruismBonusTitle:"🎁 +10 credits verdiend!",altruismBonusMsg:"Gefeliciteerd! Je hebt je altruïstische doel afgerond. Als dank voor je inzet voor anderen hebben we 10 gratis credits aan je account toegevoegd.",altruismBonusBtn:"Super, bedankt!",altruismTeaser:"💛 Gaat je doel over anderen helpen? Dan verdien je 10 gratis credits als je alle stappen afrondt.",analyticsNote:"We verzamelen anonieme gebruiksstatistieken (geen cookies, geen persoonsgegevens).",
   signIn:"Inloggen met Google",signInSub:"Sla je doelen op via al je apparaten",signOut:"Uitloggen",profile:"Profiel",terms:"Voorwaarden",privacy:"Privacy",stats:"Statistieken",
+  altruismLoadingMsg:"💛 Je bent iets moois aan het doen voor anderen.",
   altruisticSugg:["Ik wil vrijwilligerswerk doen bij een voedselbank","Ik wil mantelzorger worden voor een familielid","Ik wil een buurtmoestuin starten","Ik wil bloed doneren","Ik wil een mentorrol op me nemen voor een jongere"],
   phSugg:["Ik wil beter slapen","Ik wil leren gitaarspelen","Ik wil elke dag sporten","Ik wil een boek schrijven","Ik wil gezonder eten"]},
 
@@ -76,6 +77,7 @@ const LANGS = [
   topUp:"Top up credits",topUpDesc:"10 credits for €1.00",topUpBtn:"Pay with Stripe →",topUpSuccess:"Payment successful! Credits will be added shortly.",topUpPending:"Processing credits...",topUpPopupTitle:"Credits added! 🎉",topUpPopupMsg:"untangle.lol is free and private — no ads, no data harvesting. Credits keep the AI running and support a fair, independent product. Thank you for your support!",topUpPopupBtn:"Great, let's go!",
   altruismPopupTitle:"How kind of you! 💛",altruismPopupMsg:"Your goal is about helping others — like volunteering, caregiving, or supporting a good cause. That deserves a reward: complete all steps and automatically earn 10 free credits!",altruismPopupBtn:"Great, let's go!",altruismBonusTitle:"🎁 +10 credits earned!",altruismBonusMsg:"Congratulations! You completed your altruistic goal. As a thank-you for your efforts to help others, we've added 10 free credits to your account.",altruismBonusBtn:"Awesome, thank you!",altruismTeaser:"💛 Is your goal about helping others? Then earn 10 free credits when you complete all steps.",analyticsNote:"We collect anonymous usage statistics (no cookies, no personal data).",
   signIn:"Sign in with Google",signInSub:"Save your goals across all devices",signOut:"Sign out",profile:"Profile",terms:"Terms",privacy:"Privacy",stats:"Stats",
+  altruismLoadingMsg:"💛 You're doing something wonderful for others.",
   altruisticSugg:["I want to volunteer at a food bank","I want to become a caregiver for a family member","I want to mentor a young person","I want to donate blood regularly","I want to start a community garden"],
   phSugg:["I want to sleep better","I want to learn guitar","I want to exercise every day","I want to write a book","I want to eat healthier"]},
 
@@ -83,6 +85,7 @@ const LANGS = [
   topUp:"Credits aufladen",topUpDesc:"10 Credits für €1,00",topUpBtn:"Mit Stripe bezahlen →",topUpSuccess:"Zahlung erfolgreich! Credits werden gutgeschrieben.",topUpPending:"Credits werden verarbeitet...",topUpPopupTitle:"Credits gutgeschrieben! 🎉",topUpPopupMsg:"untangle.lol ist kostenlos und privat — keine Werbung, keine Datenweitergabe. Credits halten die KI am Laufen und unterstützen ein faires, unabhängiges Produkt. Danke!",topUpPopupBtn:"Super, los geht's!",
   altruismPopupTitle:"Wie nett von dir! 💛",altruismPopupMsg:"Dein Ziel geht darum, anderen zu helfen — z. B. Ehrenamt, Pflege oder Unterstützung eines guten Zwecks. Das verdient eine Belohnung: Schließe alle Schritte ab und erhalte automatisch 10 Gratis-Credits!",altruismPopupBtn:"Super, los geht's!",altruismBonusTitle:"🎁 +10 Credits verdient!",altruismBonusMsg:"Glückwunsch! Du hast dein altruistisches Ziel abgeschlossen. Als Dankeschön für deinen Einsatz für andere haben wir 10 Gratis-Credits zu deinem Konto hinzugefügt.",altruismBonusBtn:"Super, danke!",altruismTeaser:"💛 Geht dein Ziel darum, anderen zu helfen? Dann verdienst du 10 Gratis-Credits, wenn du alle Schritte abschließt.",analyticsNote:"Wir erheben anonyme Nutzungsstatistiken (keine Cookies, keine personenbezogenen Daten).",
   signIn:"Mit Google anmelden",signInSub:"Ziele auf allen Geräten speichern",signOut:"Abmelden",profile:"Profil",terms:"AGB",privacy:"Datenschutz",stats:"Statistiken",
+  altruismLoadingMsg:"💛 Du tust gerade etwas Wundervolles für andere.",
   altruisticSugg:["Ich möchte bei einer Tafel ehrenamtlich helfen","Ich möchte einen Angehörigen pflegen","Ich möchte einen Jugendlichen mentoren","Ich möchte regelmäßig Blut spenden","Ich möchte einen Gemeinschaftsgarten starten"],
   phSugg:["Ich möchte besser schlafen","Ich möchte Gitarre lernen","Ich möchte täglich Sport treiben","Ich möchte ein Buch schreiben","Ich möchte gesünder essen"]},
 
@@ -90,6 +93,7 @@ const LANGS = [
   topUp:"Recharger les crédits",topUpDesc:"10 crédits pour €1,00",topUpBtn:"Payer avec Stripe →",topUpSuccess:"Paiement réussi ! Les crédits seront ajoutés sous peu.",topUpPending:"Traitement des crédits...",topUpPopupTitle:"Crédits ajoutés ! 🎉",topUpPopupMsg:"untangle.lol est gratuit et privé — sans pub ni collecte de données. Les crédits font tourner l'IA et soutiennent un produit équitable et indépendant. Merci !",topUpPopupBtn:"Super, c'est parti !",
   altruismPopupTitle:"Comme c'est gentil ! 💛",altruismPopupMsg:"Ton objectif consiste à aider les autres — bénévolat, aidant·e ou soutien à une bonne cause. Cela mérite une récompense : complète toutes les étapes et gagne automatiquement 10 crédits gratuits !",altruismPopupBtn:"Super, c'est parti !",altruismBonusTitle:"🎁 +10 crédits gagnés !",altruismBonusMsg:"Félicitations ! Tu as accompli ton objectif altruiste. En remerciement de ton engagement envers les autres, nous avons ajouté 10 crédits gratuits à ton compte.",altruismBonusBtn:"Super, merci !",altruismTeaser:"💛 Ton objectif consiste à aider les autres ? Alors gagne 10 crédits gratuits en complétant toutes les étapes.",analyticsNote:"Nous collectons des statistiques d'utilisation anonymes (sans cookies ni données personnelles).",
   signIn:"Se connecter avec Google",signInSub:"Sauvegarde tes objectifs sur tous tes appareils",signOut:"Déconnexion",profile:"Profil",terms:"CGU",privacy:"Confidentialité",stats:"Statistiques",
+  altruismLoadingMsg:"💛 Tu fais quelque chose de merveilleux pour les autres.",
   altruisticSugg:["Je veux faire du bénévolat dans une banque alimentaire","Je veux devenir aidant·e pour un proche","Je veux créer un jardin partagé","Je veux donner mon sang régulièrement","Je veux encadrer un jeune en difficulté"],
   phSugg:["Je veux mieux dormir","Je veux apprendre la guitare","Je veux faire du sport chaque jour","Je veux écrire un livre","Je veux manger plus sainement"]},
 
@@ -97,6 +101,7 @@ const LANGS = [
   topUp:"Recargar créditos",topUpDesc:"10 créditos por €1,00",topUpBtn:"Pagar con Stripe →",topUpSuccess:"¡Pago exitoso! Los créditos se añadirán pronto.",topUpPending:"Procesando créditos...",topUpPopupTitle:"¡Créditos añadidos! 🎉",topUpPopupMsg:"untangle.lol es gratuito y privado — sin anuncios ni recopilación de datos. Los créditos mantienen la IA en marcha y apoyan un producto justo e independiente. ¡Gracias!",topUpPopupBtn:"¡Genial, a por ello!",
   altruismPopupTitle:"¡Qué amable eres! 💛",altruismPopupMsg:"Tu meta consiste en ayudar a otros — como voluntariado, cuidado de personas o apoyo a una buena causa. Eso merece una recompensa: completa todos los pasos y gana automáticamente 10 créditos gratis.",altruismPopupBtn:"¡Genial, a por ello!",altruismBonusTitle:"🎁 ¡+10 créditos ganados!",altruismBonusMsg:"¡Felicitaciones! Completaste tu meta altruista. Como agradecimiento por tu esfuerzo para ayudar a otros, hemos añadido 10 créditos gratuitos a tu cuenta.",altruismBonusBtn:"¡Increíble, gracias!",altruismTeaser:"💛 ¿Tu meta consiste en ayudar a otros? Entonces gana 10 créditos gratis al completar todos los pasos.",analyticsNote:"Recopilamos estadísticas de uso anónimas (sin cookies ni datos personales).",
   signIn:"Iniciar sesión con Google",signInSub:"Guarda tus metas en todos tus dispositivos",signOut:"Cerrar sesión",profile:"Perfil",terms:"Términos",privacy:"Privacidad",stats:"Estadísticas",
+  altruismLoadingMsg:"💛 Estás haciendo algo maravilloso por los demás.",
   altruisticSugg:["Quiero hacer voluntariado en un banco de alimentos","Quiero cuidar a un familiar","Quiero crear un huerto comunitario","Quiero donar sangre regularmente","Quiero ser mentor de un joven"],
   phSugg:["Quiero dormir mejor","Quiero aprender guitarra","Quiero hacer ejercicio cada día","Quiero escribir un libro","Quiero comer más sano"]},
 ];
@@ -196,6 +201,7 @@ export default function App(){
   const [altruismPopup,setAltruismPopup]=useState(false);   // show "you're helping others!" popup
   const [altruismBonusPopup,setAltruismBonusPopup]=useState(false); // show "+10 credits earned!" popup
   const [pendingAltruismId,setPendingAltruismId]=useState(null); // entry id that has pending bonus
+  const [loadingAltruistic,setLoadingAltruistic]=useState(false); // show amber pill on loading screen
   // Hero subtitle cycling
   const [heroSIdx,setHeroSIdx]=useState(0);
   // Stripe
@@ -375,7 +381,7 @@ export default function App(){
     if(!valid){
       if(credits<=0){setVw("no_credits");return;}
     }
-    setBusy(true);setErr(null);setSteps(null);setVw("loading");
+    setBusy(true);setErr(null);setSteps(null);setVw("loading");setLoadingAltruistic(false);
     utrack("goal_submitted",{lang,mode:valid?"byok":"free"});
     try{
       let tx,inputTokens,outputTokens;
@@ -391,6 +397,7 @@ export default function App(){
       const ps=JSON.parse(tx.replace(/```json\s?|```/g,"").trim());
       if(!ps.titel||!ps.stappen)throw new Error("bad");
       const isAltruistic=ps.altruistic===true;
+      if(isAltruistic)setLoadingAltruistic(true);
       setSteps(ps);
       if(!valid)deductCredit();
       setUsage(prev=>{const next={calls:prev.calls+1,inputTokens:prev.inputTokens+inputTokens,outputTokens:prev.outputTokens+outputTokens,costUsd:prev.costUsd+calcCost(inputTokens,outputTokens)};ls.set(KEYS.usage,JSON.stringify(next));return next;});
@@ -764,7 +771,7 @@ export default function App(){
       );
     })()}
 
-    {vw==="loading"&&(<div style={sx.pg}><div style={sx.w}><div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/></div><div style={sx.cd}><Loader c={c} lp={t.lp}/></div><BottomBar/><style>{GS}</style></div></div>)}
+    {vw==="loading"&&(<div style={sx.pg}><div style={sx.w}><div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/></div><div style={sx.cd}><Loader c={c} lp={t.lp}/>{loadingAltruistic&&<div style={{marginTop:16,padding:"10px 16px",borderRadius:12,background:c.am,border:`1px solid ${c.abr}`,color:c.ac,fontSize:14,fontWeight:600,textAlign:"center",animation:"fadeIn 0.5s ease forwards"}}>{t.altruismLoadingMsg}</div>}</div><BottomBar/><style>{GS}</style></div></div>)}
 
     {(vw==="home"||vw==="new_goal")&&auth!=="in"&&(
       <div style={sx.pg}><div style={sx.w}>
