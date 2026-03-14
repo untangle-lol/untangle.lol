@@ -240,6 +240,7 @@ export default function App(){
   const [woopData,setWoopData]=useState({wish:"",outcome:"",obstacle:"",plan:""});
   const woopKeys=["wish","outcome","obstacle","plan"];
   const [suggOpen,setSuggOpen]=useState(false);
+  const [altOffset,setAltOffset]=useState(0);
   const userRef=useRef(null);
   const zone=useMemo(()=>tz(),[]);
 
@@ -574,8 +575,8 @@ export default function App(){
     const localSet=new Set(recents.map(r=>r.toLowerCase()));
     const globals=globalSugg.filter(s=>!localSet.has(s.toLowerCase())).slice(0,4);
     const altPool=(t.altruisticSugg||[]).filter(s=>!localSet.has(s.toLowerCase()));
-    // Show at most 2 altruistic chips, interleaved with regular ones, total cap 4
-    const altPick=altPool.slice(0,2);
+    // Cycle 2 altruistic picks using altOffset so each open shows different ones
+    const altPick=altPool.length===0?[]:altPool.length<=2?altPool:[altPool[altOffset%altPool.length],altPool[(altOffset+1)%altPool.length]];
     const interleaved=[];
     let gi=0,ai=0;
     while((gi<globals.length||ai<altPick.length)&&interleaved.length<4){
@@ -584,10 +585,11 @@ export default function App(){
     }
     if(recents.length===0&&interleaved.length===0)return null;
     const pick=(text)=>{setInp(text);setSuggOpen(false);};
+    const toggle=()=>{setSuggOpen(o=>{if(!o)setAltOffset(n=>n+2);return!o;});};
     const chipRow={display:"flex",alignItems:"center",width:"100%",overflow:"hidden"};
     return(
       <div style={{marginTop:10,border:"1px solid "+c.cb,borderRadius:10,overflow:"hidden"}}>
-        <button onClick={()=>setSuggOpen(o=>!o)} style={{width:"100%",background:c.sb,border:"none",borderBottom:suggOpen?"1px solid "+c.cb:"none",padding:"8px 12px",textAlign:"left",fontSize:12,fontWeight:600,color:c.tf,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <button onClick={toggle} style={{width:"100%",background:c.sb,border:"none",borderBottom:suggOpen?"1px solid "+c.cb:"none",padding:"8px 12px",textAlign:"left",fontSize:12,fontWeight:600,color:c.tf,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <span>{t.suggLabel||"💡 Pick a suggestion"}</span>
           <span style={{fontSize:10,opacity:0.6}}>{suggOpen?"▲":"▼"}</span>
         </button>
