@@ -239,6 +239,7 @@ export default function App(){
   const [woopStep,setWoopStep]=useState(0); // 0=W,1=O,2=O,3=P
   const [woopData,setWoopData]=useState({wish:"",outcome:"",obstacle:"",plan:""});
   const woopKeys=["wish","outcome","obstacle","plan"];
+  const [suggOpen,setSuggOpen]=useState(false);
   const userRef=useRef(null);
   const zone=useMemo(()=>tz(),[]);
 
@@ -582,24 +583,28 @@ export default function App(){
       if(ai<altPick.length&&interleaved.length<4)interleaved.push({text:altPick[ai++],kind:"alt"});
     }
     if(recents.length===0&&interleaved.length===0)return null;
-    const chipRow={display:"flex",alignItems:"center",width:"100%",borderRadius:8,overflow:"hidden"};
+    const pick=(text)=>{setInp(text);setSuggOpen(false);};
+    const chipRow={display:"flex",alignItems:"center",width:"100%",overflow:"hidden"};
     return(
       <div style={{marginTop:10,border:"1px solid "+c.cb,borderRadius:10,overflow:"hidden"}}>
-        <div style={{padding:"8px 12px 6px",fontSize:12,fontWeight:600,color:c.tf,borderBottom:"1px solid "+c.cb,background:c.sb}}>{t.suggLabel||"💡 Pick a suggestion"}</div>
-        <div style={{display:"flex",flexDirection:"column",gap:0}}>
+        <button onClick={()=>setSuggOpen(o=>!o)} style={{width:"100%",background:c.sb,border:"none",borderBottom:suggOpen?"1px solid "+c.cb:"none",padding:"8px 12px",textAlign:"left",fontSize:12,fontWeight:600,color:c.tf,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+          <span>{t.suggLabel||"💡 Pick a suggestion"}</span>
+          <span style={{fontSize:10,opacity:0.6}}>{suggOpen?"▲":"▼"}</span>
+        </button>
+        {suggOpen&&<div style={{display:"flex",flexDirection:"column",gap:0}}>
           {recents.map((r,i)=>(
             <div key={"l"+i} style={{...chipRow,borderTop:i>0?"1px solid "+c.cb:"none",background:c.ab}}>
-              <button onClick={()=>setInp(r)} style={{flex:1,background:"none",border:"none",padding:"9px 12px",color:c.ac,cursor:"pointer",fontSize:13,textAlign:"left",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r}</button>
+              <button onClick={()=>pick(r)} style={{flex:1,background:"none",border:"none",padding:"9px 12px",color:c.ac,cursor:"pointer",fontSize:13,textAlign:"left",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r}</button>
               <button onClick={()=>delRecent(r)} style={{flexShrink:0,background:"none",border:"none",padding:"9px 12px",color:c.ac,cursor:"pointer",fontSize:15,opacity:0.5,lineHeight:1}} title="Remove">×</button>
             </div>
           ))}
           {interleaved.map((s,i)=>(
             <div key={"m"+i} style={{...chipRow,borderTop:(recents.length>0||i>0)?"1px solid "+c.cb:"none",background:s.kind==="alt"?"rgba(251,191,36,0.06)":"transparent"}}>
-              <button onClick={()=>setInp(s.text)} style={{flex:1,background:"none",border:"none",padding:"9px 12px",color:s.kind==="alt"?c.ac:c.tm,cursor:"pointer",fontSize:13,textAlign:"left",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{s.kind==="alt"?"💛 ":"💡 "}{s.text}</button>
+              <button onClick={()=>pick(s.text)} style={{flex:1,background:"none",border:"none",padding:"9px 12px",color:s.kind==="alt"?c.ac:c.tm,cursor:"pointer",fontSize:13,textAlign:"left",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{s.kind==="alt"?"💛 ":"💡 "}{s.text}</button>
               {s.kind==="global"&&<button onClick={()=>delGlobal(s.text)} style={{flexShrink:0,background:"none",border:"none",padding:"9px 12px",color:c.tm,cursor:"pointer",fontSize:15,opacity:0.5,lineHeight:1}} title="Remove">×</button>}
             </div>
           ))}
-        </div>
+        </div>}
       </div>
     );
   };
