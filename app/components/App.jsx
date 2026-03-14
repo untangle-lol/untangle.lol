@@ -181,7 +181,10 @@ export default function App(){
         const d=await r.json();
         if(d.error){ls.del(KEYS.apiKey);setApiKeyErr("Invalid key: "+d.error.message);setBusy(false);return;}
       }
-    }catch(e){ls.del(KEYS.apiKey);setApiKeyErr("Could not reach API.");setBusy(false);return;}
+    }catch(e){
+      // Network error — key is already saved, don't delete it, just warn
+      setApiKeyErr("Could not reach API to verify — key saved anyway.");
+    }
     setBusy(false);
     setVw(auth==="in"?"dash":lang?"home":"lang");
   };
