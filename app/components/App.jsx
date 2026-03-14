@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect, useMemo, useRef } from "react";
 
-const RECAPTCHA_SITE_KEY = "6Lf0HYosAAAAAGfrM5i3D0p1UUhZz3tM1J9etYGY";
 const ALTRUISM_BONUS_CREDITS = 10;
 
 // ─── Config ──────────────────────────────────────────────────────────────────
@@ -184,11 +183,6 @@ export default function App(){
   const [credits,setCredits]=useState(FREE_CREDITS);
   // Honeypot
   const [honeypot,setHoneypot]=useState("");
-  // reCAPTCHA
-  const [recaptchaToken,setRecaptchaToken]=useState(null);
-  const [recaptchaReady,setRecaptchaReady]=useState(false);
-  const recaptchaContainerRef=useRef(null);
-  const recaptchaWidgetId=useRef(null);
   // Altruism
   const [altruismPopup,setAltruismPopup]=useState(false);   // show "you're helping others!" popup
   const [altruismBonusPopup,setAltruismBonusPopup]=useState(false); // show "+10 credits earned!" popup
@@ -197,11 +191,8 @@ export default function App(){
   const [topUpBusy,setTopUpBusy]=useState(false);
   const [topUpMsg,setTopUpMsg]=useState(null);
   const [clientRef,setClientRef]=useState(null);
-
   const userRef=useRef(null);
   const zone=useMemo(()=>tz(),[]);
-
-  const t=lang?LANGS.find(l=>l.code===lang)||LANGS[1]:LANGS[1];
   const rt=tm==="system"?sys:tm;
   const c=TH[rt];
 
@@ -215,40 +206,6 @@ export default function App(){
     document.documentElement.style.background=color;
     document.body.style.background=color;
   },[rt]);
-
-  // Load reCAPTCHA v2 script once
-  useEffect(()=>{
-    if(typeof window==="undefined")return;
-    window.__recaptchaOnLoad=()=>setRecaptchaReady(true);
-    if(window.grecaptcha&&window.grecaptcha.render){setRecaptchaReady(true);return;}
-    const s=document.createElement("script");
-    s.src="https://www.google.com/recaptcha/api.js?onload=__recaptchaOnLoad&render=explicit";
-    s.async=true;s.defer=true;
-    document.head.appendChild(s);
-  },[]);
-
-  // Render or reset widget whenever the container ref is live and grecaptcha is ready
-  useEffect(()=>{
-    if(!recaptchaReady)return;
-    const el=recaptchaContainerRef.current;
-    if(!el)return;
-    // If already rendered into this exact element, just reset it
-    if(recaptchaWidgetId.current!=null){
-      try{window.grecaptcha.reset(recaptchaWidgetId.current);}catch{}
-      setRecaptchaToken(null);
-      return;
-    }
-    // Fresh element — render new widget
-    try{
-      recaptchaWidgetId.current=window.grecaptcha.render(el,{
-        sitekey:RECAPTCHA_SITE_KEY,
-        theme:rt==="dark"?"dark":"light",
-        callback:(token)=>setRecaptchaToken(token),
-        "expired-callback":()=>setRecaptchaToken(null),
-        "error-callback":()=>setRecaptchaToken(null),
-      });
-    }catch(e){}
-  },[recaptchaReady,vw,rt]);
 
   // Boot
   useEffect(()=>{(async()=>{
@@ -383,7 +340,6 @@ export default function App(){
     const {valid}=getCredential();
     if(!valid){
       if(credits<=0){setVw("no_credits");return;}
-      if(!recaptchaToken){setErr("Please complete the reCAPTCHA.");return;}
     }
     setBusy(true);setErr(null);setSteps(null);setVw("loading");
     try{
@@ -391,7 +347,7 @@ export default function App(){
       if(valid){
         ({text:tx,inputTokens,outputTokens,isAltruistic}=await callAPI([{role:"user",content:prompt(inp.trim())}],1000));
       }else{
-        const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:prompt(inp.trim())}],lang,recaptchaToken})});
+        const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:prompt(inp.trim())}],lang})});
         if(!r.ok)throw new Error("proxy fail");
         const d=await r.json();if(d.error)throw new Error(d.error);
         tx=d.text;inputTokens=d.inputTokens||0;outputTokens=d.outputTokens||0;isAltruistic=d.isAltruistic||false;
@@ -732,7 +688,6 @@ export default function App(){
           <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
           <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
           <SuggChips/>
-          {!getCredential().valid&&<div style={{marginTop:14,display:"flex",justifyContent:"center"}}><div ref={recaptchaContainerRef}/></div>}
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
         </div>
         <div style={{textAlign:"center",marginTop:14,padding:"10px 16px",borderRadius:10,background:c.gb,border:"1px solid "+c.gbr}}><span style={{fontSize:12,color:c.gt}}>{t.eth}</span></div>
@@ -795,7 +750,6 @@ export default function App(){
           <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
           <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
           <SuggChips/>
-          {!getCredential().valid&&<div style={{marginTop:14,display:"flex",justifyContent:"center"}}><div ref={recaptchaContainerRef}/></div>}
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
         </div>
         <button onClick={()=>setVw("dash")} style={sx.bg}>{t.back}</button>

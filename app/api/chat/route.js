@@ -29,19 +29,6 @@ setInterval(() => {
   }
 }, WINDOW_MS);
 
-// Verify reCAPTCHA v2 token server-side
-async function verifyRecaptcha(token) {
-  const secret = process.env.RECAPTCHA_SECRET_KEY;
-  if (!secret) return true; // skip if not configured
-  const res = await fetch("https://www.google.com/recaptcha/api/siteverify", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `secret=${encodeURIComponent(secret)}&response=${encodeURIComponent(token)}`,
-  });
-  const data = await res.json();
-  return data.success === true;
-}
-
 // Detect if the goal is altruistic (helping other human beings)
 async function detectAltruism(goalText, apiKey) {
   const prompt = `You are a classification assistant. Decide if the following goal is primarily about helping, supporting, or benefiting OTHER people (not just the person themselves). Examples: volunteering, caregiving, teaching others, charity work, supporting a loved one, community projects. Reply with JSON only: {"altruistic": true} or {"altruistic": false}. Goal: "${goalText}"`;
@@ -94,21 +81,10 @@ export async function POST(request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { messages, maxTokens = 1000, recaptchaToken, lang } = body ?? {};
+  const { messages, maxTokens = 1000, lang } = body ?? {};
 
   if (!Array.isArray(messages) || messages.length === 0) {
     return NextResponse.json({ error: "messages required" }, { status: 400 });
-  }
-
-  // Verify reCAPTCHA if secret is configured
-  if (process.env.RECAPTCHA_SECRET_KEY) {
-    if (!recaptchaToken) {
-      return NextResponse.json({ error: "reCAPTCHA required" }, { status: 400 });
-    }
-    const ok = await verifyRecaptcha(recaptchaToken);
-    if (!ok) {
-      return NextResponse.json({ error: "reCAPTCHA verification failed" }, { status: 403 });
-    }
   }
 
   // Extract the raw goal text from the prompt for altruism detection
