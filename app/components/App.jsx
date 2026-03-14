@@ -1,5 +1,8 @@
 "use client";
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
+
+const RECAPTCHA_SITE_KEY = "6Lf0HYosAAAAAGfrM5i3D0p1UUhZz3tM1J9etYGY";
+const ALTRUISM_BONUS_CREDITS = 10;
 
 // ─── Config ──────────────────────────────────────────────────────────────────
 const ANTHROPIC_URL  = "https://api.anthropic.com/v1/messages";
@@ -24,6 +27,7 @@ const KEYS = {
   guestHist:"untangle_guest_hist",
   usage:    "untangle_usage",
   credits:  "untangle_credits",
+  clientRef:"untangle_client_ref",
 };
 
 const FREE_CREDITS = 20;
@@ -53,20 +57,44 @@ function buildHeaders(key) {
   };
 }
 
+// Generate a random client reference ID for Stripe fulfillment
+function genClientRef() {
+  return Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+
 const LANGS = [
-  {code:"nl",label:"Nederlands",flag:"🇳🇱",ph:"Bijv. 'Ik wil beter slapen' of 'Ik wil leren gitaarspelen' 🎸",hero:"Wat wil je bereiken?",heroS:"Typ het maar in.",go:"Laten we beginnen →",back:"← Terug",out:"Uitloggen",clr:"🗑️ Alles wissen",nG:"➕ Nieuw doel",noG:"Nog geen doelen. Tijd om te beginnen!",prog:"voortgang",allD:"🎉 Alles afgerond!",sOf:"van",eth:"🌍 Advies met respect voor mens, planeet en welzijn",err:"Oeps, probeer het nog eens!",resB:"← Terug naar overzicht",dW:"Welkom terug",dS:"Hier zijn je doelen.",byok:"Voer je API-sleutel in",chAuth:"Authenticatie wijzigen",rmKey:"Sleutel verwijderen",lSel:"Taal",byokL:"API-sleutel (Anthropic of OpenRouter)",byokPh:"sk-ant-... of sk-or-...",byokSave:"Opslaan & beginnen",byokNote:"Je sleutel wordt lokaal opgeslagen. Nooit gedeeld.",cred:"credits",credFree:"gratis credits",credOut:"Geen credits meer",credOutMsg:"Je gratis credits zijn op. Voeg je eigen API-sleutel toe om door te gaan — gratis bij Anthropic en OpenRouter.",credByok:"Eigen sleutel toevoegen →"},
-  {code:"en",label:"English",flag:"🇬🇧",ph:"E.g. 'I want to sleep better' or 'I want to learn guitar' 🎸",hero:"What do you want to achieve?",heroS:"Just type it in. No question is too weird.",go:"Let's begin →",back:"← Back",out:"Log out",clr:"🗑️ Clear all",nG:"➕ New goal",noG:"No goals yet. Time to begin!",prog:"progress",allD:"🎉 All done!",sOf:"of",eth:"🌍 Advice with respect for people, planet & wellbeing",err:"Oops, try again!",resB:"← Back to overview",dW:"Welcome back",dS:"Here are your goals.",byok:"Enter your API key",chAuth:"Change auth",rmKey:"Remove key",lSel:"Language",byokL:"API Key (Anthropic or OpenRouter)",byokPh:"sk-ant-... or sk-or-...",byokSave:"Save & continue",byokNote:"Stored locally only, never shared.",cred:"credits",credFree:"free credits",credOut:"Out of credits",credOutMsg:"Your free credits are used up. Add your own API key to keep going — free to get from Anthropic or OpenRouter.",credByok:"Add your own key →"},
-  {code:"de",label:"Deutsch",flag:"🇩🇪",ph:"Z.B. 'Besser schlafen' 🎸",hero:"Was willst du erreichen?",heroS:"Einfach tippen.",go:"Los geht's →",back:"← Zurück",out:"Abmelden",clr:"🗑️ Löschen",nG:"➕ Neues Ziel",noG:"Keine Ziele. Zeit anzufangen!",prog:"Fortschritt",allD:"🎉 Geschafft!",sOf:"von",eth:"🌍 Respekt für Mensch & Planet",err:"Ups!",resB:"← Zurück",dW:"Willkommen zurück",dS:"Deine Ziele.",byok:"API-Schlüssel eingeben",chAuth:"Auth ändern",rmKey:"Schlüssel entfernen",lSel:"Sprache",byokL:"API-Schlüssel (Anthropic oder OpenRouter)",byokPh:"sk-ant-... oder sk-or-...",byokSave:"Speichern & loslegen",byokNote:"Lokal gespeichert. Nie weitergegeben.",cred:"Credits",credFree:"Gratis-Credits",credOut:"Keine Credits mehr",credOutMsg:"Deine Gratis-Credits sind aufgebraucht. Füge deinen eigenen API-Schlüssel hinzu — kostenlos bei Anthropic oder OpenRouter.",credByok:"Eigenen Schlüssel hinzufügen →"},
-  {code:"fr",label:"Français",flag:"🇫🇷",ph:"Ex. 'Mieux dormir' 🎸",hero:"Que veux-tu accomplir ?",heroS:"Tape-le.",go:"Commençons →",back:"← Retour",out:"Déco",clr:"🗑️ Effacer",nG:"➕ Nouveau",noG:"Pas d'objectifs. On commence !",prog:"progrès",allD:"🎉 Fini !",sOf:"de",eth:"🌍 Conseils respectueux",err:"Oups !",resB:"← Retour",dW:"Re-bonjour",dS:"Tes objectifs.",byok:"Entrer la clé API",chAuth:"Changer auth",rmKey:"Supprimer clé",lSel:"Langue",byokL:"Clé API (Anthropic ou OpenRouter)",byokPh:"sk-ant-... ou sk-or-...",byokSave:"Enregistrer",byokNote:"Stockée localement. Jamais partagée.",cred:"crédits",credFree:"crédits gratuits",credOut:"Plus de crédits",credOutMsg:"Tes crédits gratuits sont épuisés. Ajoute ta propre clé API pour continuer — gratuite chez Anthropic ou OpenRouter.",credByok:"Ajouter ma clé →"},
-  {code:"es",label:"Español",flag:"🇪🇸",ph:"Ej. 'Quiero dormir mejor' 🎸",hero:"¿Qué quieres lograr?",heroS:"Solo escríbelo.",go:"Comencemos →",back:"← Volver",out:"Salir",clr:"🗑️ Borrar",nG:"➕ Nueva meta",noG:"Sin metas. ¡Hora de comenzar!",prog:"progreso",allD:"🎉 ¡Listo!",sOf:"de",eth:"🌍 Consejos con respeto",err:"¡Ups!",resB:"← Volver",dW:"Hola de nuevo",dS:"Tus metas.",byok:"Ingresar clave API",chAuth:"Cambiar auth",rmKey:"Eliminar clave",lSel:"Idioma",byokL:"Clave API (Anthropic u OpenRouter)",byokPh:"sk-ant-... o sk-or-...",byokSave:"Guardar",byokNote:"Solo local. Nunca compartida.",cred:"créditos",credFree:"créditos gratis",credOut:"Sin créditos",credOutMsg:"Tus créditos gratuitos se agotaron. Agrega tu propia clave API para continuar — gratis en Anthropic u OpenRouter.",credByok:"Agregar mi clave →"},
+  {code:"nl",label:"Nederlands",flag:"🇳🇱",ph:"Bijv. 'Ik wil beter slapen' of 'Ik wil leren gitaarspelen' 🎸",hero:"Wat wil je bereiken?",heroS:"Typ het maar in.",go:"Laten we beginnen →",back:"← Terug",out:"Uitloggen",clr:"🗑️ Alles wissen",nG:"➕ Nieuw doel",noG:"Nog geen doelen. Tijd om te beginnen!",prog:"voortgang",allD:"🎉 Alles afgerond!",sOf:"van",eth:"🌍 Advies met respect voor mens, planeet en welzijn",err:"Oeps, probeer het nog eens!",resB:"← Terug naar overzicht",dW:"Welkom terug",dS:"Hier zijn je doelen.",byok:"Voer je API-sleutel in",byokH1:"Breng je eigen API-sleutel mee",chAuth:"Authenticatie wijzigen",rmKey:"Sleutel verwijderen",lSel:"Taal",byokL:"API-sleutel (Anthropic of OpenRouter)",byokPh:"sk-ant-... of sk-or-...",byokSave:"Opslaan & beginnen",byokNote:"Opgeslagen in je browser. Nooit gedeeld.",apiKeyBadge:"🔑 API-sleutel",apiKeyUnset:"instellen",checking:"Controleren...",chooseLang:"Kies je taal",byokAnthTitle:"Anthropic",byokAnthDesc:"Directe toegang tot Claude. Sleutels beginnen met",byokAnthS1:"Ga naar console.anthropic.com",byokAnthS2:"Aanmelden / inloggen",byokAnthS3:"Instellingen → API-sleutels → Sleutel aanmaken",byokAnthLink:"Haal Anthropic-sleutel op →",byokOrTitle:"OpenRouter",byokOrDesc:"Betaal per gebruik. Vaak goedkoper. Sleutels beginnen met",byokOrS1:"Ga naar openrouter.ai",byokOrS2:"Aanmelden / inloggen",byokOrS3:"Sleutels → Sleutel aanmaken",byokOrLink:"Haal OpenRouter-sleutel op →",keyErrFmt:"Sleutel moet beginnen met sk-ant- of sk-or-",keyErrInv:"Ongeldige sleutel: ",keyErrNet:"API niet bereikbaar — sleutel toch opgeslagen.",usageStat:"Gebruiksstatistieken",apiCalls:"API-aanroepen",estCost:"Geschatte kosten",inputTok:"Invoertokens",outputTok:"Uitvoertokens",resetStats:"Statistieken wissen",rmTip:"Verwijderen",start:"Start",cred:"credits",credFree:"gratis credits",credOut:"Geen credits meer",credOutMsg:"Je gratis credits zijn op. Voeg je eigen API-sleutel toe om door te gaan — gratis bij Anthropic en OpenRouter.",credByok:"Eigen sleutel toevoegen →",lp:["🧠 Nadenken...","☕ Ideeën brouwen...","🔮 Kristallen bol opwarmen...","🧙 Spreuken uitspreken...","🤔 Diep nadenken...","🎯 Scherp stellen..."],
+  topUp:"Credits bijkopen",topUpDesc:"10 credits voor €1,50",topUpBtn:"Betalen met Stripe →",topUpSuccess:"Betaling geslaagd! Credits worden bijgeschreven.",topUpPending:"Credits worden verwerkt...",
+  altruismPopupTitle:"Wat lief van je! 💛",altruismPopupMsg:"Je wilt anderen helpen — dat verdient een beloning. Rond alle stappen af en ontvang 10 gratis credits!",altruismPopupBtn:"Top, ik ga aan de slag!",altruismBonusTitle:"🎁 +10 credits verdiend!",altruismBonusMsg:"Gefeliciteerd! Je hebt je doel om anderen te helpen voltooid. We hebben 10 gratis credits aan je account toegevoegd.",altruismBonusBtn:"Super, bedankt!",
+  signIn:"Inloggen met Google",signInSub:"Sla je doelen op via al je apparaten",signOut:"Uitloggen",profile:"Profiel"},
+
+  {code:"en",label:"English",flag:"🇬🇧",ph:"E.g. 'I want to sleep better' or 'I want to learn guitar' 🎸",hero:"What do you want to achieve?",heroS:"Just type it in. No question is too weird.",go:"Let's begin →",back:"← Back",out:"Log out",clr:"🗑️ Clear all",nG:"➕ New goal",noG:"No goals yet. Time to begin!",prog:"progress",allD:"🎉 All done!",sOf:"of",eth:"🌍 Advice with respect for people, planet & wellbeing",err:"Oops, try again!",resB:"← Back to overview",dW:"Welcome back",dS:"Here are your goals.",byok:"Enter your API key",byokH1:"Bring your own API key",chAuth:"Change auth",rmKey:"Remove key",lSel:"Language",byokL:"API Key (Anthropic or OpenRouter)",byokPh:"sk-ant-... or sk-or-...",byokSave:"Save & continue",byokNote:"Stored in your browser only. Never shared.",apiKeyBadge:"🔑 API Key",apiKeyUnset:"set",checking:"Checking...",chooseLang:"Choose your language",byokAnthTitle:"Anthropic",byokAnthDesc:"Direct access to Claude. Keys start with",byokAnthS1:"Go to console.anthropic.com",byokAnthS2:"Sign up / log in",byokAnthS3:"Settings → API Keys → Create key",byokAnthLink:"Get Anthropic key →",byokOrTitle:"OpenRouter",byokOrDesc:"Pay-as-you-go. Often cheaper. Keys start with",byokOrS1:"Go to openrouter.ai",byokOrS2:"Sign up / log in",byokOrS3:"Keys → Create key",byokOrLink:"Get OpenRouter key →",keyErrFmt:"Key should start with sk-ant- or sk-or-",keyErrInv:"Invalid key: ",keyErrNet:"Could not reach API to verify — key saved anyway.",usageStat:"Usage stats",apiCalls:"API calls",estCost:"Est. cost",inputTok:"Input tokens",outputTok:"Output tokens",resetStats:"Reset stats",rmTip:"Remove",start:"Start",cred:"credits",credFree:"free credits",credOut:"Out of credits",credOutMsg:"Your free credits are used up. Add your own API key to keep going — free to get from Anthropic or OpenRouter.",credByok:"Add your own key →",lp:["🧠 Thinking...","☕ Brewing ideas...","🔮 Crystal ball warming up...","🧙 Casting spells...","🤔 Deep thought...","🎯 Locking in..."],
+  topUp:"Top up credits",topUpDesc:"10 credits for €1.50",topUpBtn:"Pay with Stripe →",topUpSuccess:"Payment successful! Credits will be added shortly.",topUpPending:"Processing credits...",
+  altruismPopupTitle:"How kind of you! 💛",altruismPopupMsg:"Your goal is about helping others — that deserves a reward. Complete all steps and earn 10 free credits!",altruismPopupBtn:"Great, let's go!",altruismBonusTitle:"🎁 +10 credits earned!",altruismBonusMsg:"Congratulations! You completed your goal to help others. We've added 10 free credits to your account.",altruismBonusBtn:"Awesome, thank you!",
+  signIn:"Sign in with Google",signInSub:"Save your goals across all devices",signOut:"Sign out",profile:"Profile"},
+
+  {code:"de",label:"Deutsch",flag:"🇩🇪",ph:"Z.B. 'Besser schlafen' 🎸",hero:"Was willst du erreichen?",heroS:"Einfach tippen.",go:"Los geht's →",back:"← Zurück",out:"Abmelden",clr:"🗑️ Löschen",nG:"➕ Neues Ziel",noG:"Keine Ziele. Zeit anzufangen!",prog:"Fortschritt",allD:"🎉 Geschafft!",sOf:"von",eth:"🌍 Respekt für Mensch & Planet",err:"Ups!",resB:"← Zurück",dW:"Willkommen zurück",dS:"Deine Ziele.",byok:"API-Schlüssel eingeben",byokH1:"Eigenen API-Schlüssel nutzen",chAuth:"Auth ändern",rmKey:"Schlüssel entfernen",lSel:"Sprache",byokL:"API-Schlüssel (Anthropic oder OpenRouter)",byokPh:"sk-ant-... oder sk-or-...",byokSave:"Speichern & loslegen",byokNote:"Im Browser gespeichert. Nie weitergegeben.",apiKeyBadge:"🔑 API-Schlüssel",apiKeyUnset:"setzen",checking:"Prüfen...",chooseLang:"Sprache wählen",byokAnthTitle:"Anthropic",byokAnthDesc:"Direktzugang zu Claude. Schlüssel beginnen mit",byokAnthS1:"console.anthropic.com aufrufen",byokAnthS2:"Registrieren / anmelden",byokAnthS3:"Einstellungen → API-Schlüssel → Schlüssel erstellen",byokAnthLink:"Anthropic-Schlüssel holen →",byokOrTitle:"OpenRouter",byokOrDesc:"Pay-as-you-go. Oft günstiger. Schlüssel beginnen mit",byokOrS1:"openrouter.ai aufrufen",byokOrS2:"Registrieren / anmelden",byokOrS3:"Schlüssel → Schlüssel erstellen",byokOrLink:"OpenRouter-Schlüssel holen →",keyErrFmt:"Schlüssel muss mit sk-ant- oder sk-or- beginnen",keyErrInv:"Ungültiger Schlüssel: ",keyErrNet:"API nicht erreichbar — Schlüssel trotzdem gespeichert.",usageStat:"Nutzungsstatistiken",apiCalls:"API-Anfragen",estCost:"Geschätzte Kosten",inputTok:"Eingabe-Token",outputTok:"Ausgabe-Token",resetStats:"Statistiken zurücksetzen",rmTip:"Entfernen",start:"Start",cred:"Credits",credFree:"Gratis-Credits",credOut:"Keine Credits mehr",credOutMsg:"Deine Gratis-Credits sind aufgebraucht. Füge deinen eigenen API-Schlüssel hinzu — kostenlos bei Anthropic oder OpenRouter.",credByok:"Eigenen Schlüssel hinzufügen →",lp:["🧠 Nachdenken...","☕ Ideen brauen...","🔮 Kristallkugel aufwärmen...","🧙 Zauber wirken...","🤔 Tief denken...","🎯 Fokussieren..."],
+  topUp:"Credits aufladen",topUpDesc:"10 Credits für €1,50",topUpBtn:"Mit Stripe bezahlen →",topUpSuccess:"Zahlung erfolgreich! Credits werden gutgeschrieben.",topUpPending:"Credits werden verarbeitet...",
+  altruismPopupTitle:"Wie nett von dir! 💛",altruismPopupMsg:"Dein Ziel ist es, anderen zu helfen — das verdient eine Belohnung. Schließe alle Schritte ab und erhalte 10 Gratis-Credits!",altruismPopupBtn:"Super, los geht's!",altruismBonusTitle:"🎁 +10 Credits verdient!",altruismBonusMsg:"Glückwunsch! Du hast dein Ziel abgeschlossen, anderen zu helfen. Wir haben 10 Gratis-Credits zu deinem Konto hinzugefügt.",altruismBonusBtn:"Super, danke!",
+  signIn:"Mit Google anmelden",signInSub:"Ziele auf allen Geräten speichern",signOut:"Abmelden",profile:"Profil"},
+
+  {code:"fr",label:"Français",flag:"🇫🇷",ph:"Ex. 'Mieux dormir' 🎸",hero:"Que veux-tu accomplir ?",heroS:"Tape-le.",go:"Commençons →",back:"← Retour",out:"Déco",clr:"🗑️ Effacer",nG:"➕ Nouveau",noG:"Pas d'objectifs. On commence !",prog:"progrès",allD:"🎉 Fini !",sOf:"de",eth:"🌍 Conseils respectueux",err:"Oups !",resB:"← Retour",dW:"Re-bonjour",dS:"Tes objectifs.",byok:"Entrer la clé API",byokH1:"Utilise ta propre clé API",chAuth:"Changer auth",rmKey:"Supprimer clé",lSel:"Langue",byokL:"Clé API (Anthropic ou OpenRouter)",byokPh:"sk-ant-... ou sk-or-...",byokSave:"Enregistrer",byokNote:"Stockée dans ton navigateur. Jamais partagée.",apiKeyBadge:"🔑 Clé API",apiKeyUnset:"définir",checking:"Vérification...",chooseLang:"Choisis ta langue",byokAnthTitle:"Anthropic",byokAnthDesc:"Accès direct à Claude. Les clés commencent par",byokAnthS1:"Aller sur console.anthropic.com",byokAnthS2:"S'inscrire / se connecter",byokAnthS3:"Paramètres → Clés API → Créer une clé",byokAnthLink:"Obtenir une clé Anthropic →",byokOrTitle:"OpenRouter",byokOrDesc:"Pay-as-you-go. Souvent moins cher. Les clés commencent par",byokOrS1:"Aller sur openrouter.ai",byokOrS2:"S'inscrire / se connecter",byokOrS3:"Clés → Créer une clé",byokOrLink:"Obtenir une clé OpenRouter →",keyErrFmt:"La clé doit commencer par sk-ant- ou sk-or-",keyErrInv:"Clé invalide : ",keyErrNet:"API inaccessible — clé sauvegardée quand même.",usageStat:"Statistiques d'utilisation",apiCalls:"Appels API",estCost:"Coût estimé",inputTok:"Tokens en entrée",outputTok:"Tokens en sortie",resetStats:"Réinitialiser",rmTip:"Supprimer",start:"Démarrer",cred:"crédits",credFree:"crédits gratuits",credOut:"Plus de crédits",credOutMsg:"Tes crédits gratuits sont épuisés. Ajoute ta propre clé API pour continuer — gratuite chez Anthropic ou OpenRouter.",credByok:"Ajouter ma clé →",lp:["🧠 Réflexion...","☕ Brassage d'idées...","🔮 Boule de cristal en chauffe...","🧙 Sorts en cours...","🤔 Pensée profonde...","🎯 Concentration..."],
+  topUp:"Recharger les crédits",topUpDesc:"10 crédits pour €1,50",topUpBtn:"Payer avec Stripe →",topUpSuccess:"Paiement réussi ! Les crédits seront ajoutés sous peu.",topUpPending:"Traitement des crédits...",
+  altruismPopupTitle:"Comme c'est gentil ! 💛",altruismPopupMsg:"Ton objectif est d'aider les autres — cela mérite une récompense. Complète toutes les étapes et gagne 10 crédits gratuits !",altruismPopupBtn:"Super, c'est parti !",altruismBonusTitle:"🎁 +10 crédits gagnés !",altruismBonusMsg:"Félicitations ! Tu as accompli ton objectif d'aider les autres. Nous avons ajouté 10 crédits gratuits à ton compte.",altruismBonusBtn:"Super, merci !",
+  signIn:"Se connecter avec Google",signInSub:"Sauvegarde tes objectifs sur tous tes appareils",signOut:"Déconnexion",profile:"Profil"},
+
+  {code:"es",label:"Español",flag:"🇪🇸",ph:"Ej. 'Quiero dormir mejor' 🎸",hero:"¿Qué quieres lograr?",heroS:"Solo escríbelo.",go:"Comencemos →",back:"← Volver",out:"Salir",clr:"🗑️ Borrar",nG:"➕ Nueva meta",noG:"Sin metas. ¡Hora de comenzar!",prog:"progreso",allD:"🎉 ¡Listo!",sOf:"de",eth:"🌍 Consejos con respeto",err:"¡Ups!",resB:"← Volver",dW:"Hola de nuevo",dS:"Tus metas.",byok:"Ingresar clave API",byokH1:"Usa tu propia clave API",chAuth:"Cambiar auth",rmKey:"Eliminar clave",lSel:"Idioma",byokL:"Clave API (Anthropic u OpenRouter)",byokPh:"sk-ant-... o sk-or-...",byokSave:"Guardar",byokNote:"Guardada en tu navegador. Nunca compartida.",apiKeyBadge:"🔑 Clave API",apiKeyUnset:"configurar",checking:"Comprobando...",chooseLang:"Elige tu idioma",byokAnthTitle:"Anthropic",byokAnthDesc:"Acceso directo a Claude. Las claves empiezan con",byokAnthS1:"Ir a console.anthropic.com",byokAnthS2:"Registrarse / iniciar sesión",byokAnthS3:"Ajustes → Claves API → Crear clave",byokAnthLink:"Obtener clave de Anthropic →",byokOrTitle:"OpenRouter",byokOrDesc:"Pago por uso. A menudo más barato. Las claves empiezan con",byokOrS1:"Ir a openrouter.ai",byokOrS2:"Registrarse / iniciar sesión",byokOrS3:"Claves → Crear clave",byokOrLink:"Obtener clave de OpenRouter →",keyErrFmt:"La clave debe empezar con sk-ant- o sk-or-",keyErrInv:"Clave inválida: ",keyErrNet:"No se pudo verificar con la API — clave guardada de todas formas.",usageStat:"Estadísticas de uso",apiCalls:"Llamadas API",estCost:"Coste estimado",inputTok:"Tokens de entrada",outputTok:"Tokens de salida",resetStats:"Resetear stats",rmTip:"Eliminar",start:"Empezar",cred:"créditos",credFree:"créditos gratis",credOut:"Sin créditos",credOutMsg:"Tus créditos gratuitos se agotaron. Agrega tu propia clave API para continuar — gratis en Anthropic u OpenRouter.",credByok:"Agregar mi clave →",lp:["🧠 Pensando...","☕ Destilando ideas...","🔮 Calentando la bola de cristal...","🧙 Lanzando hechizos...","🤔 Reflexionando...","🎯 Enfocando..."],
+  topUp:"Recargar créditos",topUpDesc:"10 créditos por €1,50",topUpBtn:"Pagar con Stripe →",topUpSuccess:"¡Pago exitoso! Los créditos se añadirán pronto.",topUpPending:"Procesando créditos...",
+  altruismPopupTitle:"¡Qué amable eres! 💛",altruismPopupMsg:"Tu meta es ayudar a otros — eso merece una recompensa. Completa todos los pasos y gana 10 créditos gratis.",altruismPopupBtn:"¡Genial, a por ello!",altruismBonusTitle:"🎁 ¡+10 créditos ganados!",altruismBonusMsg:"¡Felicitaciones! Completaste tu meta de ayudar a otros. Hemos añadido 10 créditos gratuitos a tu cuenta.",altruismBonusBtn:"¡Increíble, gracias!",
+  signIn:"Iniciar sesión con Google",signInSub:"Guarda tus metas en todos tus dispositivos",signOut:"Cerrar sesión",profile:"Perfil"},
 ];
 
 const TH = {
-  dark:{bg:"linear-gradient(135deg,#0f172a,#1e293b,#0f172a)",card:"rgba(255,255,255,0.05)",cb:"rgba(255,255,255,0.08)",ib:"rgba(255,255,255,0.06)",ibr:"rgba(255,255,255,0.12)",tx:"#f1f5f9",tm:"#94a3b8",tf:"#64748b",ac:"#facc15",ag:"linear-gradient(135deg,#facc15,#eab308)",ab:"rgba(250,204,21,0.15)",abr:"rgba(250,204,21,0.4)",am:"rgba(250,204,21,0.2)",bt:"#0f172a",gr:"#22c55e",gb:"rgba(34,197,94,0.06)",gbr:"rgba(34,197,94,0.12)",gt:"#6ee7a0",eb:"rgba(239,68,68,0.12)",et:"#fca5a5",ghb:"rgba(255,255,255,0.06)",ghr:"rgba(255,255,255,0.1)",ckb:"rgba(255,255,255,0.06)",ckr:"rgba(255,255,255,0.15)",cm:"#0f172a",dt:"#4a6350",sb:"rgba(255,255,255,0.02)",sr:"rgba(255,255,255,0.06)",dm:"#475569",sh:"none"},
-  light:{bg:"linear-gradient(135deg,#f8fafc,#e2e8f0,#f8fafc)",card:"rgba(255,255,255,0.9)",cb:"rgba(0,0,0,0.08)",ib:"#fff",ibr:"rgba(0,0,0,0.15)",tx:"#1e293b",tm:"#64748b",tf:"#94a3b8",ac:"#b45309",ag:"linear-gradient(135deg,#f59e0b,#d97706)",ab:"rgba(245,158,11,0.12)",abr:"rgba(245,158,11,0.4)",am:"rgba(245,158,11,0.15)",bt:"#fff",gr:"#16a34a",gb:"rgba(22,163,74,0.06)",gbr:"rgba(22,163,74,0.15)",gt:"#16a34a",eb:"rgba(239,68,68,0.08)",et:"#dc2626",ghb:"rgba(0,0,0,0.03)",ghr:"rgba(0,0,0,0.1)",ckb:"#fff",ckr:"rgba(0,0,0,0.2)",cm:"#fff",dt:"#4d7c56",sb:"rgba(0,0,0,0.015)",sr:"rgba(0,0,0,0.06)",dm:"#94a3b8",sh:"0 1px 3px rgba(0,0,0,0.06)"},
+  dark:{bg:"linear-gradient(135deg,#0f172a,#1e293b,#0f172a)",card:"rgba(255,255,255,0.05)",cb:"rgba(255,255,255,0.08)",ib:"rgba(255,255,255,0.06)",ibr:"rgba(255,255,255,0.12)",tx:"#f1f5f9",tm:"#94a3b8",tf:"#64748b",ac:"#facc15",ag:"linear-gradient(135deg,#facc15,#eab308)",ab:"rgba(250,204,21,0.15)",abr:"rgba(250,204,21,0.4)",am:"rgba(250,204,21,0.2)",bt:"#0f172a",gr:"#22c55e",gb:"rgba(34,197,94,0.06)",gbr:"rgba(34,197,94,0.12)",gt:"#6ee7a0",eb:"rgba(239,68,68,0.12)",et:"#fca5a5",ghb:"rgba(255,255,255,0.06)",ghr:"rgba(255,255,255,0.1)",ckb:"rgba(255,255,255,0.06)",ckr:"rgba(255,255,255,0.15)",cm:"#0f172a",dt:"#4a6350",sb:"rgba(255,255,255,0.02)",sr:"rgba(255,255,255,0.06)",dm:"#475569",sh:"none",hp:"rgba(250,204,21,0.08)",hpr:"rgba(250,204,21,0.25)"},
+  light:{bg:"linear-gradient(135deg,#f8fafc,#e2e8f0,#f8fafc)",card:"rgba(255,255,255,0.9)",cb:"rgba(0,0,0,0.08)",ib:"#fff",ibr:"rgba(0,0,0,0.15)",tx:"#1e293b",tm:"#64748b",tf:"#94a3b8",ac:"#b45309",ag:"linear-gradient(135deg,#f59e0b,#d97706)",ab:"rgba(245,158,11,0.12)",abr:"rgba(245,158,11,0.4)",am:"rgba(245,158,11,0.15)",bt:"#fff",gr:"#16a34a",gb:"rgba(22,163,74,0.06)",gbr:"rgba(22,163,74,0.15)",gt:"#16a34a",eb:"rgba(239,68,68,0.08)",et:"#dc2626",ghb:"rgba(0,0,0,0.03)",ghr:"rgba(0,0,0,0.1)",ckb:"#fff",ckr:"rgba(0,0,0,0.2)",cm:"#fff",dt:"#4d7c56",sb:"rgba(0,0,0,0.015)",sr:"rgba(0,0,0,0.06)",dm:"#94a3b8",sh:"0 1px 3px rgba(0,0,0,0.06)",hp:"rgba(245,158,11,0.06)",hpr:"rgba(245,158,11,0.2)"},
 };
 
-const GS=`@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes pulse{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.4);opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}`;
+const GS=`@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes pulse{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.4);opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}@keyframes modalIn{from{opacity:0;transform:translateY(24px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}`;
 
 function tz(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone}catch{return"UTC"}}
 function fmtDate(iso,z,lc){try{return new Date(iso).toLocaleString(lc||undefined,{timeZone:z,day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}catch{return new Date(iso).toLocaleString()}}
@@ -74,10 +102,11 @@ function tAgo(iso,lc){const d=Date.now()-new Date(iso).getTime(),m=Math.floor(d/
 
 const LP=[["🧠","Thinking..."],["☕","Brewing ideas..."],["🔮","Crystal ball warming up..."],["🧙","Casting spells..."],["🤔","Deep thought..."],["🎯","Locking in..."]];
 
-function Loader({c}){
+function Loader({c,lp}){
+  const phrases=lp||LP.map(p=>p.join(" "));
   const [i,setI]=useState(0);const [d,setD]=useState("");const [b,setB]=useState(false);
-  useEffect(()=>{let x=0;const a=setInterval(()=>{x=(x+1)%LP.length;setI(x);setB(true);setTimeout(()=>setB(false),400);},2400);const dd=setInterval(()=>setD(p=>p.length>=3?"":p+"."),500);return()=>{clearInterval(a);clearInterval(dd);};},[]);
-  return(<div style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"48px 24px"}}><div style={{fontSize:56,transition:"transform 0.4s cubic-bezier(0.34,1.56,0.64,1)",transform:b?"scale(1.3) rotate(10deg)":"scale(1)",marginBottom:20}}>{LP[i][0]}</div><div style={{fontSize:16,color:c.tx,fontWeight:500}}>{LP[i][1]}{d}</div><div style={{marginTop:24,display:"flex",gap:8}}>{[0,1,2].map(j=>(<div key={j} style={{width:10,height:10,borderRadius:"50%",background:c.ac,animation:`pulse 1.2s ease-in-out ${j*0.2}s infinite`}}/>))}</div></div>);
+  useEffect(()=>{let x=0;const a=setInterval(()=>{x=(x+1)%phrases.length;setI(x);setB(true);setTimeout(()=>setB(false),400);},2400);const dd=setInterval(()=>setD(p=>p.length>=3?"":p+"."),500);return()=>{clearInterval(a);clearInterval(dd);};},[]);
+  return(<div style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"48px 24px"}}><div style={{fontSize:56,transition:"transform 0.4s cubic-bezier(0.34,1.56,0.64,1)",transform:b?"scale(1.3) rotate(10deg)":"scale(1)",marginBottom:20}}>{(phrases[i]||"").split(" ")[0]}</div><div style={{fontSize:16,color:c.tx,fontWeight:500}}>{(phrases[i]||"").split(" ").slice(1).join(" ")}{d}</div><div style={{marginTop:24,display:"flex",gap:8}}>{[0,1,2].map(j=>(<div key={j} style={{width:10,height:10,borderRadius:"50%",background:c.ac,animation:`pulse 1.2s ease-in-out ${j*0.2}s infinite`}}/>))}</div></div>);
 }
 
 function PBar({done,total,c}){
@@ -103,15 +132,28 @@ function CheckItem({done,label,desc,onToggle,c}){
   </div>);
 }
 
+// ─── Modal overlay ────────────────────────────────────────────────────────────
+function Modal({c,children}){
+  return(
+    <div style={{position:"fixed",inset:0,zIndex:999,display:"flex",alignItems:"center",justifyContent:"center",padding:20,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(4px)"}}>
+      <div style={{background:c.card,borderRadius:20,padding:28,width:"100%",maxWidth:400,border:"1px solid "+c.cb,boxShadow:"0 24px 64px rgba(0,0,0,0.35)",animation:"modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1)"}}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 function AuthBadge({c,onManage,credits,t}){
   const {key}=getCredential();
   const showCredits=!key&&credits!==undefined;
   const low=showCredits&&credits<=3;
+  const label=t?.apiKeyBadge||"🔑 API Key";
+  const unset=t?.apiKeyUnset||"set";
   return(
     <button onClick={onManage} style={{display:"flex",alignItems:"center",gap:6,background:c.ab,border:"1px solid "+c.abr,borderRadius:20,padding:"4px 10px",cursor:"pointer",fontSize:12,color:c.ac}}>
-      <span>🔑 API Key</span>
+      <span>{label}</span>
       <span style={{opacity:0.6}}>·</span>
-      <span style={{color:c.tf}}>{key?key.slice(0,10)+"…":"set"}</span>
+      <span style={{color:c.tf}}>{key?key.slice(0,10)+"…":unset}</span>
       {showCredits&&<><span style={{opacity:0.4}}>·</span><span style={{color:low?"#ef4444":c.tf,fontWeight:low?700:400}}>{credits} {t?.cred||"credits"}</span></>}
     </button>
   );
@@ -140,6 +182,22 @@ export default function App(){
   const [globalSugg,setGlobalSugg]=useState([]);
   const [usage,setUsage]=useState({calls:0,inputTokens:0,outputTokens:0,costUsd:0});
   const [credits,setCredits]=useState(FREE_CREDITS);
+  // Honeypot
+  const [honeypot,setHoneypot]=useState("");
+  // reCAPTCHA
+  const [recaptchaToken,setRecaptchaToken]=useState(null);
+  const [recaptchaReady,setRecaptchaReady]=useState(false);
+  const recaptchaContainerRef=useRef(null);
+  const recaptchaWidgetId=useRef(null);
+  // Altruism
+  const [altruismPopup,setAltruismPopup]=useState(false);   // show "you're helping others!" popup
+  const [altruismBonusPopup,setAltruismBonusPopup]=useState(false); // show "+10 credits earned!" popup
+  const [pendingAltruismId,setPendingAltruismId]=useState(null); // entry id that has pending bonus
+  // Stripe
+  const [topUpBusy,setTopUpBusy]=useState(false);
+  const [topUpMsg,setTopUpMsg]=useState(null);
+  const [clientRef,setClientRef]=useState(null);
+
   const userRef=useRef(null);
   const zone=useMemo(()=>tz(),[]);
 
@@ -158,6 +216,38 @@ export default function App(){
     document.body.style.background=color;
   },[rt]);
 
+  // Load reCAPTCHA v2 script
+  useEffect(()=>{
+    if(typeof window==="undefined")return;
+    window.__recaptchaOnLoad=()=>setRecaptchaReady(true);
+    if(window.grecaptcha){setRecaptchaReady(true);return;}
+    const s=document.createElement("script");
+    s.src="https://www.google.com/recaptcha/api.js?onload=__recaptchaOnLoad&render=explicit";
+    s.async=true;s.defer=true;
+    document.head.appendChild(s);
+  },[]);
+
+  // Render reCAPTCHA widget when container is visible and grecaptcha is ready
+  useEffect(()=>{
+    if(!recaptchaReady||!recaptchaContainerRef.current)return;
+    if(recaptchaWidgetId.current!=null)return; // already rendered
+    try{
+      recaptchaWidgetId.current=window.grecaptcha.render(recaptchaContainerRef.current,{
+        sitekey:RECAPTCHA_SITE_KEY,
+        theme:rt==="dark"?"dark":"light",
+        callback:(token)=>setRecaptchaToken(token),
+        "expired-callback":()=>setRecaptchaToken(null),
+      });
+    }catch(e){}
+  },[recaptchaReady,vw,rt]);
+
+  // Reset reCAPTCHA widget on view change so token is fresh
+  useEffect(()=>{
+    setRecaptchaToken(null);
+    recaptchaWidgetId.current=null;
+  },[vw]);
+
+  // Boot
   useEffect(()=>{(async()=>{
     const sv=ls.get(KEYS.theme);if(sv)setTm(sv);
     const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
@@ -166,18 +256,63 @@ export default function App(){
     const cv=ls.get(KEYS.credits);
     if(cv===null){ls.set(KEYS.credits,String(FREE_CREDITS));setCredits(FREE_CREDITS);}
     else{const n=parseInt(cv,10);setCredits(isNaN(n)?FREE_CREDITS:Math.max(0,n));}
+    // Ensure clientRef exists
+    let ref=ls.get(KEYS.clientRef);
+    if(!ref){ref=genClientRef();ls.set(KEYS.clientRef,ref);}
+    setClientRef(ref);
     const {valid}=getCredential();
-    const ss=ls.get(KEYS.session);
-    if(ss){try{const p=JSON.parse(ss);if(p.email&&p.lang){setUser(p.email);userRef.current=p.email;setLang(p.lang);ls.set("untangle_lang",p.lang);setAuth("in");const hv=ls.get(eKey(p.email));if(hv)setHist(JSON.parse(hv));setVw("dash");setReady(true);return;}}catch{}}
+    // Check for URL flags from Google OAuth redirect
+    const params=new URLSearchParams(window.location.search);
+    const signedIn=params.get("signed_in")==="1";
+    const authErr=params.get("auth_error")==="1";
+    const topupSuccess=params.get("topup")==="success";
+    if(signedIn||authErr||topupSuccess){window.history.replaceState({},"",window.location.pathname);}
+    // Try Google session cookie first
+    try{
+      const sr=await fetch("/api/auth/session");
+      const sd=await sr.json();
+      if(sd.user?.email){
+        const {email,name,picture}=sd.user;
+        setUser({email,name,picture});
+        userRef.current=email;
+        const savedLang=ls.get("untangle_lang");
+        if(savedLang)setLang(savedLang);
+        setAuth("in");
+        const hv=ls.get(eKey(email));if(hv){try{setHist(JSON.parse(hv));}catch{}}
+        if(topupSuccess){setTopUpMsg("pending");pollCredits(ref);}
+        setVw("dash");setReady(true);return;
+      }
+    }catch{}
     const gh=ls.get(KEYS.guestHist);if(gh){try{setHist(JSON.parse(gh));}catch{}}
+    if(topupSuccess){setTopUpMsg("pending");pollCredits(ref);}
     setVw(valid?langSv?"home":"lang":"lang");
     setReady(true);
   })();},[]);
 
+  // Poll /api/credits/claim until credits land (after Stripe redirect)
+  const pollCredits=async(ref,attempts=0)=>{
+    if(attempts>20)return;
+    try{
+      const r=await fetch("/api/credits/claim?ref="+encodeURIComponent(ref));
+      const d=await r.json();
+      if(d.credits>0){
+        addCredits(d.credits);
+        setTopUpMsg("success");
+        setTimeout(()=>setTopUpMsg(null),5000);
+        return;
+      }
+    }catch{}
+    setTimeout(()=>pollCredits(ref,attempts+1),3000);
+  };
+
+  const addCredits=(n)=>{
+    setCredits(prev=>{const next=prev+n;ls.set(KEYS.credits,String(next));return next;});
+  };
+
   const saveApiKey=async()=>{
     const k=apiKeyInput.trim();
     const provider=keyProvider(k);
-    if(!k.startsWith("sk-ant-")&&!k.startsWith("sk-or-")){setApiKeyErr("Key should start with sk-ant- or sk-or-");return;}
+    if(!k.startsWith("sk-ant-")&&!k.startsWith("sk-or-")){setApiKeyErr(t.keyErrFmt);return;}
     ls.set(KEYS.apiKey,k);
     setApiKeyErr("");setApiKeyInput("");
     setBusy(true);
@@ -185,15 +320,14 @@ export default function App(){
       if(provider==="openrouter"){
         const r=await fetch(OPENROUTER_URL,{method:"POST",headers:buildHeaders(k),body:JSON.stringify({model:MODEL_OPENROUTER,max_tokens:10,messages:[{role:"user",content:"hi"}]})});
         const d=await r.json();
-        if(d.error){ls.del(KEYS.apiKey);setApiKeyErr("Invalid key: "+d.error.message);setBusy(false);return;}
+        if(d.error){ls.del(KEYS.apiKey);setApiKeyErr(t.keyErrInv+d.error.message);setBusy(false);return;}
       }else{
         const r=await fetch(ANTHROPIC_URL,{method:"POST",headers:buildHeaders(k),body:JSON.stringify({model:MODEL_ANTHROPIC,max_tokens:10,messages:[{role:"user",content:"hi"}]})});
         const d=await r.json();
-        if(d.error){ls.del(KEYS.apiKey);setApiKeyErr("Invalid key: "+d.error.message);setBusy(false);return;}
+        if(d.error){ls.del(KEYS.apiKey);setApiKeyErr(t.keyErrInv+d.error.message);setBusy(false);return;}
       }
     }catch(e){
-      // Network error — key is already saved, don't delete it, just warn
-      setApiKeyErr("Could not reach API to verify — key saved anyway.");
+      setApiKeyErr(t.keyErrNet);
     }
     setBusy(false);
     setVw(auth==="in"?"dash":lang?"home":"lang");
@@ -219,14 +353,14 @@ export default function App(){
       const d=await r.json();if(d.error)throw new Error(d.error.message);
       const text=(d.choices||[]).map(ch=>ch.message?.content||"").join("");
       const u=d.usage||{};
-      return{text,inputTokens:u.prompt_tokens||0,outputTokens:u.completion_tokens||0};
+      return{text,inputTokens:u.prompt_tokens||0,outputTokens:u.completion_tokens||0,isAltruistic:false};
     }else{
       const r=await fetch(ANTHROPIC_URL,{method:"POST",headers:buildHeaders(key),body:JSON.stringify({model:MODEL_ANTHROPIC,max_tokens:maxTokens,messages})});
       if(!r.ok)throw new Error("fail");
       const d=await r.json();if(d.error)throw new Error(d.error.message);
       const text=(d.content||[]).map(b=>b.text||"").join("");
       const u=d.usage||{};
-      return{text,inputTokens:u.input_tokens||0,outputTokens:u.output_tokens||0};
+      return{text,inputTokens:u.input_tokens||0,outputTokens:u.output_tokens||0,isAltruistic:false};
     }
   };
 
@@ -238,21 +372,23 @@ export default function App(){
 
   const submit=async()=>{
     if(!inp.trim()||busy)return;
+    // Honeypot — bots fill hidden fields
+    if(honeypot)return;
     const {valid}=getCredential();
     if(!valid){
-      // Using public key path — check credits
       if(credits<=0){setVw("no_credits");return;}
+      if(!recaptchaToken){setErr("Please complete the reCAPTCHA.");return;}
     }
     setBusy(true);setErr(null);setSteps(null);setVw("loading");
     try{
-      let tx,inputTokens,outputTokens;
+      let tx,inputTokens,outputTokens,isAltruistic=false;
       if(valid){
-        ({text:tx,inputTokens,outputTokens}=await callAPI([{role:"user",content:prompt(inp.trim())}],1000));
+        ({text:tx,inputTokens,outputTokens,isAltruistic}=await callAPI([{role:"user",content:prompt(inp.trim())}],1000));
       }else{
-        const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:prompt(inp.trim())}],lang})});
+        const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:prompt(inp.trim())}],lang,recaptchaToken})});
         if(!r.ok)throw new Error("proxy fail");
         const d=await r.json();if(d.error)throw new Error(d.error);
-        tx=d.text;inputTokens=d.inputTokens||0;outputTokens=d.outputTokens||0;
+        tx=d.text;inputTokens=d.inputTokens||0;outputTokens=d.outputTokens||0;isAltruistic=d.isAltruistic||false;
       }
       const ps=JSON.parse(tx.replace(/```json\s?|```/g,"").trim());
       if(!ps.titel||!ps.stappen)throw new Error("bad");
@@ -261,25 +397,57 @@ export default function App(){
       setUsage(prev=>{const next={calls:prev.calls+1,inputTokens:prev.inputTokens+inputTokens,outputTokens:prev.outputTokens+outputTokens,costUsd:prev.costUsd+calcCost(inputTokens,outputTokens)};ls.set(KEYS.usage,JSON.stringify(next));return next;});
       const trimmed=inp.trim();
       setRecents(prev=>{const next=[trimmed,...prev.filter(r=>r!==trimmed)].slice(0,5);ls.set(KEYS.recents,JSON.stringify(next));return next;});
-      // Share to global suggestions (fire-and-forget)
       fetch("/api/suggestions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({lang,text:trimmed})})
         .then(r=>r.ok?r.json():null)
         .then(()=>fetch("/api/suggestions?lang="+lang).then(r=>r.ok?r.json():null).then(d=>{if(d?.suggestions)setGlobalSugg(d.suggestions);}))
         .catch(()=>{});
       const comp=ps.stappen.map(()=>false);
-      const entry={id:Date.now(),timestamp:new Date().toISOString(),timezone:zone,behoefte:inp.trim(),resultaat:ps,lang,completed:comp};
+      const entry={id:Date.now(),timestamp:new Date().toISOString(),timezone:zone,behoefte:inp.trim(),resultaat:ps,lang,completed:comp,isAltruistic,altruismBonusClaimed:false};
       if(auth==="in"){const nh=[entry,...hist];setHist(nh);ls.set(eKey(userRef.current),JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
       else{const nh=[entry,...hist].slice(0,10);setHist(nh);ls.set(KEYS.guestHist,JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
+      // Show altruism popup after a short delay so result view renders first
+      if(isAltruistic){setTimeout(()=>setAltruismPopup(true),600);}
     }catch(e){setErr(t.err);setVw(auth==="in"?"new_goal":"home");}finally{setBusy(false);}
   };
 
   const toggleStep=(idx)=>{
     setLocalComp(prev=>{
       const next=[...prev];next[idx]=!next[idx];
-      if(activeId&&auth==="in"){setHist(ph=>{const nh=ph.map(h=>h.id!==activeId?h:{...h,completed:next});ls.set(eKey(userRef.current),JSON.stringify(nh));return nh;});}
-      else if(activeId){setHist(ph=>{const nh=ph.map(h=>h.id!==activeId?h:{...h,completed:next});ls.set(KEYS.guestHist,JSON.stringify(nh));return nh;});}
+      const allDone=next.every(Boolean)&&next.length>0;
+      // Save updated completion
+      const updateHist=(ph)=>{
+        const nh=ph.map(h=>{
+          if(h.id!==activeId)return h;
+          // If all steps done and this is an altruistic goal with unclaimed bonus → award
+          if(allDone&&h.isAltruistic&&!h.altruismBonusClaimed){
+            // award credits client-side immediately
+            addCredits(ALTRUISM_BONUS_CREDITS);
+            setPendingAltruismId(null);
+            setTimeout(()=>setAltruismBonusPopup(true),300);
+            return{...h,completed:next,altruismBonusClaimed:true};
+          }
+          return{...h,completed:next};
+        });
+        return nh;
+      };
+      if(activeId&&auth==="in"){setHist(ph=>{const nh=updateHist(ph);ls.set(eKey(userRef.current),JSON.stringify(nh));return nh;});}
+      else if(activeId){setHist(ph=>{const nh=updateHist(ph);ls.set(KEYS.guestHist,JSON.stringify(nh));return nh;});}
       return next;
     });
+  };
+
+  // Stripe top-up
+  const startTopUp=async()=>{
+    if(topUpBusy)return;
+    setTopUpBusy(true);
+    try{
+      const ref=clientRef||ls.get(KEYS.clientRef);
+      const r=await fetch("/api/stripe/checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientRef:ref})});
+      const d=await r.json();
+      if(d.url){window.location.href=d.url;}
+      else{setTopUpMsg("error");}
+    }catch{setTopUpMsg("error");}
+    setTopUpBusy(false);
   };
 
   const openEntry=(entry)=>{setSteps(entry.resultaat);setActiveId(entry.id);setLocalComp(entry.completed||entry.resultaat.stappen.map(()=>false));setVw("result");};
@@ -288,18 +456,14 @@ export default function App(){
   const goHome=()=>{setInp("");setSteps(null);setErr(null);setActiveId(null);setLocalComp([]);setVw(auth==="in"?"dash":"home");};
   const prog=(e)=>{const tt=e.resultaat?.stappen?.length||0;const dn=(e.completed||[]).filter(Boolean).length;return{dn,tt,pct:tt>0?Math.round(dn/tt*100):0};};
 
-  // Delete a local recent
   const delRecent=(text)=>{
     setRecents(prev=>{const next=prev.filter(r=>r!==text);ls.set(KEYS.recents,JSON.stringify(next));return next;});
   };
-
-  // Delete a global suggestion (server + local state)
   const delGlobal=(text)=>{
     setGlobalSugg(prev=>prev.filter(s=>s!==text));
     fetch("/api/suggestions",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({lang,text})}).catch(()=>{});
   };
 
-  // Combined suggestions chip row: local recents + global (deduplicated)
   const SuggChips=()=>{
     const localSet=new Set(recents.map(r=>r.toLowerCase()));
     const globals=globalSugg.filter(s=>!localSet.has(s.toLowerCase())).slice(0,Math.max(0,8-recents.length));
@@ -327,8 +491,26 @@ export default function App(){
     );
   };
 
+  // Honeypot field — visually hidden, bots fill it
+  const HoneypotField=()=>(
+    <div style={{position:"absolute",left:"-9999px",top:"-9999px",width:1,height:1,overflow:"hidden"}} aria-hidden="true">
+      <input type="text" name="website" tabIndex={-1} autoComplete="off" value={honeypot} onChange={e=>setHoneypot(e.target.value)}/>
+    </div>
+  );
+
+  // reCAPTCHA widget container
+  const RecaptchaBox=()=>{
+    const {valid}=getCredential();
+    if(valid)return null; // BYOK users skip captcha
+    return(
+      <div style={{marginTop:14,display:"flex",justifyContent:"center"}}>
+        <div ref={recaptchaContainerRef}/>
+      </div>
+    );
+  };
+
   const sx={
-    pg:{minHeight:"100dvh",height:"100dvh",background:c.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-start",padding:"12px 20px",paddingTop:"calc(12px + env(safe-area-inset-top))",paddingBottom:"calc(68px + env(safe-area-inset-bottom))",fontFamily:"'Inter',-apple-system,sans-serif",transition:"background 0.4s",overflowY:"auto"},
+    pg:{minHeight:"100dvh",height:"100dvh",background:c.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-start",padding:"12px 20px",paddingTop:"calc(48px + env(safe-area-inset-top))",paddingBottom:"calc(68px + env(safe-area-inset-bottom))",fontFamily:"'Inter',-apple-system,sans-serif",transition:"background 0.4s",overflowY:"auto"},
     w:{width:"100%",maxWidth:540,flex:1,display:"flex",flexDirection:"column",justifyContent:"center"},
     cd:{background:c.card,borderRadius:16,padding:24,border:"1px solid "+c.cb,boxShadow:c.sh,transition:"all 0.3s"},
     ip:{width:"100%",background:c.ib,border:"2px solid "+c.ibr,borderRadius:10,padding:"13px 16px",color:c.tx,fontSize:16,outline:"none",boxSizing:"border-box"},
@@ -337,10 +519,11 @@ export default function App(){
     bg:{width:"100%",marginTop:12,padding:"12px 20px",background:c.ghb,color:c.tm,border:"1px solid "+c.ghr,borderRadius:10,fontSize:14,fontWeight:500,cursor:"pointer"},
     note:{fontSize:12,color:c.tf,marginTop:8,textAlign:"center"},
     err:{marginTop:10,padding:"10px 14px",background:c.eb,borderRadius:8,color:c.et,fontSize:13},
+    stripe:{width:"100%",marginTop:10,padding:"13px 20px",background:"linear-gradient(135deg,#6772e5,#4f46e5)",color:"#fff",border:"none",borderRadius:10,fontSize:15,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8},
   };
 
   const Bar=()=>(
-    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,gap:8}}>
+    <div style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 20px",paddingTop:"calc(8px + env(safe-area-inset-top))",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+c.cb}}>
       <button onClick={()=>setVw("lang")} style={{background:"none",border:"none",color:c.tf,fontSize:12,cursor:"pointer",padding:0,flexShrink:0}}>🌍 {t.lSel}</button>
       {user&&<button onClick={logout} style={{background:"none",border:"none",color:c.tf,fontSize:12,cursor:"pointer"}}>{t.out}</button>}
       <TTog mode={tm} set={chTm} c={c}/>
@@ -348,8 +531,10 @@ export default function App(){
   );
 
   const BottomBar=()=>(
-    <div style={{position:"fixed",bottom:0,left:0,right:0,padding:"8px 20px",paddingBottom:"calc(8px + env(safe-area-inset-bottom))",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderTop:"1px solid "+c.cb,display:"flex",justifyContent:"center",zIndex:100}}>
+    <div style={{position:"fixed",bottom:0,left:0,right:0,padding:"8px 20px",paddingBottom:"calc(8px + env(safe-area-inset-bottom))",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderTop:"1px solid "+c.cb,display:"flex",justifyContent:"center",gap:12,alignItems:"center",zIndex:100}}>
       <AuthBadge c={c} onManage={()=>setVw("manage_auth")} credits={credits} t={t}/>
+      {topUpMsg==="pending"&&<span style={{fontSize:11,color:c.tm,animation:"pulse 1s infinite"}}>{t.topUpPending}</span>}
+      {topUpMsg==="success"&&<span style={{fontSize:11,color:c.gr,fontWeight:600}}>✓ {t.topUpSuccess}</span>}
     </div>
   );
 
@@ -357,215 +542,270 @@ export default function App(){
 
   if(!ready)return (<div style={{minHeight:"100dvh",background:c.bg}}><style>{GS}</style></div>);
 
-  if(vw==="lang")return(
-    <div style={{...sx.pg,direction:"ltr"}}><div style={sx.w}>
-      <Bar/>
-      <div style={{textAlign:"center",marginBottom:28}}><BrandMark c={c} size="large"/><p style={{color:c.tm,fontSize:14,marginTop:10}}>Choose your language</p></div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-        {LANGS.map(l=>(
-          <button key={l.code} onClick={()=>pickLang(l.code)} style={{...sx.cd,padding:"16px 14px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,textAlign:"left"}}
-            onMouseEnter={e=>{e.currentTarget.style.borderColor=c.abr;e.currentTarget.style.transform="scale(1.02)";}}
-            onMouseLeave={e=>{e.currentTarget.style.borderColor=c.cb;e.currentTarget.style.transform="scale(1)";}}>
-            <span style={{fontSize:28}}>{l.flag}</span><span style={{color:c.tx,fontSize:15,fontWeight:500}}>{l.label}</span>
-          </button>))}
-      </div>
-    <BottomBar/><style>{GS}</style></div></div>
-  );
+  return(<>
+    {/* ── Persistent top bar ── */}
+    {ready&&<Bar/>}
 
-  if(vw==="byok")return(
-    <div style={sx.pg}><div style={sx.w}>
-      <Bar/>
-      <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>Bring your own API key</h1></div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
-        <div style={{...sx.cd,padding:"14px 16px"}}>
-          <div style={{fontSize:13,fontWeight:700,color:c.tx,marginBottom:6}}>Anthropic</div>
-          <div style={{fontSize:12,color:c.tm,lineHeight:1.5,marginBottom:8}}>Direct access to Claude. Keys start with <code style={{background:c.cb,borderRadius:4,padding:"1px 5px",color:c.ac,fontSize:11}}>sk-ant-</code></div>
-          <ol style={{margin:0,padding:"0 0 0 16px",fontSize:12,color:c.tm,lineHeight:1.8}}>
-            <li>Go to console.anthropic.com</li>
-            <li>Sign up / log in</li>
-            <li>Settings → API Keys → Create key</li>
-          </ol>
-          <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noreferrer" style={{display:"block",marginTop:10,fontSize:12,color:c.ac,fontWeight:600}}>Get Anthropic key →</a>
+    {/* ── Altruism Announcement Popup ── */}
+    {altruismPopup&&(
+      <Modal c={c}>
+        <div style={{textAlign:"center"}}>
+          <div style={{fontSize:52,marginBottom:12}}>💛</div>
+          <h2 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"0 0 10px"}}>{t.altruismPopupTitle}</h2>
+          <p style={{fontSize:14,color:c.tm,lineHeight:1.6,margin:"0 0 20px"}}>{t.altruismPopupMsg}</p>
+          <button onClick={()=>setAltruismPopup(false)} style={{...sx.bo,marginTop:0,background:"linear-gradient(135deg,#f59e0b,#d97706)"}}>{t.altruismPopupBtn}</button>
         </div>
-        <div style={{...sx.cd,padding:"14px 16px"}}>
-          <div style={{fontSize:13,fontWeight:700,color:c.tx,marginBottom:6}}>OpenRouter</div>
-          <div style={{fontSize:12,color:c.tm,lineHeight:1.5,marginBottom:8}}>Pay-as-you-go. Often cheaper. Keys start with <code style={{background:c.cb,borderRadius:4,padding:"1px 5px",color:c.ac,fontSize:11}}>sk-or-</code></div>
-          <ol style={{margin:0,padding:"0 0 0 16px",fontSize:12,color:c.tm,lineHeight:1.8}}>
-            <li>Go to openrouter.ai</li>
-            <li>Sign up / log in</li>
-            <li>Keys → Create key</li>
-          </ol>
-          <a href="https://openrouter.ai/keys" target="_blank" rel="noreferrer" style={{display:"block",marginTop:10,fontSize:12,color:c.ac,fontWeight:600}}>Get OpenRouter key →</a>
+      </Modal>
+    )}
+
+    {/* ── Altruism Bonus Earned Popup ── */}
+    {altruismBonusPopup&&(
+      <Modal c={c}>
+        <div style={{textAlign:"center"}}>
+          <div style={{fontSize:52,marginBottom:12,animation:"pop 0.5s ease"}}>🎁</div>
+          <h2 style={{fontSize:20,fontWeight:700,color:c.gr,margin:"0 0 10px"}}>{t.altruismBonusTitle}</h2>
+          <p style={{fontSize:14,color:c.tm,lineHeight:1.6,margin:"0 0 20px"}}>{t.altruismBonusMsg}</p>
+          <div style={{fontSize:32,fontWeight:800,color:c.gr,margin:"0 0 16px"}}>+{ALTRUISM_BONUS_CREDITS}</div>
+          <button onClick={()=>setAltruismBonusPopup(false)} style={{...sx.bo,marginTop:0,background:c.ag}}>{t.altruismBonusBtn}</button>
         </div>
-      </div>
-      <div style={sx.cd}>
-        <label style={{fontSize:13,color:c.tm,fontWeight:500,display:"block",marginBottom:8}}>{t.byokL}</label>
-        <input type="password" value={apiKeyInput} onChange={e=>setApiKeyInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&saveApiKey()} placeholder={t.byokPh} style={sx.ip} autoFocus/>
-        {apiKeyErr&&<div style={sx.err}>{apiKeyErr}</div>}
-        <p style={sx.note}>Stored in your browser only. Never sent anywhere except the provider&apos;s API.</p>
-        <button onClick={saveApiKey} disabled={busy||!apiKeyInput.trim()} style={!apiKeyInput.trim()||busy?sx.bd:sx.bo}>{busy?"Checking...":t.byokSave}</button>
-        <button onClick={()=>setVw(lang?"home":"lang")} style={sx.bg}>{t.back}</button>
-      </div>
-    <BottomBar/><style>{GS}</style></div></div>
-  );
+      </Modal>
+    )}
 
-  if(vw==="no_credits")return(
-    <div style={sx.pg}><div style={sx.w}>
-      <Bar/>
-      <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/></div>
-      <div style={{...sx.cd,textAlign:"center",padding:"32px 24px"}}>
-        <div style={{fontSize:48,marginBottom:12}}>🪙</div>
-        <h2 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"0 0 8px"}}>{t.credOut}</h2>
-        <p style={{fontSize:14,color:c.tm,lineHeight:1.6,margin:"0 0 20px"}}>{t.credOutMsg}</p>
-        <button onClick={()=>setVw("byok")} style={sx.bo}>{t.credByok}</button>
-        <button onClick={()=>setVw(auth==="in"?"dash":"home")} style={sx.bg}>{t.back}</button>
-      </div>
-    <BottomBar/><style>{GS}</style></div></div>
-  );
+    {vw==="lang"&&(
+      <div style={{...sx.pg,direction:"ltr"}}><div style={sx.w}>
+        <div style={{textAlign:"center",marginBottom:28}}><BrandMark c={c} size="large"/><p style={{color:c.tm,fontSize:14,marginTop:10}}>{t.chooseLang}</p></div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+          {LANGS.map(l=>(
+            <button key={l.code} onClick={()=>pickLang(l.code)} style={{...sx.cd,padding:"16px 14px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,textAlign:"left"}}
+              onMouseEnter={e=>{e.currentTarget.style.borderColor=c.abr;e.currentTarget.style.transform="scale(1.02)";}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor=c.cb;e.currentTarget.style.transform="scale(1)";}}>
+              <span style={{fontSize:28}}>{l.flag}</span><span style={{color:c.tx,fontSize:15,fontWeight:500}}>{l.label}</span>
+            </button>))}
+        </div>
+      <BottomBar/><style>{GS}</style></div></div>
+    )}
 
-  if(vw==="manage_auth"){
-    const {key,provider}=getCredential();
-    const providerLabel=provider==="openrouter"?"OpenRouter":"Anthropic";
-    const resetUsage=()=>{const z={calls:0,inputTokens:0,outputTokens:0,costUsd:0};setUsage(z);ls.del(KEYS.usage);};
-    return(
+    {vw==="byok"&&(
       <div style={sx.pg}><div style={sx.w}>
-        <Bar/>
-        <div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>{t.chAuth}</h1></div>
-        <div style={sx.cd}>
-          {key&&<div style={{padding:"14px 16px",background:c.ab,borderRadius:10,marginBottom:12}}>
-            <div style={{fontSize:13,color:c.tm,marginBottom:4}}>API Key · <span style={{fontWeight:600,color:c.ac}}>{providerLabel}</span></div>
-            <div style={{fontSize:14,fontWeight:500,color:c.ac,fontFamily:"monospace"}}>{key.slice(0,14)}…</div>
-          </div>}
-          {!key&&<div style={{padding:"14px 16px",background:credits<=3?c.eb:c.sb,border:"1px solid "+(credits<=3?"rgba(239,68,68,0.3)":c.sr),borderRadius:10,marginBottom:12,display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
-            <div>
-              <div style={{fontSize:13,fontWeight:600,color:credits<=3?"#ef4444":c.tm,marginBottom:2}}>🪙 {t.credFree}</div>
-              <div style={{fontSize:22,fontWeight:700,color:credits<=3?"#ef4444":c.tx}}>{credits}</div>
-            </div>
-            {credits<=3&&<button onClick={()=>setVw("byok")} style={{...sx.bo,marginTop:0,width:"auto",padding:"8px 14px",fontSize:12}}>{t.credByok}</button>}
-          </div>}
-          <div style={{padding:"14px 16px",background:c.sb,border:"1px solid "+c.sr,borderRadius:10,marginBottom:12}}>
-            <div style={{fontSize:13,fontWeight:600,color:c.tm,marginBottom:10}}>Usage stats</div>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-              <div style={{background:c.card,borderRadius:8,padding:"10px 12px",border:"1px solid "+c.cb}}>
-                <div style={{fontSize:11,color:c.tf,marginBottom:2}}>API calls</div>
-                <div style={{fontSize:20,fontWeight:700,color:c.tx}}>{usage.calls}</div>
-              </div>
-              <div style={{background:c.card,borderRadius:8,padding:"10px 12px",border:"1px solid "+c.cb}}>
-                <div style={{fontSize:11,color:c.tf,marginBottom:2}}>Est. cost</div>
-                <div style={{fontSize:20,fontWeight:700,color:c.ac}}>{fmtCost(usage.costUsd)}</div>
-              </div>
-              <div style={{background:c.card,borderRadius:8,padding:"10px 12px",border:"1px solid "+c.cb}}>
-                <div style={{fontSize:11,color:c.tf,marginBottom:2}}>Input tokens</div>
-                <div style={{fontSize:16,fontWeight:600,color:c.tx}}>{usage.inputTokens.toLocaleString()}</div>
-              </div>
-              <div style={{background:c.card,borderRadius:8,padding:"10px 12px",border:"1px solid "+c.cb}}>
-                <div style={{fontSize:11,color:c.tf,marginBottom:2}}>Output tokens</div>
-                <div style={{fontSize:16,fontWeight:600,color:c.tx}}>{usage.outputTokens.toLocaleString()}</div>
-              </div>
-            </div>
-            <button onClick={resetUsage} style={{...sx.bg,marginTop:10,fontSize:12,padding:"8px 14px"}}>Reset stats</button>
+        <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>{t.byokH1}</h1></div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
+          <div style={{...sx.cd,padding:"14px 16px"}}>
+            <div style={{fontSize:13,fontWeight:700,color:c.tx,marginBottom:6}}>{t.byokAnthTitle}</div>
+            <div style={{fontSize:12,color:c.tm,lineHeight:1.5,marginBottom:8}}>{t.byokAnthDesc} <code style={{background:c.cb,borderRadius:4,padding:"1px 5px",color:c.ac,fontSize:11}}>sk-ant-</code></div>
+            <ol style={{margin:0,padding:"0 0 0 16px",fontSize:12,color:c.tm,lineHeight:1.8}}>
+              <li>{t.byokAnthS1}</li><li>{t.byokAnthS2}</li><li>{t.byokAnthS3}</li>
+            </ol>
+            <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noreferrer" style={{display:"block",marginTop:10,fontSize:12,color:c.ac,fontWeight:600}}>{t.byokAnthLink}</a>
           </div>
-          <button onClick={()=>setVw("byok")} style={sx.bo}>🔑 {t.byok}</button>
-          <button onClick={removeAuth} style={{...sx.bg,color:"#ef4444",borderColor:"rgba(239,68,68,0.3)",marginTop:12}}>{t.rmKey}</button>
+          <div style={{...sx.cd,padding:"14px 16px"}}>
+            <div style={{fontSize:13,fontWeight:700,color:c.tx,marginBottom:6}}>{t.byokOrTitle}</div>
+            <div style={{fontSize:12,color:c.tm,lineHeight:1.5,marginBottom:8}}>{t.byokOrDesc} <code style={{background:c.cb,borderRadius:4,padding:"1px 5px",color:c.ac,fontSize:11}}>sk-or-</code></div>
+            <ol style={{margin:0,padding:"0 0 0 16px",fontSize:12,color:c.tm,lineHeight:1.8}}>
+              <li>{t.byokOrS1}</li><li>{t.byokOrS2}</li><li>{t.byokOrS3}</li>
+            </ol>
+            <a href="https://openrouter.ai/keys" target="_blank" rel="noreferrer" style={{display:"block",marginTop:10,fontSize:12,color:c.ac,fontWeight:600}}>{t.byokOrLink}</a>
+          </div>
+        </div>
+        <div style={sx.cd}>
+          <label style={{fontSize:13,color:c.tm,fontWeight:500,display:"block",marginBottom:8}}>{t.byokL}</label>
+          <input type="password" value={apiKeyInput} onChange={e=>setApiKeyInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&saveApiKey()} placeholder={t.byokPh} style={sx.ip} autoFocus/>
+          {apiKeyErr&&<div style={sx.err}>{apiKeyErr}</div>}
+          <p style={sx.note}>{t.byokNote}</p>
+          <button onClick={saveApiKey} disabled={busy||!apiKeyInput.trim()} style={!apiKeyInput.trim()||busy?sx.bd:sx.bo}>{busy?t.checking:t.byokSave}</button>
+          <button onClick={()=>setVw(lang?"home":"lang")} style={sx.bg}>{t.back}</button>
+        </div>
+      <BottomBar/><style>{GS}</style></div></div>
+    )}
+
+    {vw==="no_credits"&&(
+      <div style={sx.pg}><div style={sx.w}>
+        <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/></div>
+        <div style={{...sx.cd,textAlign:"center",padding:"32px 24px"}}>
+          <div style={{fontSize:48,marginBottom:12}}>🪙</div>
+          <h2 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"0 0 8px"}}>{t.credOut}</h2>
+          <p style={{fontSize:14,color:c.tm,lineHeight:1.6,margin:"0 0 20px"}}>{t.credOutMsg}</p>
+          <button onClick={startTopUp} disabled={topUpBusy} style={sx.stripe}>
+            💳 {topUpBusy?"...":t.topUpBtn} <span style={{opacity:0.7,fontSize:12}}>({t.topUpDesc})</span>
+          </button>
+          <button onClick={()=>setVw("byok")} style={sx.bo}>{t.credByok}</button>
           <button onClick={()=>setVw(auth==="in"?"dash":"home")} style={sx.bg}>{t.back}</button>
         </div>
       <BottomBar/><style>{GS}</style></div></div>
-    );
-  }
+    )}
 
-  if(vw==="loading")return(<div style={sx.pg}><div style={sx.w}><Bar/><div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/></div><div style={sx.cd}><Loader c={c}/></div><BottomBar/><style>{GS}</style></div></div>);
-
-  if((vw==="home"||vw==="new_goal")&&auth!=="in")return(
-    <div style={sx.pg}><div style={sx.w}><Bar/>
-      <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c} size="large"/><h1 style={{fontSize:26,fontWeight:700,color:c.tx,margin:"10px 0 0"}}>{t.hero}</h1><p style={{color:c.tm,fontSize:14,marginTop:4}}>{t.heroS}</p></div>
-      <div style={sx.cd}>
-        <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
-        <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
-        <SuggChips/>
-        <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
-      </div>
-      <div style={{textAlign:"center",marginTop:14,padding:"10px 16px",borderRadius:10,background:c.gb,border:"1px solid "+c.gbr}}><span style={{fontSize:12,color:c.gt}}>{t.eth}</span></div>
-      {hist.length>0&&<div style={{display:"flex",flexDirection:"column",gap:10,marginTop:16}}>
-        {hist.map((h,i)=>{const p=prog(h);return(
-          <div key={h.id} onClick={()=>openEntry(h)} style={{...sx.cd,padding:"14px 18px",cursor:"pointer",animation:"slideUp 0.3s ease "+Math.min(i*0.05,0.5)+"s both",borderColor:p.pct>=100?c.gbr:c.cb}}
-            onMouseEnter={e=>e.currentTarget.style.borderColor=p.pct>=100?c.gr:c.abr}
-            onMouseLeave={e=>e.currentTarget.style.borderColor=p.pct>=100?c.gbr:c.cb}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12,marginBottom:10}}>
-              <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:14,fontWeight:600,color:p.pct>=100?c.gr:c.tx,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginBottom:2}}>{p.pct>=100?"✅ ":""}{h.resultaat?.titel||h.behoefte}</div>
-                <div style={{fontSize:12,color:c.tf}}>{tAgo(h.timestamp,lang)} · {p.dn} {t.sOf} {p.tt}</div>
-              </div>
-              <button onClick={e=>{e.stopPropagation();del(h.id);}} style={{background:"none",border:"none",color:c.dm,cursor:"pointer",fontSize:18,padding:"2px 6px",lineHeight:1}} onMouseEnter={e=>e.target.style.color="#ef4444"} onMouseLeave={e=>e.target.style.color=c.dm}>×</button>
-            </div>
-            <PBar done={p.dn} total={p.tt} c={c}/>
-          </div>);})}
-        {hist.length>3&&<button onClick={clrAll} style={{...sx.bg,marginTop:4,color:"#ef4444",borderColor:"rgba(239,68,68,0.2)"}}>{t.clr}</button>}
-      </div>}
-    <BottomBar/><style>{GS}</style></div></div>
-  );
-
-  if(vw==="dash")return(
-    <div style={sx.pg}><div style={sx.w}><Bar/>
-      <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"6px 0 0"}}>{t.dW} 👋</h1><p style={{color:c.tm,fontSize:13,marginTop:2}}>{t.dS}</p></div>
-      <button onClick={()=>setVw("new_goal")} style={{...sx.bo,marginTop:0,marginBottom:16}}>{t.nG}</button>
-      {hist.length===0?(<div style={{...sx.cd,textAlign:"center",padding:40}}><div style={{fontSize:40,marginBottom:10}}>🪢</div><p style={{color:c.tf,margin:0}}>{t.noG}</p></div>):(
-        <div style={{display:"flex",flexDirection:"column",gap:10}}>{hist.map((h,i)=>{const p=prog(h);return(
-          <div key={h.id} onClick={()=>openEntry(h)} style={{...sx.cd,padding:"14px 18px",cursor:"pointer",animation:"slideUp 0.3s ease "+Math.min(i*0.05,0.5)+"s both",borderColor:p.pct>=100?c.gbr:c.cb}}
-            onMouseEnter={e=>e.currentTarget.style.borderColor=p.pct>=100?c.gr:c.abr}
-            onMouseLeave={e=>e.currentTarget.style.borderColor=p.pct>=100?c.gbr:c.cb}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12,marginBottom:10}}>
-              <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:14,fontWeight:600,color:p.pct>=100?c.gr:c.tx,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginBottom:2}}>{p.pct>=100?"✅ ":""}{h.resultaat?.titel||h.behoefte}</div>
-                <div style={{fontSize:12,color:c.tf}}>{tAgo(h.timestamp,lang)} · {p.dn} {t.sOf} {p.tt}</div>
-              </div>
-              <button onClick={e=>{e.stopPropagation();del(h.id);}} style={{background:"none",border:"none",color:c.dm,cursor:"pointer",fontSize:18,padding:"2px 6px",lineHeight:1}} onMouseEnter={e=>e.target.style.color="#ef4444"} onMouseLeave={e=>e.target.style.color=c.dm}>×</button>
-            </div>
-            <PBar done={p.dn} total={p.tt} c={c}/>
-          </div>);})}
-          {hist.length>3&&<button onClick={clrAll} style={{...sx.bg,marginTop:4,color:"#ef4444",borderColor:"rgba(239,68,68,0.2)"}}>{t.clr}</button>}
-        </div>
-      )}<BottomBar/><style>{GS}</style></div></div>
-  );
-
-  if(vw==="new_goal"&&auth==="in")return(
-    <div style={sx.pg}><div style={sx.w}><Bar/>
-      <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/><h1 style={{fontSize:22,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>{t.hero}</h1><p style={{color:c.tm,fontSize:13,marginTop:2}}>{t.heroS}</p></div>
-      <div style={sx.cd}>
-        <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
-        <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
-        <SuggChips/>
-        <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
-      </div>
-      <button onClick={()=>setVw("dash")} style={sx.bg}>{t.back}</button>
-    <BottomBar/><style>{GS}</style></div></div>
-  );
-
-  if((vw==="result"||vw==="save_prompt")&&steps){
-    const dn=localComp.filter(Boolean).length;const tt=steps.stappen.length;const all=tt>0&&dn===tt;
-    const ae=hist.find(h=>h.id===activeId);
-    return(
-      <div style={sx.pg}><div style={sx.w}>
-        <Bar/>
-        <div style={{animation:"fadeIn 0.4s ease"}}>
+    {vw==="manage_auth"&&(()=>{
+      const {key,provider}=getCredential();
+      const providerLabel=provider==="openrouter"?"OpenRouter":"Anthropic";
+      const resetUsage=()=>{const z={calls:0,inputTokens:0,outputTokens:0,costUsd:0};setUsage(z);ls.del(KEYS.usage);};
+      return(
+        <div style={sx.pg}><div style={sx.w}>
+          <div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>{t.chAuth}</h1></div>
           <div style={sx.cd}>
-            <h2 style={{fontSize:17,fontWeight:600,color:all?c.gr:c.ac,margin:"0 0 6px"}}>{all?"✅ ":""}{steps.titel}</h2>
-            {ae?.timestamp&&<div style={{fontSize:12,color:c.tf,marginBottom:10}}>{fmtDate(ae.timestamp,ae.timezone||zone,ae.lang||lang)}</div>}
-            <div style={{marginBottom:18}}>
-              <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}><span style={{fontSize:13,color:c.tm}}>{t.prog}</span><span style={{fontSize:13,color:all?c.gr:c.ac,fontWeight:600}}>{dn} {t.sOf} {tt}</span></div>
-              <PBar done={dn} total={tt} c={c}/>
+            {/* Credits balance */}
+            {!key&&<div style={{padding:"16px",background:c.hp,border:"1px solid "+c.hpr,borderRadius:12,marginBottom:12}}>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+                <div>
+                  <div style={{fontSize:12,color:c.tm,fontWeight:500,marginBottom:4}}>🪙 {t.credFree}</div>
+                  <div style={{fontSize:28,fontWeight:800,color:credits<=3?"#ef4444":c.tx,lineHeight:1}}>{credits}</div>
+                  <div style={{fontSize:11,color:c.tf,marginTop:2}}>{t.cred}</div>
+                </div>
+                <div style={{textAlign:"right"}}>
+                  <div style={{fontSize:11,color:c.tm,marginBottom:8}}>{t.topUpDesc}</div>
+                  <button onClick={startTopUp} disabled={topUpBusy} style={{...sx.stripe,width:"auto",marginTop:0,padding:"9px 14px",fontSize:13}}>
+                    💳 {topUpBusy?"...":t.topUpBtn}
+                  </button>
+                  {topUpMsg==="success"&&<div style={{fontSize:11,color:c.gr,marginTop:6,fontWeight:600}}>✓ {t.topUpSuccess}</div>}
+                </div>
+              </div>
+            </div>}
+            {key&&<div style={{padding:"14px 16px",background:c.ab,borderRadius:10,marginBottom:12}}>
+              <div style={{fontSize:13,color:c.tm,marginBottom:4}}>{t.apiKeyBadge} · <span style={{fontWeight:600,color:c.ac}}>{providerLabel}</span></div>
+              <div style={{fontSize:14,fontWeight:500,color:c.ac,fontFamily:"monospace"}}>{key.slice(0,14)}…</div>
+            </div>}
+            {/* Usage stats */}
+            <div style={{padding:"14px 16px",background:c.sb,border:"1px solid "+c.sr,borderRadius:10,marginBottom:12}}>
+              <div style={{fontSize:13,fontWeight:600,color:c.tm,marginBottom:10}}>{t.usageStat}</div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                <div style={{background:c.card,borderRadius:8,padding:"10px 12px",border:"1px solid "+c.cb}}>
+                  <div style={{fontSize:11,color:c.tf,marginBottom:2}}>{t.apiCalls}</div>
+                  <div style={{fontSize:20,fontWeight:700,color:c.tx}}>{usage.calls}</div>
+                </div>
+                <div style={{background:c.card,borderRadius:8,padding:"10px 12px",border:"1px solid "+c.cb}}>
+                  <div style={{fontSize:11,color:c.tf,marginBottom:2}}>{t.estCost}</div>
+                  <div style={{fontSize:20,fontWeight:700,color:c.ac}}>{fmtCost(usage.costUsd)}</div>
+                </div>
+                <div style={{background:c.card,borderRadius:8,padding:"10px 12px",border:"1px solid "+c.cb}}>
+                  <div style={{fontSize:11,color:c.tf,marginBottom:2}}>{t.inputTok}</div>
+                  <div style={{fontSize:16,fontWeight:600,color:c.tx}}>{usage.inputTokens.toLocaleString()}</div>
+                </div>
+                <div style={{background:c.card,borderRadius:8,padding:"10px 12px",border:"1px solid "+c.cb}}>
+                  <div style={{fontSize:11,color:c.tf,marginBottom:2}}>{t.outputTok}</div>
+                  <div style={{fontSize:16,fontWeight:600,color:c.tx}}>{usage.outputTokens.toLocaleString()}</div>
+                </div>
+              </div>
+              <button onClick={resetUsage} style={{...sx.bg,marginTop:10,fontSize:12,padding:"8px 14px"}}>{t.resetStats}</button>
             </div>
-            {all&&<div style={{textAlign:"center",padding:"10px 0 16px",fontSize:14,color:c.gr,fontWeight:600,animation:"pop 0.4s ease"}}>{t.allD}</div>}
-            <div style={{display:"flex",flexDirection:"column",gap:10}}>
-              {steps.stappen.map((s,i)=>(
-                <CheckItem key={i} done={localComp[i]||false} label={s.actie} desc={s.toelichting} onToggle={activeId?()=>toggleStep(i):undefined} c={c}/>
-              ))}
-            </div>
+            <button onClick={()=>setVw("byok")} style={sx.bo}>{t.apiKeyBadge} {t.byok}</button>
+            <button onClick={removeAuth} style={{...sx.bg,color:"#ef4444",borderColor:"rgba(239,68,68,0.3)",marginTop:12}}>{t.rmKey}</button>
+            <button onClick={()=>setVw(auth==="in"?"dash":"home")} style={sx.bg}>{t.back}</button>
           </div>
-          <button onClick={goHome} style={sx.bg}>{t.resB}</button>
-        </div>
-      <BottomBar/><style>{GS}</style></div></div>
-    );
-  }
+        <BottomBar/><style>{GS}</style></div></div>
+      );
+    })()}
 
-  return(<div style={sx.pg}><div style={sx.w}><div style={{textAlign:"center",padding:40}}><BrandMark c={c} size="large"/><button onClick={()=>setVw("lang")} style={sx.bo}>Start</button></div><BottomBar/><style>{GS}</style></div></div>);
+    {vw==="loading"&&(<div style={sx.pg}><div style={sx.w}><div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/></div><div style={sx.cd}><Loader c={c} lp={t.lp}/></div><BottomBar/><style>{GS}</style></div></div>)}
+
+    {(vw==="home"||vw==="new_goal")&&auth!=="in"&&(
+      <div style={sx.pg}><div style={sx.w}>
+        <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c} size="large"/><h1 style={{fontSize:26,fontWeight:700,color:c.tx,margin:"10px 0 0"}}>{t.hero}</h1><p style={{color:c.tm,fontSize:14,marginTop:4}}>{t.heroS}</p></div>
+        <div style={{...sx.cd,position:"relative"}}>
+          <HoneypotField/>
+          <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
+          <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
+          <SuggChips/>
+          <RecaptchaBox/>
+          <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
+        </div>
+        <div style={{textAlign:"center",marginTop:14,padding:"10px 16px",borderRadius:10,background:c.gb,border:"1px solid "+c.gbr}}><span style={{fontSize:12,color:c.gt}}>{t.eth}</span></div>
+        {hist.length>0&&<div style={{display:"flex",flexDirection:"column",gap:10,marginTop:16}}>
+          {hist.map((h,i)=>{const p=prog(h);return(
+            <div key={h.id} onClick={()=>openEntry(h)} style={{...sx.cd,padding:"14px 18px",cursor:"pointer",animation:"slideUp 0.3s ease "+Math.min(i*0.05,0.5)+"s both",borderColor:p.pct>=100?c.gbr:c.cb}}
+              onMouseEnter={e=>e.currentTarget.style.borderColor=p.pct>=100?c.gr:c.abr}
+              onMouseLeave={e=>e.currentTarget.style.borderColor=p.pct>=100?c.gbr:c.cb}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12,marginBottom:10}}>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:14,fontWeight:600,color:p.pct>=100?c.gr:c.tx,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginBottom:2}}>{p.pct>=100?"✅ ":""}{h.resultaat?.titel||h.behoefte}</div>
+                  <div style={{fontSize:12,color:c.tf}}>{tAgo(h.timestamp,lang)} · {p.dn} {t.sOf} {p.tt}{h.isAltruistic&&" 💛"}</div>
+                </div>
+                <button onClick={e=>{e.stopPropagation();del(h.id);}} style={{background:"none",border:"none",color:c.dm,cursor:"pointer",fontSize:18,padding:"2px 6px",lineHeight:1}} onMouseEnter={e=>e.target.style.color="#ef4444"} onMouseLeave={e=>e.target.style.color=c.dm}>×</button>
+              </div>
+              <PBar done={p.dn} total={p.tt} c={c}/>
+            </div>);})}
+          {hist.length>3&&<button onClick={clrAll} style={{...sx.bg,marginTop:4,color:"#ef4444",borderColor:"rgba(239,68,68,0.2)"}}>{t.clr}</button>}
+        </div>}
+      <BottomBar/><style>{GS}</style></div></div>
+    )}
+
+    {vw==="dash"&&(
+      <div style={sx.pg}><div style={sx.w}>
+        <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"6px 0 0"}}>{t.dW} 👋</h1><p style={{color:c.tm,fontSize:13,marginTop:2}}>{t.dS}</p></div>
+        <button onClick={()=>setVw("new_goal")} style={{...sx.bo,marginTop:0,marginBottom:16}}>{t.nG}</button>
+        {hist.length===0?(<div style={{...sx.cd,textAlign:"center",padding:40}}><div style={{fontSize:40,marginBottom:10}}>🪢</div><p style={{color:c.tf,margin:0}}>{t.noG}</p></div>):(
+          <div style={{display:"flex",flexDirection:"column",gap:10}}>{hist.map((h,i)=>{const p=prog(h);return(
+            <div key={h.id} onClick={()=>openEntry(h)} style={{...sx.cd,padding:"14px 18px",cursor:"pointer",animation:"slideUp 0.3s ease "+Math.min(i*0.05,0.5)+"s both",borderColor:p.pct>=100?c.gbr:c.cb}}
+              onMouseEnter={e=>e.currentTarget.style.borderColor=p.pct>=100?c.gr:c.abr}
+              onMouseLeave={e=>e.currentTarget.style.borderColor=p.pct>=100?c.gbr:c.cb}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12,marginBottom:10}}>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:14,fontWeight:600,color:p.pct>=100?c.gr:c.tx,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginBottom:2}}>{p.pct>=100?"✅ ":""}{h.resultaat?.titel||h.behoefte}</div>
+                  <div style={{fontSize:12,color:c.tf}}>{tAgo(h.timestamp,lang)} · {p.dn} {t.sOf} {p.tt}{h.isAltruistic&&" 💛"}</div>
+                </div>
+                <button onClick={e=>{e.stopPropagation();del(h.id);}} style={{background:"none",border:"none",color:c.dm,cursor:"pointer",fontSize:18,padding:"2px 6px",lineHeight:1}} onMouseEnter={e=>e.target.style.color="#ef4444"} onMouseLeave={e=>e.target.style.color=c.dm}>×</button>
+              </div>
+              <PBar done={p.dn} total={p.tt} c={c}/>
+            </div>);})}
+            {hist.length>3&&<button onClick={clrAll} style={{...sx.bg,marginTop:4,color:"#ef4444",borderColor:"rgba(239,68,68,0.2)"}}>{t.clr}</button>}
+          </div>
+        )}<BottomBar/><style>{GS}</style></div></div>
+    )}
+
+    {vw==="new_goal"&&auth==="in"&&(
+      <div style={sx.pg}><div style={sx.w}>
+        <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/><h1 style={{fontSize:22,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>{t.hero}</h1><p style={{color:c.tm,fontSize:13,marginTop:2}}>{t.heroS}</p></div>
+        <div style={{...sx.cd,position:"relative"}}>
+          <HoneypotField/>
+          <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
+          <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
+          <SuggChips/>
+          <RecaptchaBox/>
+          <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
+        </div>
+        <button onClick={()=>setVw("dash")} style={sx.bg}>{t.back}</button>
+      <BottomBar/><style>{GS}</style></div></div>
+    )}
+
+    {(vw==="result"||vw==="save_prompt")&&steps&&(()=>{
+      const dn=localComp.filter(Boolean).length;const tt=steps.stappen.length;const all=tt>0&&dn===tt;
+      const ae=hist.find(h=>h.id===activeId);
+      const isAlt=ae?.isAltruistic&&!ae?.altruismBonusClaimed;
+      return(
+        <div style={sx.pg}><div style={sx.w}>
+          <div style={{animation:"fadeIn 0.4s ease"}}>
+            {/* Altruistic goal progress indicator */}
+            {ae?.isAltruistic&&!ae?.altruismBonusClaimed&&(
+              <div style={{marginBottom:10,padding:"10px 14px",borderRadius:10,background:"rgba(251,191,36,0.1)",border:"1px solid rgba(251,191,36,0.3)",display:"flex",alignItems:"center",gap:8}}>
+                <span style={{fontSize:16}}>💛</span>
+                <span style={{fontSize:12,color:c.ac,fontWeight:500}}>{t.altruismPopupMsg}</span>
+              </div>
+            )}
+            {ae?.isAltruistic&&ae?.altruismBonusClaimed&&(
+              <div style={{marginBottom:10,padding:"10px 14px",borderRadius:10,background:c.gb,border:"1px solid "+c.gbr,display:"flex",alignItems:"center",gap:8}}>
+                <span style={{fontSize:16}}>🎁</span>
+                <span style={{fontSize:12,color:c.gr,fontWeight:600}}>{t.altruismBonusTitle}</span>
+              </div>
+            )}
+            <div style={sx.cd}>
+              <h2 style={{fontSize:17,fontWeight:600,color:all?c.gr:c.ac,margin:"0 0 6px"}}>{all?"✅ ":""}{steps.titel}</h2>
+              {ae?.timestamp&&<div style={{fontSize:12,color:c.tf,marginBottom:10}}>{fmtDate(ae.timestamp,ae.timezone||zone,ae.lang||lang)}</div>}
+              <div style={{marginBottom:18}}>
+                <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}><span style={{fontSize:13,color:c.tm}}>{t.prog}</span><span style={{fontSize:13,color:all?c.gr:c.ac,fontWeight:600}}>{dn} {t.sOf} {tt}</span></div>
+                <PBar done={dn} total={tt} c={c}/>
+              </div>
+              {all&&<div style={{textAlign:"center",padding:"10px 0 16px",fontSize:14,color:c.gr,fontWeight:600,animation:"pop 0.4s ease"}}>{t.allD}</div>}
+              <div style={{display:"flex",flexDirection:"column",gap:10}}>
+                {steps.stappen.map((s,i)=>(
+                  <CheckItem key={i} done={localComp[i]||false} label={s.actie} desc={s.toelichting} onToggle={activeId?()=>toggleStep(i):undefined} c={c}/>
+                ))}
+              </div>
+            </div>
+            <button onClick={goHome} style={sx.bg}>{t.resB}</button>
+          </div>
+        <BottomBar/><style>{GS}</style></div></div>
+      );
+    })()}
+
+    {!["lang","byok","no_credits","manage_auth","loading","home","new_goal","dash","result","save_prompt"].includes(vw)&&(
+      <div style={sx.pg}><div style={sx.w}><div style={{textAlign:"center",padding:40}}><BrandMark c={c} size="large"/><button onClick={()=>setVw("lang")} style={sx.bo}>Start</button></div><BottomBar/><style>{GS}</style></div></div>
+    )}
+  </>);
 }
