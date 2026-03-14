@@ -409,11 +409,14 @@ export default function App(){
         .catch(()=>{});
       const comp=ps.stappen.map(()=>false);
       const entry={id:Date.now(),timestamp:new Date().toISOString(),timezone:zone,behoefte:inp.trim(),resultaat:ps,lang,completed:comp,isAltruistic,altruismBonusClaimed:false};
-      if(auth==="in"){const nh=[entry,...hist];setHist(nh);ls.set(eKey(userRef.current),JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
-      else{const nh=[entry,...hist].slice(0,10);setHist(nh);ls.set(KEYS.guestHist,JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
-      // Show altruism popup after a short delay so result view renders first
-      if(isAltruistic){setTimeout(()=>setAltruismPopup(true),600);}
-      utrack("goal_result",{lang,isAltruistic,steps:ps.stappen?.length||0});
+      const navigate=()=>{
+        if(auth==="in"){const nh=[entry,...hist];setHist(nh);ls.set(eKey(userRef.current),JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
+        else{const nh=[entry,...hist].slice(0,10);setHist(nh);ls.set(KEYS.guestHist,JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
+        // Show altruism popup after a short delay so result view renders first
+        if(isAltruistic){setTimeout(()=>setAltruismPopup(true),600);}
+        utrack("goal_result",{lang,isAltruistic,steps:ps.stappen?.length||0});
+      };
+      if(isAltruistic){setTimeout(navigate,1800);}else{navigate();}
     }catch(e){setErr(t.err);setVw(auth==="in"?"new_goal":"home");}finally{setBusy(false);}
   };
 
