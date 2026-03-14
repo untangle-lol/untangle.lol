@@ -241,6 +241,7 @@ export default function App(){
   const woopKeys=["wish","outcome","obstacle","plan"];
   const [suggOpen,setSuggOpen]=useState(false);
   const [altOffset,setAltOffset]=useState(0);
+  const [dismissedAlts,setDismissedAlts]=useState([]);
   const userRef=useRef(null);
   const zone=useMemo(()=>tz(),[]);
 
@@ -574,7 +575,7 @@ export default function App(){
   const SuggChips=()=>{
     const localSet=new Set(recents.map(r=>r.toLowerCase()));
     const globals=globalSugg.filter(s=>!localSet.has(s.toLowerCase())).slice(0,4);
-    const altPool=(t.altruisticSugg||[]).filter(s=>!localSet.has(s.toLowerCase()));
+    const altPool=(t.altruisticSugg||[]).filter(s=>!localSet.has(s.toLowerCase())&&!dismissedAlts.includes(s));
     // Cycle 2 altruistic picks using altOffset so each open shows different ones
     const altPick=altPool.length===0?[]:altPool.length<=2?altPool:[altPool[altOffset%altPool.length],altPool[(altOffset+1)%altPool.length]];
     const interleaved=[];
@@ -587,6 +588,7 @@ export default function App(){
     const pick=(text)=>{setInp(text);setSuggOpen(false);};
     const toggle=()=>{setSuggOpen(o=>{if(!o)setAltOffset(n=>n+2);return!o;});};
     const chipRow={display:"flex",alignItems:"center",width:"100%",overflow:"hidden"};
+    const delBtn=(onClick)=><button onClick={(e)=>{e.stopPropagation();onClick();}} style={{flexShrink:0,background:"none",border:"none",padding:"10px 14px",color:c.tm,cursor:"pointer",fontSize:16,opacity:0.5,lineHeight:1}} title="Remove">×</button>;
     return(
       <div style={{marginTop:10,border:"1px solid "+c.cb,borderRadius:10,overflow:"hidden"}}>
         <button onClick={toggle} style={{width:"100%",background:c.sb,border:"none",borderBottom:suggOpen?"1px solid "+c.cb:"none",padding:"8px 12px",textAlign:"left",fontSize:12,fontWeight:600,color:c.tf,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
@@ -597,13 +599,14 @@ export default function App(){
           {recents.map((r,i)=>(
             <div key={"l"+i} style={{...chipRow,borderTop:i>0?"1px solid "+c.cb:"none",background:c.ab}}>
               <button onClick={()=>pick(r)} style={{flex:1,background:"none",border:"none",padding:"9px 12px",color:c.ac,cursor:"pointer",fontSize:13,textAlign:"left",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r}</button>
-              <button onClick={()=>delRecent(r)} style={{flexShrink:0,background:"none",border:"none",padding:"9px 12px",color:c.ac,cursor:"pointer",fontSize:15,opacity:0.5,lineHeight:1}} title="Remove">×</button>
+              {delBtn(()=>delRecent(r))}
             </div>
           ))}
           {interleaved.map((s,i)=>(
             <div key={"m"+i} style={{...chipRow,borderTop:(recents.length>0||i>0)?"1px solid "+c.cb:"none",background:s.kind==="alt"?"rgba(251,191,36,0.06)":"transparent"}}>
               <button onClick={()=>pick(s.text)} style={{flex:1,background:"none",border:"none",padding:"9px 12px",color:s.kind==="alt"?c.ac:c.tm,cursor:"pointer",fontSize:13,textAlign:"left",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{s.kind==="alt"?"💛 ":"💡 "}{s.text}</button>
-              {s.kind==="global"&&<button onClick={()=>delGlobal(s.text)} style={{flexShrink:0,background:"none",border:"none",padding:"9px 12px",color:c.tm,cursor:"pointer",fontSize:15,opacity:0.5,lineHeight:1}} title="Remove">×</button>}
+              {s.kind==="global"&&delBtn(()=>delGlobal(s.text))}
+              {s.kind==="alt"&&delBtn(()=>setDismissedAlts(d=>[...d,s.text]))}
             </div>
           ))}
         </div>}
