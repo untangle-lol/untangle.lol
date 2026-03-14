@@ -490,12 +490,16 @@ export default function App(){
   );
 
   const BottomBar=()=>(
-    <div style={{position:"fixed",bottom:0,left:0,right:0,padding:"8px 20px",paddingBottom:"calc(8px + env(safe-area-inset-bottom))",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderTop:"1px solid "+c.cb,display:"flex",justifyContent:"center",gap:12,alignItems:"center",zIndex:100}}>
-      <AuthBadge c={c} onManage={()=>setVw("manage_auth")} credits={credits} t={t}/>
-      {topUpMsg==="pending"&&<span style={{fontSize:11,color:c.tm,animation:"pulse 1s infinite"}}>{t.topUpPending}</span>}
-      {topUpMsg==="success"&&<span style={{fontSize:11,color:c.gr,fontWeight:600}}>✓ {t.topUpSuccess}</span>}
-      <a href={"/terms?lang="+(lang||"en")} target="_blank" rel="noreferrer" style={{fontSize:11,color:c.tf,textDecoration:"none",flexShrink:0}}>{t.terms||"Terms"}</a>
-      <a href={"/privacy?lang="+(lang||"en")} target="_blank" rel="noreferrer" style={{fontSize:11,color:c.tf,textDecoration:"none",flexShrink:0}}>{t.privacy||"Privacy"}</a>
+    <div style={{position:"fixed",bottom:0,left:0,right:0,paddingBottom:"env(safe-area-inset-bottom)",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderTop:"1px solid "+c.cb,display:"flex",flexDirection:"column",alignItems:"center",zIndex:100}}>
+      <div style={{display:"flex",justifyContent:"center",gap:12,alignItems:"center",padding:"8px 20px",width:"100%",boxSizing:"border-box"}}>
+        <AuthBadge c={c} onManage={()=>setVw("manage_auth")} credits={credits} t={t}/>
+        {topUpMsg==="pending"&&<span style={{fontSize:11,color:c.tm,animation:"pulse 1s infinite"}}>{t.topUpPending}</span>}
+        {topUpMsg==="success"&&<span style={{fontSize:11,color:c.gr,fontWeight:600}}>✓ {t.topUpSuccess}</span>}
+      </div>
+      <div style={{display:"flex",gap:16,justifyContent:"center",paddingBottom:6}}>
+        <a href={"/terms?lang="+(lang||"en")} target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none"}}>{t.terms||"Terms"}</a>
+        <a href={"/privacy?lang="+(lang||"en")} target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none"}}>{t.privacy||"Privacy"}</a>
+      </div>
     </div>
   );
 
