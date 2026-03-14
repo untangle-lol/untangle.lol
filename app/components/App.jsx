@@ -626,7 +626,7 @@ export default function App(){
   };
 
   // Honeypot field — visually hidden, bots fill it
-  const HoneypotField=()=>(=>(
+  const HoneypotField=()=>(
     <div style={{position:"absolute",left:"-9999px",top:"-9999px",width:1,height:1,overflow:"hidden"}} aria-hidden="true">
       <input type="text" name="website" tabIndex={-1} autoComplete="off" value={honeypot} onChange={e=>setHoneypot(e.target.value)}/>
     </div>
