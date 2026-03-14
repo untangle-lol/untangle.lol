@@ -247,7 +247,7 @@ export default function App(){
     }catch{}
     const gh=ls.get(KEYS.guestHist);if(gh){try{setHist(JSON.parse(gh));}catch{}}
     if(topupSuccess){setTopUpMsg("pending");pollCredits(ref);}
-    setVw(valid?langSv?"home":"lang":"lang");
+    setVw(langSv?"home":"lang");
     setReady(true);
   })();},[]);
 
@@ -300,7 +300,7 @@ export default function App(){
     try{await fetch("/api/auth/logout",{method:"POST"});}catch{}
     setAuth("out");setUser(null);userRef.current=null;setHist([]);setSteps(null);setInp("");setVw("home");setActiveId(null);setLocalComp([]);
   };
-  const pickLang=(code)=>{setLang(code);ls.set("untangle_lang",code);const {valid}=getCredential();setVw(valid?"home":"byok");};
+  const pickLang=(code)=>{setLang(code);ls.set("untangle_lang",code);setVw("home");};
 
   useEffect(()=>{
     if(!lang)return;
