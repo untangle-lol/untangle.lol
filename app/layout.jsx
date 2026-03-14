@@ -172,6 +172,11 @@ export default function RootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
+        <script
+          defer
+          src="https://stats.fabrikage.nl/script.js"
+          data-website-id="5df9894f-35a2-4ba6-8729-407a1baed305"
+        />
       </head>
       <body>
         {/*

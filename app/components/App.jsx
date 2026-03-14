@@ -3,6 +3,9 @@ import { useState, useEffect, useMemo, useRef } from "react";
 
 const ALTRUISM_BONUS_CREDITS = 10;
 
+// Umami custom event helper — safe no-op if script hasn't loaded yet
+const utrack=(event,data)=>{try{window.umami?.track(event,data);}catch{}};
+
 // ─── Config ──────────────────────────────────────────────────────────────────
 const ANTHROPIC_URL  = "https://api.anthropic.com/v1/messages";
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
@@ -241,6 +244,7 @@ export default function App(){
         if(savedLang)setLang(savedLang);
         setAuth("in");
         const hv=ls.get(eKey(email));if(hv){try{setHist(JSON.parse(hv));}catch{}}
+        if(signedIn)utrack("sign_in");
         if(topupSuccess){setTopUpMsg("pending");pollCredits(ref);}
         setVw("dash");setReady(true);return;
       }
@@ -259,6 +263,7 @@ export default function App(){
       const d=await r.json();
       if(d.credits>0){
         addCredits(d.credits);
+        utrack("credits_topped_up",{credits:d.credits});
         setTopUpMsg("success");
         setTimeout(()=>setTopUpMsg(null),5000);
         return;
@@ -292,15 +297,17 @@ export default function App(){
       setApiKeyErr(t.keyErrNet);
     }
     setBusy(false);
+    utrack("byok_key_saved",{provider});
     setVw(auth==="in"?"dash":lang?"home":"lang");
   };
 
   const removeAuth=()=>{ls.del(KEYS.apiKey);setVw(auth==="in"?"dash":"home");};
   const logout=async()=>{
     try{await fetch("/api/auth/logout",{method:"POST"});}catch{}
+    utrack("sign_out");
     setAuth("out");setUser(null);userRef.current=null;setHist([]);setSteps(null);setInp("");setVw("home");setActiveId(null);setLocalComp([]);
   };
-  const pickLang=(code)=>{setLang(code);ls.set("untangle_lang",code);setVw("home");};
+  const pickLang=(code)=>{setLang(code);ls.set("untangle_lang",code);utrack("language_selected",{lang:code});setVw("home");};
 
   useEffect(()=>{
     if(!lang)return;
@@ -344,6 +351,7 @@ export default function App(){
       if(credits<=0){setVw("no_credits");return;}
     }
     setBusy(true);setErr(null);setSteps(null);setVw("loading");
+    utrack("goal_submitted",{lang,mode:valid?"byok":"free"});
     try{
       let tx,inputTokens,outputTokens,isAltruistic=false;
       if(valid){
@@ -371,6 +379,7 @@ export default function App(){
       else{const nh=[entry,...hist].slice(0,10);setHist(nh);ls.set(KEYS.guestHist,JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
       // Show altruism popup after a short delay so result view renders first
       if(isAltruistic){setTimeout(()=>setAltruismPopup(true),600);}
+      utrack("goal_result",{lang,isAltruistic,steps:ps.stappen?.length||0});
     }catch(e){setErr(t.err);setVw(auth==="in"?"new_goal":"home");}finally{setBusy(false);}
   };
 
@@ -378,6 +387,7 @@ export default function App(){
     setLocalComp(prev=>{
       const next=[...prev];next[idx]=!next[idx];
       const allDone=next.every(Boolean)&&next.length>0;
+      if(allDone)utrack("goal_completed",{lang});
       // Save updated completion
       const updateHist=(ph)=>{
         const nh=ph.map(h=>{
@@ -386,6 +396,7 @@ export default function App(){
           if(allDone&&h.isAltruistic&&!h.altruismBonusClaimed){
             // award credits client-side immediately
             addCredits(ALTRUISM_BONUS_CREDITS);
+            utrack("altruism_bonus_earned",{credits:ALTRUISM_BONUS_CREDITS});
             setPendingAltruismId(null);
             setTimeout(()=>setAltruismBonusPopup(true),300);
             return{...h,completed:next,altruismBonusClaimed:true};
@@ -404,6 +415,7 @@ export default function App(){
   const startTopUp=async()=>{
     if(topUpBusy)return;
     setTopUpBusy(true);
+    utrack("topup_started");
     try{
       const ref=clientRef||ls.get(KEYS.clientRef);
       const r=await fetch("/api/stripe/checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientRef:ref})});
