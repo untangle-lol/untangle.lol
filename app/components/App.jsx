@@ -1138,9 +1138,9 @@ export default function App(){
               autoFocus
             />
             {err&&<div style={sx.err}>{err}</div>}
-            <div style={{display:"flex",gap:10,marginTop:14}}>
+            <div style={{display:"flex",gap:10,marginTop:14,width:"100%"}}>
               {woopStep>0&&(
-                <button onClick={()=>{setErr(null);setWoopStep(s=>s-1);}} style={{...sx.bg,marginTop:0,flex:"0 0 auto",padding:"13px 16px"}}>
+                <button onClick={()=>{setErr(null);setWoopStep(s=>s-1);}} style={{...sx.bg,marginTop:0,width:"auto",flex:"0 0 auto",padding:"13px 16px"}}>
                   {t.back||"← Back"}
                 </button>
               )}
