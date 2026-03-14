@@ -3,8 +3,12 @@ import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 // ─── Config ──────────────────────────────────────────────────────────────────
 const ANTHROPIC_URL  = "https://api.anthropic.com/v1/messages";
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
-const MODEL_ANTHROPIC   = "claude-haiku-4-5";
-const MODEL_OPENROUTER  = "anthropic/claude-haiku-4-5";
+const MODEL_ANTHROPIC   = "claude-sonnet-4-6";
+const MODEL_OPENROUTER  = "anthropic/claude-sonnet-4-6";
+// Pricing per 1M tokens (USD) — claude-sonnet-4-6
+const PRICE = { input: 3.00, output: 15.00 };
+function calcCost(inp,out){ return (inp/1e6)*PRICE.input + (out/1e6)*PRICE.output; }
+function fmtCost(usd){ return usd<0.001?"<$0.001":"$"+usd.toFixed(4); }
 
 // ─── localStorage helpers (replaces window.storage) ─────────────────────────
 const ls = {
@@ -19,6 +23,7 @@ const KEYS = {
   apiKey:   "untangle_apikey",
   recents:  "untangle_recents",
   guestHist:"untangle_guest_hist",
+  usage:    "untangle_usage",
 };
 
 function eKey(email) { return "untangle_hist_" + email.toLowerCase().replace(/[^a-z0-9]/g,"_"); }
@@ -131,6 +136,7 @@ export default function App(){
   const [apiKeyErr,setApiKeyErr]=useState("");
   const [ready,setReady]=useState(false);
   const [recents,setRecents]=useState([]);
+  const [usage,setUsage]=useState({calls:0,inputTokens:0,outputTokens:0,costUsd:0});
   const userRef=useRef(null);
   const zone=useMemo(()=>tz(),[]);
 
@@ -158,6 +164,7 @@ export default function App(){
     const sv=ls.get(KEYS.theme);if(sv)setTm(sv);
     const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     const rv=ls.get(KEYS.recents);if(rv){try{setRecents(JSON.parse(rv));}catch{}}
+    const uv=ls.get(KEYS.usage);if(uv){try{setUsage(JSON.parse(uv));}catch{}}
 
     // Check credentials
     const {valid}=getCredential();
@@ -221,12 +228,16 @@ export default function App(){
       const r=await fetch(OPENROUTER_URL,{method:"POST",headers:buildHeaders(key),body:JSON.stringify({model:MODEL_OPENROUTER,max_tokens:maxTokens,messages})});
       if(!r.ok)throw new Error("fail");
       const d=await r.json();if(d.error)throw new Error(d.error.message);
-      return(d.choices||[]).map(c=>c.message?.content||"").join("");
+      const text=(d.choices||[]).map(c=>c.message?.content||"").join("");
+      const u=d.usage||{};
+      return{text,inputTokens:u.prompt_tokens||0,outputTokens:u.completion_tokens||0};
     }else{
       const r=await fetch(ANTHROPIC_URL,{method:"POST",headers:buildHeaders(key),body:JSON.stringify({model:MODEL_ANTHROPIC,max_tokens:maxTokens,messages})});
       if(!r.ok)throw new Error("fail");
       const d=await r.json();if(d.error)throw new Error(d.error.message);
-      return(d.content||[]).map(b=>b.text||"").join("");
+      const text=(d.content||[]).map(b=>b.text||"").join("");
+      const u=d.usage||{};
+      return{text,inputTokens:u.input_tokens||0,outputTokens:u.output_tokens||0};
     }
   };
 
