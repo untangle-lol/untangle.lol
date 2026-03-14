@@ -33,7 +33,7 @@ const KEYS = {
    clientRef:"untangle_client_ref",
 };
 
-const FREE_CREDITS = 20;
+const FREE_CREDITS = 10;
 
 function eKey(email) { return "untangle_hist_" + email.toLowerCase().replace(/[^a-z0-9]/g,"_"); }
 
