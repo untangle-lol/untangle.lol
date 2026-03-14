@@ -272,7 +272,7 @@ export default function App(){
     pg:{minHeight:"100dvh",background:c.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-start",padding:"12px 20px",paddingTop:"calc(12px + env(safe-area-inset-top))",paddingBottom:"calc(20px + env(safe-area-inset-bottom))",fontFamily:"'Inter',-apple-system,sans-serif",transition:"background 0.4s"},
     w:{width:"100%",maxWidth:540,flex:1,display:"flex",flexDirection:"column",justifyContent:"center"},
     cd:{background:c.card,borderRadius:16,padding:24,border:"1px solid "+c.cb,boxShadow:c.sh,transition:"all 0.3s"},
-    ip:{width:"100%",background:c.ib,border:"1px solid "+c.ibr,borderRadius:10,padding:"13px 16px",color:c.tx,fontSize:15,outline:"none",boxSizing:"border-box"},
+    ip:{width:"100%",background:c.ib,border:"2px solid "+c.ibr,borderRadius:10,padding:"13px 16px",color:c.tx,fontSize:16,outline:"none",boxSizing:"border-box"},
     bo:{width:"100%",marginTop:14,padding:"13px 20px",background:c.ag,color:c.bt,border:"none",borderRadius:10,fontSize:15,fontWeight:600,cursor:"pointer"},
     bd:{width:"100%",marginTop:14,padding:"13px 20px",background:c.am,color:c.tm,border:"none",borderRadius:10,fontSize:15,fontWeight:600,cursor:"not-allowed"},
     bg:{width:"100%",marginTop:12,padding:"12px 20px",background:c.ghb,color:c.tm,border:"1px solid "+c.ghr,borderRadius:10,fontSize:14,fontWeight:500,cursor:"pointer"},
@@ -281,15 +281,13 @@ export default function App(){
   };
 
   const Bar=({showLogin,showAuth=true})=>(
-    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,flexWrap:"wrap",gap:8}}>
-      <div style={{display:"flex",alignItems:"center",gap:8}}>
-        <button onClick={()=>setVw("lang")} style={{background:"none",border:"none",color:c.tf,fontSize:12,cursor:"pointer",padding:0}}>🌍 {t.lSel}</button>
-        <TTog mode={tm} set={chTm} c={c}/>
-      </div>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,gap:8}}>
+      <button onClick={()=>setVw("lang")} style={{background:"none",border:"none",color:c.tf,fontSize:12,cursor:"pointer",padding:0,flexShrink:0}}>🌍 {t.lSel}</button>
       {showAuth&&<div style={{display:"flex",gap:8,alignItems:"center"}}>
         <AuthBadge c={c} onManage={()=>setVw("manage_auth")}/>
         {!showLogin&&user&&<button onClick={logout} style={{background:"none",border:"none",color:c.tf,fontSize:12,cursor:"pointer"}}>{t.out}</button>}
       </div>}
+      <TTog mode={tm} set={chTm} c={c}/>
     </div>
   );
 
@@ -358,7 +356,8 @@ export default function App(){
     <div style={sx.pg}><div style={sx.w}><Bar showLogin={false}/>
       <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c} size="large"/><h1 style={{fontSize:26,fontWeight:700,color:c.tx,margin:"10px 0 0"}}>{t.hero}</h1><p style={{color:c.tm,fontSize:14,marginTop:4}}>{t.heroS}</p></div>
       <div style={sx.cd}>
-        <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={3} style={{...sx.ip,resize:"none",lineHeight:1.5}}/>
+        <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
+        <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
         {recents.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:10}}>{recents.map((r,i)=>(<button key={i} onClick={()=>setInp(r)} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:20,padding:"4px 12px",fontSize:12,color:c.tm,cursor:"pointer",maxWidth:"100%",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r}</button>))}</div>}
         <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
       </div>
@@ -411,7 +410,8 @@ export default function App(){
     <div style={sx.pg}><div style={sx.w}><Bar showLogin={false}/>
       <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/><h1 style={{fontSize:22,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>{t.hero}</h1><p style={{color:c.tm,fontSize:13,marginTop:2}}>{t.heroS}</p></div>
       <div style={sx.cd}>
-        <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={3} style={{...sx.ip,resize:"none",lineHeight:1.5}}/>
+        <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
+        <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
         {recents.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:10}}>{recents.map((r,i)=>(<button key={i} onClick={()=>setInp(r)} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:20,padding:"4px 12px",fontSize:12,color:c.tm,cursor:"pointer",maxWidth:"100%",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r}</button>))}</div>}
         <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
       </div>
