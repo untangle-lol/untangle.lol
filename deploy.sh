@@ -8,7 +8,7 @@ NEW_CONTAINER="untangle_web_new"
 OLD_CONTAINER="untangle_web"
 
 echo "[deploy] pulling latest code..."
-GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/github_actions_deploy -o StrictHostKeyChecking=no" git -C "$REPO_DIR" pull origin main
+git -C "$REPO_DIR" pull origin main
 
 echo "[deploy] building new image..."
 docker build -t "$IMAGE:new" "$REPO_DIR"
