@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { signSession, sessionCookieHeader } from "../../../../lib/session.js";
+import { signSession, sessionCookieHeader } from "../../../../../lib/session.js";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
