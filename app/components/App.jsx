@@ -405,23 +405,8 @@ export default function App(){
       const next=[...prev];next[idx]=!next[idx];
       const allDone=next.every(Boolean)&&next.length>0;
       if(allDone)utrack("goal_completed",{lang});
-      // Save updated completion
-      const updateHist=(ph)=>{
-        const nh=ph.map(h=>{
-          if(h.id!==activeId)return h;
-          // If all steps done and this is an altruistic goal with unclaimed bonus → award
-          if(allDone&&h.isAltruistic&&!h.altruismBonusClaimed){
-            // award credits client-side immediately
-            addCredits(ALTRUISM_BONUS_CREDITS);
-            utrack("altruism_bonus_earned",{credits:ALTRUISM_BONUS_CREDITS});
-            setPendingAltruismId(null);
-            setTimeout(()=>setAltruismBonusPopup(true),300);
-            return{...h,completed:next,altruismBonusClaimed:true};
-          }
-          return{...h,completed:next};
-        });
-        return nh;
-      };
+      // Save updated completion state only (bonus awarded on goHome)
+      const updateHist=(ph)=>ph.map(h=>h.id!==activeId?h:{...h,completed:next});
       if(activeId&&auth==="in"){setHist(ph=>{const nh=updateHist(ph);ls.set(eKey(userRef.current),JSON.stringify(nh));return nh;});}
       else if(activeId){setHist(ph=>{const nh=updateHist(ph);ls.set(KEYS.guestHist,JSON.stringify(nh));return nh;});}
       return next;
@@ -446,7 +431,22 @@ export default function App(){
   const openEntry=(entry)=>{setSteps(entry.resultaat);setActiveId(entry.id);setLocalComp(entry.completed||entry.resultaat.stappen.map(()=>false));setVw("result");};
   const del=(id)=>{const nh=hist.filter(h=>h.id!==id);setHist(nh);if(auth==="in")ls.set(eKey(userRef.current),JSON.stringify(nh));else ls.set(KEYS.guestHist,JSON.stringify(nh));};
   const clrAll=()=>{setHist([]);if(auth==="in")ls.set(eKey(userRef.current),"[]");else ls.set(KEYS.guestHist,"[]");};
-  const goHome=()=>{setInp("");setSteps(null);setErr(null);setActiveId(null);setLocalComp([]);setVw(auth==="in"?"dash":"home");};
+  const goHome=()=>{
+    // Check if returning from a completed altruistic goal that hasn't been rewarded yet
+    if(activeId){
+      const entry=hist.find(h=>h.id===activeId);
+      const allDone=localComp.length>0&&localComp.every(Boolean);
+      if(entry&&entry.isAltruistic&&!entry.altruismBonusClaimed&&allDone){
+        addCredits(ALTRUISM_BONUS_CREDITS);
+        utrack("altruism_bonus_earned",{credits:ALTRUISM_BONUS_CREDITS});
+        const markClaimed=(ph)=>ph.map(h=>h.id===activeId?{...h,altruismBonusClaimed:true}:h);
+        if(auth==="in"){setHist(ph=>{const nh=markClaimed(ph);ls.set(eKey(userRef.current),JSON.stringify(nh));return nh;});}
+        else{setHist(ph=>{const nh=markClaimed(ph);ls.set(KEYS.guestHist,JSON.stringify(nh));return nh;});}
+        setTimeout(()=>setAltruismBonusPopup(true),300);
+      }
+    }
+    setInp("");setSteps(null);setErr(null);setActiveId(null);setLocalComp([]);setVw(auth==="in"?"dash":"home");
+  };
   const prog=(e)=>{const tt=e.resultaat?.stappen?.length||0;const dn=(e.completed||[]).filter(Boolean).length;return{dn,tt,pct:tt>0?Math.round(dn/tt*100):0};};
 
   const delRecent=(text)=>{
