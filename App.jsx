@@ -249,10 +249,12 @@ export default function App(){
     if(!valid){setVw("byok");return;}
     setBusy(true);setErr(null);setSteps(null);setVw("loading");
     try{
-      const tx=await callAPI([{role:"user",content:prompt(inp.trim())}],1000);
+      const {text:tx,inputTokens,outputTokens}=await callAPI([{role:"user",content:prompt(inp.trim())}],1000);
       const ps=JSON.parse(tx.replace(/```json\s?|```/g,"").trim());
       if(!ps.titel||!ps.stappen)throw new Error("bad");
       setSteps(ps);
+      // Accumulate usage
+      setUsage(prev=>{const next={calls:prev.calls+1,inputTokens:prev.inputTokens+inputTokens,outputTokens:prev.outputTokens+outputTokens,costUsd:prev.costUsd+calcCost(inputTokens,outputTokens)};ls.set(KEYS.usage,JSON.stringify(next));return next;});
       // Save to recents
       const trimmed=inp.trim();
       setRecents(prev=>{const next=[trimmed,...prev.filter(r=>r!==trimmed)].slice(0,5);ls.set(KEYS.recents,JSON.stringify(next));return next;});
@@ -280,7 +282,7 @@ export default function App(){
 
   // ─── Shared styles ────────────────────────────────────────────────────────
   const sx={
-    pg:{minHeight:"100dvh",background:c.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-start",padding:"12px 20px",paddingTop:"calc(12px + env(safe-area-inset-top))",paddingBottom:"calc(20px + env(safe-area-inset-bottom))",fontFamily:"'Inter',-apple-system,sans-serif",transition:"background 0.4s"},
+    pg:{minHeight:"100dvh",background:c.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-start",padding:"12px 20px",paddingTop:"calc(12px + env(safe-area-inset-top))",paddingBottom:"calc(68px + env(safe-area-inset-bottom))",fontFamily:"'Inter',-apple-system,sans-serif",transition:"background 0.4s"},
     w:{width:"100%",maxWidth:540,flex:1,display:"flex",flexDirection:"column",justifyContent:"center"},
     cd:{background:c.card,borderRadius:16,padding:24,border:"1px solid "+c.cb,boxShadow:c.sh,transition:"all 0.3s"},
     ip:{width:"100%",background:c.ib,border:"2px solid "+c.ibr,borderRadius:10,padding:"13px 16px",color:c.tx,fontSize:16,outline:"none",boxSizing:"border-box"},
@@ -294,11 +296,15 @@ export default function App(){
   const Bar=({showLogin,showAuth=true})=>(
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,gap:8}}>
       <button onClick={()=>setVw("lang")} style={{background:"none",border:"none",color:c.tf,fontSize:12,cursor:"pointer",padding:0,flexShrink:0}}>🌍 {t.lSel}</button>
-      {showAuth&&<div style={{display:"flex",gap:8,alignItems:"center"}}>
-        <AuthBadge c={c} onManage={()=>setVw("manage_auth")}/>
-        {!showLogin&&user&&<button onClick={logout} style={{background:"none",border:"none",color:c.tf,fontSize:12,cursor:"pointer"}}>{t.out}</button>}
-      </div>}
+      {showAuth&&!showLogin&&user&&<button onClick={logout} style={{background:"none",border:"none",color:c.tf,fontSize:12,cursor:"pointer"}}>{t.out}</button>}
       <TTog mode={tm} set={chTm} c={c}/>
+    </div>
+  );
+
+  // Fixed bottom footer with API key badge
+  const BottomBar=()=>(
+    <div style={{position:"fixed",bottom:0,left:0,right:0,padding:"8px 20px",paddingBottom:"calc(8px + env(safe-area-inset-bottom))",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderTop:"1px solid "+c.cb,display:"flex",justifyContent:"center",zIndex:100}}>
+      <AuthBadge c={c} onManage={()=>setVw("manage_auth")}/>
     </div>
   );
 
@@ -319,29 +325,53 @@ export default function App(){
             <span style={{fontSize:28}}>{l.flag}</span><span style={{color:c.tx,fontSize:15,fontWeight:500}}>{l.label}</span>
           </button>))}
       </div>
-    <style>{GS}</style></div></div>
+    <BottomBar/><style>{GS}</style></div></div>
   );
 
   // ─── BYOK FORM ────────────────────────────────────────────────────────────
   if(vw==="byok")return(
     <div style={sx.pg}><div style={sx.w}>
       <Bar showLogin={false} showAuth={false}/>
-      <div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>🔑 {t.byokL}</h1></div>
+      <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>Bring your own API key</h1></div>
+      {/* Provider cards */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
+        <div style={{...sx.cd,padding:"14px 16px"}}>
+          <div style={{fontSize:13,fontWeight:700,color:c.tx,marginBottom:6}}>Anthropic</div>
+          <div style={{fontSize:12,color:c.tm,lineHeight:1.5,marginBottom:8}}>Direct access to Claude. Keys start with <code style={{background:c.cb,borderRadius:4,padding:"1px 5px",color:c.ac,fontSize:11}}>sk-ant-</code></div>
+          <ol style={{margin:0,padding:"0 0 0 16px",fontSize:12,color:c.tm,lineHeight:1.8}}>
+            <li>Go to console.anthropic.com</li>
+            <li>Sign up / log in</li>
+            <li>Settings → API Keys → Create key</li>
+          </ol>
+          <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noreferrer" style={{display:"block",marginTop:10,fontSize:12,color:c.ac,fontWeight:600}}>Get Anthropic key →</a>
+        </div>
+        <div style={{...sx.cd,padding:"14px 16px"}}>
+          <div style={{fontSize:13,fontWeight:700,color:c.tx,marginBottom:6}}>OpenRouter</div>
+          <div style={{fontSize:12,color:c.tm,lineHeight:1.5,marginBottom:8}}>Pay-as-you-go. Often cheaper. Keys start with <code style={{background:c.cb,borderRadius:4,padding:"1px 5px",color:c.ac,fontSize:11}}>sk-or-</code></div>
+          <ol style={{margin:0,padding:"0 0 0 16px",fontSize:12,color:c.tm,lineHeight:1.8}}>
+            <li>Go to openrouter.ai</li>
+            <li>Sign up / log in</li>
+            <li>Keys → Create key</li>
+          </ol>
+          <a href="https://openrouter.ai/keys" target="_blank" rel="noreferrer" style={{display:"block",marginTop:10,fontSize:12,color:c.ac,fontWeight:600}}>Get OpenRouter key →</a>
+        </div>
+      </div>
       <div style={sx.cd}>
         <label style={{fontSize:13,color:c.tm,fontWeight:500,display:"block",marginBottom:8}}>{t.byokL}</label>
         <input type="password" value={apiKeyInput} onChange={e=>setApiKeyInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&saveApiKey()} placeholder={t.byokPh} style={sx.ip} autoFocus/>
         {apiKeyErr&&<div style={sx.err}>{apiKeyErr}</div>}
-        <p style={sx.note}>{t.byokNote} <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noreferrer" style={{color:c.ac}}>Get a key →</a></p>
+        <p style={sx.note}>Stored in your browser only. Never sent anywhere except the provider's API.</p>
         <button onClick={saveApiKey} disabled={busy||!apiKeyInput.trim()} style={!apiKeyInput.trim()||busy?sx.bd:sx.bo}>{busy?"Checking...":t.byokSave}</button>
         <button onClick={()=>setVw(lang?"home":"lang")} style={sx.bg}>{t.back}</button>
       </div>
-    <style>{GS}</style></div></div>
+    <BottomBar/><style>{GS}</style></div></div>
   );
 
   // ─── MANAGE AUTH ──────────────────────────────────────────────────────────
   if(vw==="manage_auth"){
     const {key,provider}=getCredential();
     const providerLabel=provider==="openrouter"?"OpenRouter":"Anthropic";
+    const resetUsage=()=>{const z={calls:0,inputTokens:0,outputTokens:0,costUsd:0};setUsage(z);ls.del(KEYS.usage);};
     return(
       <div style={sx.pg}><div style={sx.w}>
         <Bar showLogin={false} showAuth={false}/>
@@ -351,16 +381,39 @@ export default function App(){
             <div style={{fontSize:13,color:c.tm,marginBottom:4}}>API Key · <span style={{fontWeight:600,color:c.ac}}>{providerLabel}</span></div>
             <div style={{fontSize:14,fontWeight:500,color:c.ac,fontFamily:"monospace"}}>{key.slice(0,14)}…</div>
           </div>}
+          {/* Usage stats */}
+          <div style={{padding:"14px 16px",background:c.sb,border:"1px solid "+c.sr,borderRadius:10,marginBottom:12}}>
+            <div style={{fontSize:13,fontWeight:600,color:c.tm,marginBottom:10}}>Usage stats</div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+              <div style={{background:c.card,borderRadius:8,padding:"10px 12px",border:"1px solid "+c.cb}}>
+                <div style={{fontSize:11,color:c.tf,marginBottom:2}}>API calls</div>
+                <div style={{fontSize:20,fontWeight:700,color:c.tx}}>{usage.calls}</div>
+              </div>
+              <div style={{background:c.card,borderRadius:8,padding:"10px 12px",border:"1px solid "+c.cb}}>
+                <div style={{fontSize:11,color:c.tf,marginBottom:2}}>Est. cost</div>
+                <div style={{fontSize:20,fontWeight:700,color:c.ac}}>{fmtCost(usage.costUsd)}</div>
+              </div>
+              <div style={{background:c.card,borderRadius:8,padding:"10px 12px",border:"1px solid "+c.cb}}>
+                <div style={{fontSize:11,color:c.tf,marginBottom:2}}>Input tokens</div>
+                <div style={{fontSize:16,fontWeight:600,color:c.tx}}>{usage.inputTokens.toLocaleString()}</div>
+              </div>
+              <div style={{background:c.card,borderRadius:8,padding:"10px 12px",border:"1px solid "+c.cb}}>
+                <div style={{fontSize:11,color:c.tf,marginBottom:2}}>Output tokens</div>
+                <div style={{fontSize:16,fontWeight:600,color:c.tx}}>{usage.outputTokens.toLocaleString()}</div>
+              </div>
+            </div>
+            <button onClick={resetUsage} style={{...sx.bg,marginTop:10,fontSize:12,padding:"8px 14px"}}>Reset stats</button>
+          </div>
           <button onClick={()=>setVw("byok")} style={sx.bo}>🔑 {t.byok}</button>
           <button onClick={removeAuth} style={{...sx.bg,color:"#ef4444",borderColor:"rgba(239,68,68,0.3)",marginTop:12}}>{t.rmKey}</button>
           <button onClick={()=>setVw(auth==="in"?"dash":"home")} style={sx.bg}>{t.back}</button>
         </div>
-      <style>{GS}</style></div></div>
+      <BottomBar/><style>{GS}</style></div></div>
     );
   }
 
   // ─── LOADING ──────────────────────────────────────────────────────────────
-  if(vw==="loading")return(<div style={sx.pg}><div style={sx.w}><Bar showLogin={false} showAuth={false}/><div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/></div><div style={sx.cd}><Loader c={c}/></div><style>{GS}</style></div></div>);
+  if(vw==="loading")return(<div style={sx.pg}><div style={sx.w}><Bar showLogin={false} showAuth={false}/><div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/></div><div style={sx.cd}><Loader c={c}/></div><BottomBar/><style>{GS}</style></div></div>);
 
   // ─── HOME (guest) ─────────────────────────────────────────────────────────
   if((vw==="home"||vw==="new_goal")&&auth!=="in")return(
@@ -389,7 +442,7 @@ export default function App(){
           </div>);})}
         {hist.length>3&&<button onClick={clrAll} style={{...sx.bg,marginTop:4,color:"#ef4444",borderColor:"rgba(239,68,68,0.2)"}}>{t.clr}</button>}
       </div>}
-    <style>{GS}</style></div></div>
+    <BottomBar/><style>{GS}</style></div></div>
   );
 
   // ─── DASHBOARD ────────────────────────────────────────────────────────────
@@ -413,7 +466,7 @@ export default function App(){
           </div>);})}
           {hist.length>3&&<button onClick={clrAll} style={{...sx.bg,marginTop:4,color:"#ef4444",borderColor:"rgba(239,68,68,0.2)"}}>{t.clr}</button>}
         </div>
-      )}<style>{GS}</style></div></div>
+      )}<BottomBar/><style>{GS}</style></div></div>
   );
 
   // ─── NEW GOAL (logged in) ─────────────────────────────────────────────────
@@ -427,7 +480,7 @@ export default function App(){
         <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
       </div>
       <button onClick={()=>setVw("dash")} style={sx.bg}>{t.back}</button>
-    <style>{GS}</style></div></div>
+    <BottomBar/><style>{GS}</style></div></div>
   );
 
   // ─── RESULT ───────────────────────────────────────────────────────────────
@@ -454,10 +507,10 @@ export default function App(){
           </div>
           <button onClick={goHome} style={sx.bg}>{t.resB}</button>
         </div>
-      <style>{GS}</style></div></div>
+      <BottomBar/><style>{GS}</style></div></div>
     );
   }
 
   // Fallback
-  return(<div style={sx.pg}><div style={sx.w}><div style={{textAlign:"center",padding:40}}><BrandMark c={c} size="large"/><button onClick={()=>setVw("lang")} style={sx.bo}>Start</button></div><style>{GS}</style></div></div>);
+  return(<div style={sx.pg}><div style={sx.w}><div style={{textAlign:"center",padding:40}}><BrandMark c={c} size="large"/><button onClick={()=>setVw("lang")} style={sx.bo}>Start</button></div><BottomBar/><style>{GS}</style></div></div>);
 }
