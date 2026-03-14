@@ -106,6 +106,14 @@ const LANGS = [
   altruismLoadingMsg:"💛 Estás haciendo algo maravilloso por los demás.",
   altruisticSugg:["Quiero hacer voluntariado en un banco de alimentos","Quiero cuidar a un familiar","Quiero crear un huerto comunitario","Quiero donar sangre regularmente","Quiero ser mentor de un joven"],
   phSugg:["Quiero dormir mejor","Quiero aprender guitarra","Quiero hacer ejercicio cada día","Quiero escribir un libro","Quiero comer más sano"]},
+
+  {code:"ar",label:"العربية",flag:"🇸🇦",rtl:true,ph:"مثلاً: 'أريد النوم بشكل أفضل' أو 'أريد تعلم العزف على الجيتار' 🎸",hero:"ماذا تريد أن تحقق؟",heroS:["فقط اكتبه.","لا يوجد سؤال غريب.","صغيراً كان أم كبيراً — كل شيء مقبول.","ما الذي يشغل تفكيرك؟","اكتبه، وسنساعدك على المضي قدماً."],go:"لنبدأ ←",back:"→ رجوع",out:"تسجيل الخروج",clr:"🗑️ مسح الكل",nG:"➕ هدف جديد",noG:"لا أهداف بعد. حان وقت البداية!",prog:"التقدم",allD:"🎉 تم الإنجاز!",sOf:"من",eth:"🌍 نصائح باحترام للإنسان والكوكب والرفاهية",err:"عذراً، حاول مرة أخرى!",resB:"→ العودة إلى النظرة العامة",dW:"مرحباً بعودتك",dS:"هذه أهدافك.",byok:"أدخل مفتاح API",byokH1:"استخدم مفتاح API الخاص بك",chAuth:"تغيير المصادقة",rmKey:"إزالة المفتاح",lSel:"اللغة",byokL:"مفتاح API (Anthropic أو OpenRouter)",byokPh:"sk-ant-... أو sk-or-...",byokSave:"حفظ والبدء",byokNote:"محفوظ في متصفحك فقط. لن يُشارَك أبداً.",apiKeyBadge:"🔑 مفتاح API",apiKeyUnset:"تعيين",checking:"جارٍ التحقق...",chooseLang:"اختر لغتك",byokAnthTitle:"Anthropic",byokAnthDesc:"وصول مباشر إلى Claude. تبدأ المفاتيح بـ",byokAnthS1:"اذهب إلى console.anthropic.com",byokAnthS2:"سجّل / سجّل الدخول",byokAnthS3:"الإعدادات ← مفاتيح API ← إنشاء مفتاح",byokAnthLink:"احصل على مفتاح Anthropic ←",byokOrTitle:"OpenRouter",byokOrDesc:"ادفع حسب الاستخدام. غالباً أرخص. تبدأ المفاتيح بـ",byokOrS1:"اذهب إلى openrouter.ai",byokOrS2:"سجّل / سجّل الدخول",byokOrS3:"المفاتيح ← إنشاء مفتاح",byokOrLink:"احصل على مفتاح OpenRouter ←",keyErrFmt:"يجب أن يبدأ المفتاح بـ sk-ant- أو sk-or-",keyErrInv:"مفتاح غير صالح: ",keyErrNet:"تعذّر الوصول إلى API — تم حفظ المفتاح على أي حال.",usageStat:"إحصائيات الاستخدام",apiCalls:"استدعاءات API",estCost:"التكلفة التقديرية",inputTok:"رموز الإدخال",outputTok:"رموز الإخراج",resetStats:"إعادة تعيين الإحصائيات",rmTip:"إزالة",start:"ابدأ",cred:"رصيد",credFree:"رصيد مجاني",credOut:"نفد الرصيد",credOutMsg:"لقد نفد رصيدك المجاني. أضف مفتاح API الخاص بك للمتابعة — مجاني من Anthropic أو OpenRouter.",credByok:"أضف مفتاحك ←",lp:["🧠 جارٍ التفكير...","☕ تحضير الأفكار...","🔮 الكرة السحرية تعمل...","🧙 نسج السحر...","🤔 تأمل عميق...","🎯 ضبط الهدف..."],
+  topUp:"شحن الرصيد",topUpDesc:"10 رصيد مقابل €1.00",topUpBtn:"ادفع عبر Stripe ←",topUpSuccess:"تمت عملية الدفع! سيتم إضافة الرصيد قريباً.",topUpPending:"جارٍ معالجة الرصيد...",topUpPopupTitle:"تمت إضافة الرصيد! 🎉",topUpPopupMsg:"untangle.lol مجاني وخاص — بدون إعلانات أو جمع بيانات. يُبقي الرصيدُ الذكاءَ الاصطناعي يعمل ويدعم منتجاً عادلاً ومستقلاً. شكراً لك!",topUpPopupBtn:"رائع، هيا نبدأ!",
+  altruismPopupTitle:"يا له من تصرف رائع! 💛",altruismPopupMsg:"هدفك يتعلق بمساعدة الآخرين — كالتطوع أو رعاية الآخرين أو دعم قضية خيرية. هذا يستحق مكافأة: أكمل جميع الخطوات واحصل تلقائياً على 10 رصيد مجاني!",altruismPopupBtn:"رائع، لنبدأ!",altruismBonusTitle:"🎁 +10 رصيد مكتسب!",altruismBonusMsg:"تهانينا! لقد أكملت هدفك الإيثاري. شكراً على جهودك لمساعدة الآخرين، أضفنا 10 رصيد مجاني إلى حسابك.",altruismBonusBtn:"رائع، شكراً!",altruismTeaser:"💛 هل هدفك يتعلق بمساعدة الآخرين؟ اكسب 10 رصيد مجاني عند إكمال جميع الخطوات.",analyticsNote:"نجمع إحصائيات استخدام مجهولة (بدون كوكيز أو بيانات شخصية).",
+  signIn:"تسجيل الدخول بـ Google",signInSub:"احفظ أهدافك على جميع أجهزتك",signOut:"تسجيل الخروج",profile:"الملف الشخصي",terms:"الشروط",privacy:"الخصوصية",stats:"الإحصائيات",
+  altruismLoadingMsg:"💛 أنت تفعل شيئاً رائعاً للآخرين.",
+  altruisticSugg:["أريد التطوع في بنك الطعام","أريد رعاية أحد أفراد العائلة","أريد إنشاء حديقة مجتمعية","أريد التبرع بالدم بانتظام","أريد أن أكون مرشداً لشاب"],
+  phSugg:["أريد النوم بشكل أفضل","أريد تعلم العزف على الجيتار","أريد ممارسة الرياضة يومياً","أريد كتابة كتاب","أريد تناول طعام أكثر صحة"]},
 ];
 
 const TH = {
@@ -117,7 +125,7 @@ const GS=`@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:
 
 function tz(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone}catch{return"UTC"}}
 function fmtDate(iso,z,lc){try{return new Date(iso).toLocaleString(lc||undefined,{timeZone:z,day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}catch{return new Date(iso).toLocaleString()}}
-function tAgo(iso,lc){const d=Date.now()-new Date(iso).getTime(),m=Math.floor(d/60000),h=Math.floor(d/3600000),dy=Math.floor(d/86400000);if(lc==="nl"){if(m<60)return m+" min geleden";if(h<24)return h+" uur geleden";return dy===1?"gisteren":dy+" dagen geleden";}if(m<60)return m+"m ago";if(h<24)return h+"h ago";return dy===1?"yesterday":dy+"d ago";}
+function tAgo(iso,lc){const d=Date.now()-new Date(iso).getTime(),m=Math.floor(d/60000),h=Math.floor(d/3600000),dy=Math.floor(d/86400000);if(lc==="nl"){if(m<60)return m+" min geleden";if(h<24)return h+" uur geleden";return dy===1?"gisteren":dy+" dagen geleden";}if(lc==="ar"){if(m<60)return "منذ "+m+" دقيقة";if(h<24)return "منذ "+h+" ساعة";return dy===1?"أمس":"منذ "+dy+" أيام";}if(m<60)return m+"m ago";if(h<24)return h+"h ago";return dy===1?"yesterday":dy+"d ago";}
 
 const LP=[["🧠","Thinking..."],["☕","Brewing ideas..."],["🔮","Crystal ball warming up..."],["🧙","Casting spells..."],["🤔","Deep thought..."],["🎯","Locking in..."]];
 
@@ -218,6 +226,7 @@ export default function App(){
   const t=lang?LANGS.find(l=>l.code===lang)||LANGS[1]:LANGS[1];
   const rt=tm==="system"?sys:tm;
   const c=TH[rt];
+  const dir=t.rtl?"rtl":"ltr";
 
   const chTm=(m)=>{setTm(m);ls.set(KEYS.theme,m);};
 
@@ -554,7 +563,7 @@ export default function App(){
   };
 
   const Bar=()=>(
-    <div style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 20px",paddingTop:"calc(8px + env(safe-area-inset-top))",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+c.cb}}>
+    <div dir={dir} style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 20px",paddingTop:"calc(8px + env(safe-area-inset-top))",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+c.cb}}>
       <button onClick={()=>setVw("lang")} style={{background:"none",border:"none",color:c.tf,fontSize:12,cursor:"pointer",padding:0,flexShrink:0}}>🌍 {t.lSel}</button>
       {user&&(
         <div style={{display:"flex",alignItems:"center",gap:8}}>
@@ -572,7 +581,7 @@ export default function App(){
     const showCredits=!key&&credits!==undefined;
     const low=showCredits&&credits<=3;
     return(
-    <div style={{position:"fixed",bottom:0,left:0,right:0,paddingBottom:"env(safe-area-inset-bottom)",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderTop:"1px solid "+c.cb,display:"flex",flexDirection:"column",alignItems:"center",zIndex:100}}>
+    <div dir={dir} style={{position:"fixed",bottom:0,left:0,right:0,paddingBottom:"env(safe-area-inset-bottom)",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderTop:"1px solid "+c.cb,display:"flex",flexDirection:"column",alignItems:"center",zIndex:100}}>
       <div style={{display:"flex",justifyContent:"center",gap:8,alignItems:"center",padding:"8px 20px",width:"100%",boxSizing:"border-box",flexWrap:"wrap"}}>
         <AuthBadge c={c} onManage={()=>setVw("manage_auth")} t={t}/>
         {showCredits&&(
@@ -669,7 +678,7 @@ export default function App(){
     )}
 
     {vw==="byok"&&(
-      <div style={sx.pg}><div style={sx.w}>
+      <div dir={dir} style={sx.pg}><div style={sx.w}>
         <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>{t.byokH1}</h1></div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
           <div style={{...sx.cd,padding:"14px 16px"}}>
@@ -700,7 +709,7 @@ export default function App(){
     )}
 
     {vw==="no_credits"&&(
-      <div style={sx.pg}><div style={sx.w}>
+      <div dir={dir} style={sx.pg}><div style={sx.w}>
         <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/></div>
         <div style={{...sx.cd,textAlign:"center",padding:"32px 24px"}}>
           <div style={{fontSize:48,marginBottom:12}}>🪙</div>
@@ -720,7 +729,7 @@ export default function App(){
       const providerLabel=provider==="openrouter"?"OpenRouter":"Anthropic";
       const resetUsage=()=>{const z={calls:0,inputTokens:0,outputTokens:0,costUsd:0};setUsage(z);ls.del(KEYS.usage);};
       return(
-        <div style={sx.pg}><div style={sx.w}>
+        <div dir={dir} style={sx.pg}><div style={sx.w}>
           <div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>{t.chAuth}</h1></div>
           <div style={sx.cd}>
             {/* Google profile card or sign-in */}
@@ -793,10 +802,10 @@ export default function App(){
       );
     })()}
 
-    {vw==="loading"&&(<div style={sx.pg}><div style={sx.w}><div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/></div><div style={sx.cd}><Loader c={c} lp={t.lp}/>{loadingAltruistic&&<div style={{marginTop:16,padding:"10px 16px",borderRadius:12,background:c.am,border:`1px solid ${c.abr}`,color:c.ac,fontSize:14,fontWeight:600,textAlign:"center",animation:"fadeIn 0.5s ease forwards"}}>{t.altruismLoadingMsg}</div>}</div><BottomBar/><style>{GS}</style></div></div>)}
+    {vw==="loading"&&(<div dir={dir} style={sx.pg}><div style={sx.w}><div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/></div><div style={sx.cd}><Loader c={c} lp={t.lp}/>{loadingAltruistic&&<div style={{marginTop:16,padding:"10px 16px",borderRadius:12,background:c.am,border:`1px solid ${c.abr}`,color:c.ac,fontSize:14,fontWeight:600,textAlign:"center",animation:"fadeIn 0.5s ease forwards"}}>{t.altruismLoadingMsg}</div>}</div><BottomBar/><style>{GS}</style></div></div>)}
 
     {(vw==="home"||vw==="new_goal")&&auth!=="in"&&(
-      <div style={sx.pg}><div style={sx.w}>
+      <div dir={dir} style={sx.pg}><div style={sx.w}>
         <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c} size="large"/><h1 style={{fontSize:26,fontWeight:700,color:c.tx,margin:"10px 0 0"}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:14,marginTop:4,animation:"heroFade 3s ease forwards",minHeight:"1.4em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
         <div style={{...sx.cd,position:"relative"}}>
           <HoneypotField/>
@@ -836,7 +845,7 @@ export default function App(){
     )}
 
     {vw==="dash"&&(
-      <div style={sx.pg}><div style={sx.w}>
+      <div dir={dir} style={sx.pg}><div style={sx.w}>
         <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"6px 0 0"}}>{t.dW} 👋</h1><p style={{color:c.tm,fontSize:13,marginTop:2}}>{t.dS}</p></div>
         <button onClick={()=>setVw("new_goal")} style={{...sx.bo,marginTop:0,marginBottom:16}}>{t.nG}</button>
         {hist.length===0?(<div style={{...sx.cd,textAlign:"center",padding:40}}><div style={{fontSize:40,marginBottom:10}}>🪢</div><p style={{color:c.tf,margin:0}}>{t.noG}</p></div>):(
@@ -859,7 +868,7 @@ export default function App(){
     )}
 
     {vw==="new_goal"&&auth==="in"&&(
-      <div style={sx.pg}><div style={sx.w}>
+      <div dir={dir} style={sx.pg}><div style={sx.w}>
         <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/><h1 style={{fontSize:22,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:13,marginTop:2,animation:"heroFade 3s ease forwards",minHeight:"1.3em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
         <div style={{...sx.cd,position:"relative"}}>
           <HoneypotField/>
@@ -877,7 +886,7 @@ export default function App(){
       const ae=hist.find(h=>h.id===activeId);
       const isAlt=ae?.isAltruistic&&!ae?.altruismBonusClaimed;
       return(
-        <div style={sx.pg}><div style={sx.w}>
+        <div dir={dir} style={sx.pg}><div style={sx.w}>
           <div style={{animation:"fadeIn 0.4s ease"}}>
             {/* Altruistic goal progress indicator */}
             {ae?.isAltruistic&&!ae?.altruismBonusClaimed&&(
@@ -913,7 +922,7 @@ export default function App(){
     })()}
 
     {!["lang","byok","no_credits","manage_auth","loading","home","new_goal","dash","result","save_prompt"].includes(vw)&&(
-      <div style={sx.pg}><div style={sx.w}><div style={{textAlign:"center",padding:40}}><BrandMark c={c} size="large"/><button onClick={()=>setVw("lang")} style={sx.bo}>Start</button></div><BottomBar/><style>{GS}</style></div></div>
+      <div dir={dir} style={sx.pg}><div style={sx.w}><div style={{textAlign:"center",padding:40}}><BrandMark c={c} size="large"/><button onClick={()=>setVw("lang")} style={sx.bo}>Start</button></div><BottomBar/><style>{GS}</style></div></div>
     )}
   </>);
 }
