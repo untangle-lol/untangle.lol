@@ -18,6 +18,7 @@ const KEYS = {
   session:  "untangle_session",
   apiKey:   "untangle_apikey",
   recents:  "untangle_recents",
+  guestHist:"untangle_guest_hist",
 };
 
 function eKey(email) { return "untangle_hist_" + email.toLowerCase().replace(/[^a-z0-9]/g,"_"); }
@@ -164,6 +165,9 @@ export default function App(){
     const ss=ls.get(KEYS.session);
     if(ss){try{const p=JSON.parse(ss);if(p.email&&p.lang){setUser(p.email);userRef.current=p.email;setLang(p.lang);ls.set("untangle_lang",p.lang);setAuth("in");const hv=ls.get(eKey(p.email));if(hv)setHist(JSON.parse(hv));setVw(valid?"dash":"byok");setReady(true);return;}}catch{}}
 
+    // Restore guest history
+    const gh=ls.get(KEYS.guestHist);if(gh){try{setHist(JSON.parse(gh));}catch{}}
+
     setVw(valid?langSv?"home":"lang":"lang");
     setReady(true);
   })();},[]);
@@ -244,7 +248,7 @@ export default function App(){
       const comp=ps.stappen.map(()=>false);
       const entry={id:Date.now(),timestamp:new Date().toISOString(),timezone:zone,behoefte:inp.trim(),resultaat:ps,lang,completed:comp};
       if(auth==="in"){const nh=[entry,...hist];setHist(nh);ls.set(eKey(userRef.current),JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
-      else{setActiveId(entry.id);setLocalComp(comp);setVw("result");}
+      else{const nh=[entry,...hist].slice(0,10);setHist(nh);ls.set(KEYS.guestHist,JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
     }catch(e){setErr(t.err);setVw(auth==="in"?"new_goal":"home");}finally{setBusy(false);}
   };
 
@@ -252,13 +256,14 @@ export default function App(){
     setLocalComp(prev=>{
       const next=[...prev];next[idx]=!next[idx];
       if(activeId&&auth==="in"){setHist(ph=>{const nh=ph.map(h=>h.id!==activeId?h:{...h,completed:next});ls.set(eKey(userRef.current),JSON.stringify(nh));return nh;});}
+      else if(activeId){setHist(ph=>{const nh=ph.map(h=>h.id!==activeId?h:{...h,completed:next});ls.set(KEYS.guestHist,JSON.stringify(nh));return nh;});}
       return next;
     });
   };
 
   const openEntry=(entry)=>{setSteps(entry.resultaat);setActiveId(entry.id);setLocalComp(entry.completed||entry.resultaat.stappen.map(()=>false));setVw("result");};
-  const del=(id)=>{const nh=hist.filter(h=>h.id!==id);setHist(nh);ls.set(eKey(userRef.current),JSON.stringify(nh));};
-  const clrAll=()=>{setHist([]);ls.set(eKey(userRef.current),"[]");};
+  const del=(id)=>{const nh=hist.filter(h=>h.id!==id);setHist(nh);if(auth==="in")ls.set(eKey(userRef.current),JSON.stringify(nh));else ls.set(KEYS.guestHist,JSON.stringify(nh));};
+  const clrAll=()=>{setHist([]);if(auth==="in")ls.set(eKey(userRef.current),"[]");else ls.set(KEYS.guestHist,"[]");};
   const goHome=()=>{setInp("");setSteps(null);setErr(null);setActiveId(null);setLocalComp([]);setVw(auth==="in"?"dash":"home");};
   const prog=(e)=>{const tt=e.resultaat?.stappen?.length||0;const dn=(e.completed||[]).filter(Boolean).length;return{dn,tt,pct:tt>0?Math.round(dn/tt*100):0};};
 
@@ -358,6 +363,22 @@ export default function App(){
         <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
       </div>
       <div style={{textAlign:"center",marginTop:14,padding:"10px 16px",borderRadius:10,background:c.gb,border:"1px solid "+c.gbr}}><span style={{fontSize:12,color:c.gt}}>{t.eth}</span></div>
+      {hist.length>0&&<div style={{display:"flex",flexDirection:"column",gap:10,marginTop:16}}>
+        {hist.map((h,i)=>{const p=prog(h);return(
+          <div key={h.id} onClick={()=>openEntry(h)} style={{...sx.cd,padding:"14px 18px",cursor:"pointer",animation:"slideUp 0.3s ease "+Math.min(i*0.05,0.5)+"s both",borderColor:p.pct>=100?c.gbr:c.cb}}
+            onMouseEnter={e=>e.currentTarget.style.borderColor=p.pct>=100?c.gr:c.abr}
+            onMouseLeave={e=>e.currentTarget.style.borderColor=p.pct>=100?c.gbr:c.cb}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12,marginBottom:10}}>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:14,fontWeight:600,color:p.pct>=100?c.gr:c.tx,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginBottom:2}}>{p.pct>=100?"✅ ":""}{h.resultaat?.titel||h.behoefte}</div>
+                <div style={{fontSize:12,color:c.tf}}>{tAgo(h.timestamp,lang)} · {p.dn} {t.sOf} {p.tt}</div>
+              </div>
+              <button onClick={e=>{e.stopPropagation();del(h.id);}} style={{background:"none",border:"none",color:c.dm,cursor:"pointer",fontSize:18,padding:"2px 6px",lineHeight:1}} onMouseEnter={e=>e.target.style.color="#ef4444"} onMouseLeave={e=>e.target.style.color=c.dm}>×</button>
+            </div>
+            <PBar done={p.dn} total={p.tt} c={c}/>
+          </div>);})}
+        {hist.length>3&&<button onClick={clrAll} style={{...sx.bg,marginTop:4,color:"#ef4444",borderColor:"rgba(239,68,68,0.2)"}}>{t.clr}</button>}
+      </div>}
     <style>{GS}</style></div></div>
   );
 
