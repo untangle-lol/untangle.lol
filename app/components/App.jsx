@@ -257,9 +257,9 @@ export default function App(){
 
   // Poll /api/credits/claim until credits land (after Stripe redirect)
   const pollCredits=async(ref,attempts=0)=>{
-    if(attempts>20)return;
+    if(attempts>10)return;
     try{
-      const r=await fetch("/api/credits/claim?ref="+encodeURIComponent(ref));
+      const r=await fetch("/api/credits/verify?ref="+encodeURIComponent(ref));
       const d=await r.json();
       if(d.credits>0){
         addCredits(d.credits);
