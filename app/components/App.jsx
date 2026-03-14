@@ -259,21 +259,39 @@ export default function App(){
   const goHome=()=>{setInp("");setSteps(null);setErr(null);setActiveId(null);setLocalComp([]);setVw(auth==="in"?"dash":"home");};
   const prog=(e)=>{const tt=e.resultaat?.stappen?.length||0;const dn=(e.completed||[]).filter(Boolean).length;return{dn,tt,pct:tt>0?Math.round(dn/tt*100):0};};
 
+  // Delete a local recent
+  const delRecent=(text)=>{
+    setRecents(prev=>{const next=prev.filter(r=>r!==text);ls.set(KEYS.recents,JSON.stringify(next));return next;});
+  };
+
+  // Delete a global suggestion (server + local state)
+  const delGlobal=(text)=>{
+    setGlobalSugg(prev=>prev.filter(s=>s!==text));
+    fetch("/api/suggestions",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({lang,text})}).catch(()=>{});
+  };
+
   // Combined suggestions chip row: local recents + global (deduplicated)
   const SuggChips=()=>{
     const localSet=new Set(recents.map(r=>r.toLowerCase()));
     const globals=globalSugg.filter(s=>!localSet.has(s.toLowerCase())).slice(0,Math.max(0,8-recents.length));
     if(recents.length===0&&globals.length===0)return null;
+    const chipBase={display:"inline-flex",alignItems:"center",gap:4,borderRadius:20,fontSize:12,cursor:"pointer",maxWidth:"100%",overflow:"hidden",whiteSpace:"nowrap"};
     return(
       <div style={{marginTop:10}}>
         {recents.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:6}}>
           {recents.map((r,i)=>(
-            <button key={"l"+i} onClick={()=>setInp(r)} style={{background:c.ab,border:"1px solid "+c.abr,borderRadius:20,padding:"4px 12px",fontSize:12,color:c.ac,cursor:"pointer",maxWidth:"100%",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r}</button>
+            <span key={"l"+i} style={{...chipBase,background:c.ab,border:"1px solid "+c.abr}}>
+              <button onClick={()=>setInp(r)} style={{background:"none",border:"none",padding:"4px 0 4px 12px",color:c.ac,cursor:"pointer",fontSize:12,overflow:"hidden",textOverflow:"ellipsis",maxWidth:200}}>{r}</button>
+              <button onClick={()=>delRecent(r)} style={{background:"none",border:"none",padding:"4px 10px 4px 2px",color:c.ac,cursor:"pointer",fontSize:14,opacity:0.6,lineHeight:1}} title="Remove">×</button>
+            </span>
           ))}
         </div>}
         {globals.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:recents.length>0?6:0}}>
           {globals.map((r,i)=>(
-            <button key={"g"+i} onClick={()=>setInp(r)} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:20,padding:"4px 12px",fontSize:12,color:c.tm,cursor:"pointer",maxWidth:"100%",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>💡 {r}</button>
+            <span key={"g"+i} style={{...chipBase,background:c.ghb,border:"1px solid "+c.ghr}}>
+              <button onClick={()=>setInp(r)} style={{background:"none",border:"none",padding:"4px 0 4px 12px",color:c.tm,cursor:"pointer",fontSize:12,overflow:"hidden",textOverflow:"ellipsis",maxWidth:200}}>💡 {r}</button>
+              <button onClick={()=>delGlobal(r)} style={{background:"none",border:"none",padding:"4px 10px 4px 2px",color:c.tm,cursor:"pointer",fontSize:14,opacity:0.5,lineHeight:1}} title="Remove">×</button>
+            </span>
           ))}
         </div>}
       </div>
