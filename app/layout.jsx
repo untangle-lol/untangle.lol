@@ -162,6 +162,7 @@ export default function RootLayout({ children }) {
       <head>
         <meta name="theme-color" content="#0f172a" />
         <meta name="mobile-web-app-capable" content="yes" />
+        <meta property="fb:app_id" content="0" />
         <link rel="me" href="https://untangle.lol/" />
         <script
           type="application/ld+json"
