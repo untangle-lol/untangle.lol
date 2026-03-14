@@ -3,8 +3,65 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <!-- Primary -->
+    <title>Untangle.lol — Turn any goal into a clear action plan</title>
+    <meta name="description" content="Untangle.lol uses AI to break down any goal — big or small — into simple, doable steps. Free, private, no account needed. Bring your own API key." />
+    <meta name="author" content="untangle.lol" />
+    <link rel="canonical" href="https://untangle.lol/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://untangle.lol/" />
+    <meta property="og:site_name" content="untangle.lol" />
+    <meta property="og:title" content="Untangle.lol — Turn any goal into a clear action plan" />
+    <meta property="og:description" content="Untangle any goal into simple, doable steps with AI. Private, no account required. Supports Anthropic and OpenRouter API keys." />
+    <meta property="og:image" content="https://untangle.lol/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://untangle.lol/" />
+    <meta name="twitter:title" content="Untangle.lol — Turn any goal into a clear action plan" />
+    <meta name="twitter:description" content="Untangle any goal into simple, doable steps with AI. Private, no account required." />
+    <meta name="twitter:image" content="https://untangle.lol/og.png" />
+
+    <!-- Theme / PWA -->
     <meta name="theme-color" content="#0f172a" />
-    <title>untangle.lol</title>
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="untangle.lol" />
+
+    <!-- Robots -->
+    <meta name="robots" content="index, follow" />
+
+    <!-- JSON-LD structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "untangle.lol",
+      "url": "https://untangle.lol/",
+      "description": "AI-powered goal coach that breaks down any goal into simple, doable steps. Private, no account required.",
+      "applicationCategory": "ProductivityApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "AI-generated action plans",
+        "Multi-language support",
+        "No account required",
+        "Private — data stored locally only"
+      ]
+    }
+    </script>
+
     <style>
       *, *::before, *::after { box-sizing: border-box; }
       html, body, #root { margin: 0; padding: 0; height: 100%; }
@@ -12,6 +69,15 @@
     </style>
   </head>
   <body>
+    <!-- Fallback content for crawlers (hidden visually, readable by bots) -->
+    <noscript>
+      <div style="font-family:sans-serif;max-width:600px;margin:40px auto;padding:0 20px">
+        <h1>untangle.lol</h1>
+        <p>Turn any goal into a clear, step-by-step action plan using AI. Private and free to use — bring your own Anthropic or OpenRouter API key.</p>
+        <p>Examples: "I want to sleep better", "I want to learn guitar", "I want to start running".</p>
+        <p>Please enable JavaScript to use this app.</p>
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/main.jsx"></script>
   </body>
