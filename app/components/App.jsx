@@ -565,14 +565,17 @@ export default function App(){
   const Bar=()=>(
     <div dir={dir} style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 20px",paddingTop:"calc(8px + env(safe-area-inset-top))",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+c.cb}}>
       <button onClick={()=>setVw("lang")} style={{background:"none",border:"none",color:c.tf,fontSize:12,cursor:"pointer",padding:0,flexShrink:0}}>🌍 {t.lSel}</button>
-      {user&&(
-        <div style={{display:"flex",alignItems:"center",gap:8}}>
-          {user.picture&&<img src={user.picture} alt={user.name||""} referrerPolicy="no-referrer" style={{width:24,height:24,borderRadius:"50%",border:"1px solid "+c.cb,flexShrink:0}}/>}
-          {user.name&&<span style={{fontSize:12,color:c.tm,maxWidth:120,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user.name}</span>}
-          <button onClick={logout} style={{background:"none",border:"none",color:c.tf,fontSize:12,cursor:"pointer",padding:0}}>{t.signOut||t.out}</button>
-        </div>
-      )}
-      <TTog mode={tm} set={chTm} c={c}/>
+      <div style={{display:"flex",alignItems:"center",gap:10}}>
+        {user&&(
+          <button onClick={()=>setVw("manage_auth")} style={{background:"none",border:"none",padding:0,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>
+            {user.picture
+              ?<img src={user.picture} alt={user.name||""} referrerPolicy="no-referrer" style={{width:26,height:26,borderRadius:"50%",border:"1px solid "+c.cb,flexShrink:0}}/>
+              :<div style={{width:26,height:26,borderRadius:"50%",background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13}}>👤</div>
+            }
+          </button>
+        )}
+        <TTog mode={tm} set={chTm} c={c}/>
+      </div>
     </div>
   );
 
