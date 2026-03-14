@@ -68,7 +68,7 @@ const PRIVACY = {
         list: [
           "Recht op inzage",
           "Recht op correctie",
-          "Recht op verwijdering ("recht om vergeten te worden")",
+          'Recht op verwijdering ("recht om vergeten te worden")',
           "Recht op beperking van verwerking",
           "Recht op dataportabiliteit",
           "Recht om bezwaar te maken tegen verwerking",
@@ -158,7 +158,7 @@ const PRIVACY = {
         list: [
           "Right of access",
           "Right to rectification",
-          "Right to erasure ("right to be forgotten")",
+          'Right to erasure ("right to be forgotten")',
           "Right to restriction of processing",
           "Right to data portability",
           "Right to object to processing",
