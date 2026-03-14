@@ -28,8 +28,9 @@ const KEYS = {
   recents:  "untangle_recents",
   guestHist:"untangle_guest_hist",
   usage:    "untangle_usage",
-  credits:  "untangle_credits",
-  clientRef:"untangle_client_ref",
+   credits:  "untangle_credits",
+   creditsTs: "untangle_credits_ts",
+   clientRef:"untangle_client_ref",
 };
 
 const FREE_CREDITS = 20;
@@ -234,8 +235,15 @@ export default function App(){
     const rv=ls.get(KEYS.recents);if(rv){try{setRecents(JSON.parse(rv));}catch{}}
     const uv=ls.get(KEYS.usage);if(uv){try{setUsage(JSON.parse(uv));}catch{}}
     const cv=ls.get(KEYS.credits);
-    if(cv===null){ls.set(KEYS.credits,String(FREE_CREDITS));setCredits(FREE_CREDITS);}
-    else{const n=parseInt(cv,10);setCredits(isNaN(n)?FREE_CREDITS:Math.max(0,n));}
+    const now=Date.now();
+    const TOPUP_MS=24*60*60*1000;
+    if(cv===null){ls.set(KEYS.credits,String(FREE_CREDITS));ls.set(KEYS.creditsTs,String(now));setCredits(FREE_CREDITS);}
+    else{
+      const n=parseInt(cv,10);
+      const ts=parseInt(ls.get(KEYS.creditsTs)||"0",10);
+      if((isNaN(n)||n<=0)&&(now-ts)>=TOPUP_MS){ls.set(KEYS.credits,String(FREE_CREDITS));ls.set(KEYS.creditsTs,String(now));setCredits(FREE_CREDITS);}
+      else{setCredits(isNaN(n)?FREE_CREDITS:Math.max(0,n));}
+    }
     // Ensure clientRef exists
     let ref=ls.get(KEYS.clientRef);
     if(!ref){ref=genClientRef();ls.set(KEYS.clientRef,ref);}
