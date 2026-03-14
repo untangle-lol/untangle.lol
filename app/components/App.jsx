@@ -332,6 +332,17 @@ export default function App(){
     return()=>clearInterval(id);
   },[inp,t]);
 
+  const detectAltruism=async(goalText,key)=>{
+    const dp=`You are a classification assistant. Decide if the following goal is primarily about helping, supporting, or benefiting OTHER people (not just the person themselves). Examples: volunteering, caregiving, teaching others, charity work, supporting a loved one, community projects. Reply with JSON only: {"altruistic": true} or {"altruistic": false}. Goal: "${goalText}"`;
+    try{
+      const r=await fetch(ANTHROPIC_URL,{method:"POST",headers:buildHeaders(key),body:JSON.stringify({model:MODEL_ANTHROPIC,max_tokens:20,messages:[{role:"user",content:dp}]})});
+      const d=await r.json();
+      const txt=(d.content||[]).map(b=>b.text||"").join("").trim();
+      const parsed=JSON.parse(txt.replace(/```json\s?|```/g,"").trim());
+      return parsed.altruistic===true;
+    }catch{return false;}
+  };
+
   const callAPI=async(messages,maxTokens=1000)=>{
     const {key,provider}=getCredential();
     if(provider==="openrouter"){
@@ -370,7 +381,12 @@ export default function App(){
     try{
       let tx,inputTokens,outputTokens,isAltruistic=false;
       if(valid){
-        ({text:tx,inputTokens,outputTokens,isAltruistic}=await callAPI([{role:"user",content:prompt(inp.trim())}],1000));
+        const {key}=getCredential();
+        const [apiResult,isAlt]=await Promise.all([
+          callAPI([{role:"user",content:prompt(inp.trim())}],1000),
+          detectAltruism(inp.trim(),key),
+        ]);
+        tx=apiResult.text;inputTokens=apiResult.inputTokens;outputTokens=apiResult.outputTokens;isAltruistic=isAlt;
       }else{
         const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:prompt(inp.trim())}],lang})});
         if(!r.ok)throw new Error("proxy fail");
