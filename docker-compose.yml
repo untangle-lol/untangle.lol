@@ -3,6 +3,8 @@ services:
     build: .
     container_name: untangle_web
     restart: unless-stopped
+    volumes:
+      - suggestions_data:/data
     networks:
       - proxy
     security_opt:
@@ -26,3 +28,6 @@ services:
 networks:
   proxy:
     external: true
+
+volumes:
+  suggestions_data:

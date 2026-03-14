@@ -131,6 +131,7 @@ export default function App(){
   const [apiKeyErr,setApiKeyErr]=useState("");
   const [ready,setReady]=useState(false);
   const [recents,setRecents]=useState([]);
+  const [globalSugg,setGlobalSugg]=useState([]);
   const [usage,setUsage]=useState({calls:0,inputTokens:0,outputTokens:0,costUsd:0});
   const userRef=useRef(null);
   const zone=useMemo(()=>tz(),[]);
@@ -189,6 +190,14 @@ export default function App(){
   const logout=()=>{ls.del(KEYS.session);setAuth("out");setUser(null);userRef.current=null;setHist([]);setSteps(null);setInp("");setVw("home");setActiveId(null);setLocalComp([]);};
   const pickLang=(code)=>{setLang(code);ls.set("untangle_lang",code);const {valid}=getCredential();setVw(valid?"home":"byok");};
 
+  useEffect(()=>{
+    if(!lang)return;
+    fetch("/api/suggestions?lang="+lang)
+      .then(r=>r.ok?r.json():null)
+      .then(d=>{if(d?.suggestions)setGlobalSugg(d.suggestions);})
+      .catch(()=>{});
+  },[lang]);
+
   const callAPI=async(messages,maxTokens=1000)=>{
     const {key,provider}=getCredential();
     if(provider==="openrouter"){
@@ -223,6 +232,11 @@ export default function App(){
       setUsage(prev=>{const next={calls:prev.calls+1,inputTokens:prev.inputTokens+inputTokens,outputTokens:prev.outputTokens+outputTokens,costUsd:prev.costUsd+calcCost(inputTokens,outputTokens)};ls.set(KEYS.usage,JSON.stringify(next));return next;});
       const trimmed=inp.trim();
       setRecents(prev=>{const next=[trimmed,...prev.filter(r=>r!==trimmed)].slice(0,5);ls.set(KEYS.recents,JSON.stringify(next));return next;});
+      // Share to global suggestions (fire-and-forget)
+      fetch("/api/suggestions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({lang,text:trimmed})})
+        .then(r=>r.ok?r.json():null)
+        .then(()=>fetch("/api/suggestions?lang="+lang).then(r=>r.ok?r.json():null).then(d=>{if(d?.suggestions)setGlobalSugg(d.suggestions);}))
+        .catch(()=>{});
       const comp=ps.stappen.map(()=>false);
       const entry={id:Date.now(),timestamp:new Date().toISOString(),timezone:zone,behoefte:inp.trim(),resultaat:ps,lang,completed:comp};
       if(auth==="in"){const nh=[entry,...hist];setHist(nh);ls.set(eKey(userRef.current),JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
@@ -244,6 +258,27 @@ export default function App(){
   const clrAll=()=>{setHist([]);if(auth==="in")ls.set(eKey(userRef.current),"[]");else ls.set(KEYS.guestHist,"[]");};
   const goHome=()=>{setInp("");setSteps(null);setErr(null);setActiveId(null);setLocalComp([]);setVw(auth==="in"?"dash":"home");};
   const prog=(e)=>{const tt=e.resultaat?.stappen?.length||0;const dn=(e.completed||[]).filter(Boolean).length;return{dn,tt,pct:tt>0?Math.round(dn/tt*100):0};};
+
+  // Combined suggestions chip row: local recents + global (deduplicated)
+  const SuggChips=()=>{
+    const localSet=new Set(recents.map(r=>r.toLowerCase()));
+    const globals=globalSugg.filter(s=>!localSet.has(s.toLowerCase())).slice(0,Math.max(0,8-recents.length));
+    if(recents.length===0&&globals.length===0)return null;
+    return(
+      <div style={{marginTop:10}}>
+        {recents.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+          {recents.map((r,i)=>(
+            <button key={"l"+i} onClick={()=>setInp(r)} style={{background:c.ab,border:"1px solid "+c.abr,borderRadius:20,padding:"4px 12px",fontSize:12,color:c.ac,cursor:"pointer",maxWidth:"100%",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r}</button>
+          ))}
+        </div>}
+        {globals.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:recents.length>0?6:0}}>
+          {globals.map((r,i)=>(
+            <button key={"g"+i} onClick={()=>setInp(r)} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:20,padding:"4px 12px",fontSize:12,color:c.tm,cursor:"pointer",maxWidth:"100%",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>💡 {r}</button>
+          ))}
+        </div>}
+      </div>
+    );
+  };
 
   const sx={
     pg:{minHeight:"100dvh",height:"100dvh",background:c.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-start",padding:"12px 20px",paddingTop:"calc(12px + env(safe-area-inset-top))",paddingBottom:"calc(68px + env(safe-area-inset-bottom))",fontFamily:"'Inter',-apple-system,sans-serif",transition:"background 0.4s",overflowY:"auto"},
@@ -378,7 +413,7 @@ export default function App(){
       <div style={sx.cd}>
         <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
         <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
-        {recents.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:10}}>{recents.map((r,i)=>(<button key={i} onClick={()=>setInp(r)} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:20,padding:"4px 12px",fontSize:12,color:c.tm,cursor:"pointer",maxWidth:"100%",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r}</button>))}</div>}
+        <SuggChips/>
         <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
       </div>
       <div style={{textAlign:"center",marginTop:14,padding:"10px 16px",borderRadius:10,background:c.gb,border:"1px solid "+c.gbr}}><span style={{fontSize:12,color:c.gt}}>{t.eth}</span></div>
@@ -430,7 +465,7 @@ export default function App(){
       <div style={sx.cd}>
         <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
         <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
-        {recents.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:10}}>{recents.map((r,i)=>(<button key={i} onClick={()=>setInp(r)} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:20,padding:"4px 12px",fontSize:12,color:c.tm,cursor:"pointer",maxWidth:"100%",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r}</button>))}</div>}
+        <SuggChips/>
         <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
       </div>
       <button onClick={()=>setVw("dash")} style={sx.bg}>{t.back}</button>
