@@ -182,6 +182,7 @@ export default function App(){
   const [auth,setAuth]=useState("out");
   const [user,setUser]=useState(null);
   const [inp,setInp]=useState("");
+  const setInpPersist=(v)=>{setInp(v);if(lang)ls.set("untangle_inp_"+lang,v);};
   const [steps,setSteps]=useState(null);
   const [busy,setBusy]=useState(false);
   const [err,setErr]=useState(null);
@@ -227,6 +228,9 @@ export default function App(){
     document.documentElement.style.background=color;
     document.body.style.background=color;
   },[rt]);
+
+  // Restore last typed input for this language
+  useEffect(()=>{if(lang){const saved=ls.get("untangle_inp_"+lang);setInp(saved||"");};},[lang]);
 
   // Boot
   useEffect(()=>{(async()=>{
@@ -390,6 +394,7 @@ export default function App(){
       if(credits<=0){setVw("no_credits");return;}
     }
     setBusy(true);setErr(null);setSteps(null);setVw("loading");setLoadingAltruistic(false);
+    ls.del("untangle_inp_"+lang);
     utrack("goal_submitted",{lang,mode:valid?"byok":"free"});
     try{
       let tx,inputTokens,outputTokens;
@@ -790,7 +795,7 @@ export default function App(){
         <div style={{...sx.cd,position:"relative"}}>
           <HoneypotField/>
           <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
-          <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={cyclePh} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
+          <textarea value={inp} onChange={e=>setInpPersist(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={cyclePh} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
           <SuggChips/>
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
         </div>
@@ -853,7 +858,7 @@ export default function App(){
         <div style={{...sx.cd,position:"relative"}}>
           <HoneypotField/>
           <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
-          <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={cyclePh} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
+          <textarea value={inp} onChange={e=>setInpPersist(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={cyclePh} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
           <SuggChips/>
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button><Err/>
         </div>
