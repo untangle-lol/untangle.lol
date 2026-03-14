@@ -388,10 +388,13 @@ export default function TermsPage({ searchParams }) {
             </div>
           ))}
 
-          {/* Back link */}
-          <div style={{ marginTop: 48, paddingTop: 24, borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+          {/* Footer links */}
+          <div style={{ marginTop: 48, paddingTop: 24, borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", gap: 24, alignItems: "center", flexWrap: "wrap" }}>
             <a href="/" style={{ fontSize: 14, color: "#facc15", textDecoration: "none", fontWeight: 600 }}>
               {d.back}
+            </a>
+            <a href={`/privacy?lang=${lang}`} style={{ fontSize: 13, color: "#64748b", textDecoration: "none" }}>
+              Privacy Policy
             </a>
           </div>
         </div>
