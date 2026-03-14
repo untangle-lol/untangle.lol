@@ -798,7 +798,7 @@ export default function App(){
               </div>
               <button onClick={resetUsage} style={{...sx.bg,marginTop:10,fontSize:12,padding:"8px 14px"}}>{t.resetStats}</button>
             </div>
-            <button onClick={()=>setVw("byok")} style={sx.bo}>{t.apiKeyBadge} {t.byok}</button>
+            <button onClick={()=>setVw("byok")} style={sx.bo}>{t.apiKeyBadge}</button>
             <button onClick={removeAuth} style={{...sx.bg,color:"#ef4444",borderColor:"rgba(239,68,68,0.3)",marginTop:12}}>{t.rmKey}</button>
             <button onClick={()=>setVw(auth==="in"?"dash":"home")} style={sx.bg}>{t.back}</button>
           </div>
