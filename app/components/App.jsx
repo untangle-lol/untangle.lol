@@ -23,7 +23,10 @@ const KEYS = {
   recents:  "untangle_recents",
   guestHist:"untangle_guest_hist",
   usage:    "untangle_usage",
+  credits:  "untangle_credits",
 };
+
+const FREE_CREDITS = 20;
 
 function eKey(email) { return "untangle_hist_" + email.toLowerCase().replace(/[^a-z0-9]/g,"_"); }
 
@@ -51,11 +54,11 @@ function buildHeaders(key) {
 }
 
 const LANGS = [
-  {code:"nl",label:"Nederlands",flag:"🇳🇱",ph:"Bijv. 'Ik wil beter slapen' of 'Ik wil leren gitaarspelen' 🎸",hero:"Wat wil je bereiken?",heroS:"Typ het maar in.",go:"Laten we beginnen →",back:"← Terug",out:"Uitloggen",clr:"🗑️ Alles wissen",nG:"➕ Nieuw doel",noG:"Nog geen doelen. Tijd om te beginnen!",prog:"voortgang",allD:"🎉 Alles afgerond!",sOf:"van",eth:"🌍 Advies met respect voor mens, planeet en welzijn",err:"Oeps, probeer het nog eens!",resB:"← Terug naar overzicht",dW:"Welkom terug",dS:"Hier zijn je doelen.",byok:"Voer je API-sleutel in",chAuth:"Authenticatie wijzigen",rmKey:"Sleutel verwijderen",lSel:"Taal",byokL:"API-sleutel (Anthropic of OpenRouter)",byokPh:"sk-ant-... of sk-or-...",byokSave:"Opslaan & beginnen",byokNote:"Je sleutel wordt lokaal opgeslagen. Nooit gedeeld."},
-  {code:"en",label:"English",flag:"🇬🇧",ph:"E.g. 'I want to sleep better' or 'I want to learn guitar' 🎸",hero:"What do you want to achieve?",heroS:"Just type it in. No question is too weird.",go:"Let's begin →",back:"← Back",out:"Log out",clr:"🗑️ Clear all",nG:"➕ New goal",noG:"No goals yet. Time to begin!",prog:"progress",allD:"🎉 All done!",sOf:"of",eth:"🌍 Advice with respect for people, planet & wellbeing",err:"Oops, try again!",resB:"← Back to overview",dW:"Welcome back",dS:"Here are your goals.",byok:"Enter your API key",chAuth:"Change auth",rmKey:"Remove key",lSel:"Language",byokL:"API Key (Anthropic or OpenRouter)",byokPh:"sk-ant-... or sk-or-...",byokSave:"Save & continue",byokNote:"Stored locally only, never shared."},
-  {code:"de",label:"Deutsch",flag:"🇩🇪",ph:"Z.B. 'Besser schlafen' 🎸",hero:"Was willst du erreichen?",heroS:"Einfach tippen.",go:"Los geht's →",back:"← Zurück",out:"Abmelden",clr:"🗑️ Löschen",nG:"➕ Neues Ziel",noG:"Keine Ziele. Zeit anzufangen!",prog:"Fortschritt",allD:"🎉 Geschafft!",sOf:"von",eth:"🌍 Respekt für Mensch & Planet",err:"Ups!",resB:"← Zurück",dW:"Willkommen zurück",dS:"Deine Ziele.",byok:"API-Schlüssel eingeben",chAuth:"Auth ändern",rmKey:"Schlüssel entfernen",lSel:"Sprache",byokL:"API-Schlüssel (Anthropic oder OpenRouter)",byokPh:"sk-ant-... oder sk-or-...",byokSave:"Speichern & loslegen",byokNote:"Lokal gespeichert. Nie weitergegeben."},
-  {code:"fr",label:"Français",flag:"🇫🇷",ph:"Ex. 'Mieux dormir' 🎸",hero:"Que veux-tu accomplir ?",heroS:"Tape-le.",go:"Commençons →",back:"← Retour",out:"Déco",clr:"🗑️ Effacer",nG:"➕ Nouveau",noG:"Pas d'objectifs. On commence !",prog:"progrès",allD:"🎉 Fini !",sOf:"de",eth:"🌍 Conseils respectueux",err:"Oups !",resB:"← Retour",dW:"Re-bonjour",dS:"Tes objectifs.",byok:"Entrer la clé API",chAuth:"Changer auth",rmKey:"Supprimer clé",lSel:"Langue",byokL:"Clé API (Anthropic ou OpenRouter)",byokPh:"sk-ant-... ou sk-or-...",byokSave:"Enregistrer",byokNote:"Stockée localement. Jamais partagée."},
-  {code:"es",label:"Español",flag:"🇪🇸",ph:"Ej. 'Quiero dormir mejor' 🎸",hero:"¿Qué quieres lograr?",heroS:"Solo escríbelo.",go:"Comencemos →",back:"← Volver",out:"Salir",clr:"🗑️ Borrar",nG:"➕ Nueva meta",noG:"Sin metas. ¡Hora de comenzar!",prog:"progreso",allD:"🎉 ¡Listo!",sOf:"de",eth:"🌍 Consejos con respeto",err:"¡Ups!",resB:"← Volver",dW:"Hola de nuevo",dS:"Tus metas.",byok:"Ingresar clave API",chAuth:"Cambiar auth",rmKey:"Eliminar clave",lSel:"Idioma",byokL:"Clave API (Anthropic u OpenRouter)",byokPh:"sk-ant-... o sk-or-...",byokSave:"Guardar",byokNote:"Solo local. Nunca compartida."},
+  {code:"nl",label:"Nederlands",flag:"🇳🇱",ph:"Bijv. 'Ik wil beter slapen' of 'Ik wil leren gitaarspelen' 🎸",hero:"Wat wil je bereiken?",heroS:"Typ het maar in.",go:"Laten we beginnen →",back:"← Terug",out:"Uitloggen",clr:"🗑️ Alles wissen",nG:"➕ Nieuw doel",noG:"Nog geen doelen. Tijd om te beginnen!",prog:"voortgang",allD:"🎉 Alles afgerond!",sOf:"van",eth:"🌍 Advies met respect voor mens, planeet en welzijn",err:"Oeps, probeer het nog eens!",resB:"← Terug naar overzicht",dW:"Welkom terug",dS:"Hier zijn je doelen.",byok:"Voer je API-sleutel in",chAuth:"Authenticatie wijzigen",rmKey:"Sleutel verwijderen",lSel:"Taal",byokL:"API-sleutel (Anthropic of OpenRouter)",byokPh:"sk-ant-... of sk-or-...",byokSave:"Opslaan & beginnen",byokNote:"Je sleutel wordt lokaal opgeslagen. Nooit gedeeld.",cred:"credits",credFree:"gratis credits",credOut:"Geen credits meer",credOutMsg:"Je gratis credits zijn op. Voeg je eigen API-sleutel toe om door te gaan — gratis bij Anthropic en OpenRouter.",credByok:"Eigen sleutel toevoegen →"},
+  {code:"en",label:"English",flag:"🇬🇧",ph:"E.g. 'I want to sleep better' or 'I want to learn guitar' 🎸",hero:"What do you want to achieve?",heroS:"Just type it in. No question is too weird.",go:"Let's begin →",back:"← Back",out:"Log out",clr:"🗑️ Clear all",nG:"➕ New goal",noG:"No goals yet. Time to begin!",prog:"progress",allD:"🎉 All done!",sOf:"of",eth:"🌍 Advice with respect for people, planet & wellbeing",err:"Oops, try again!",resB:"← Back to overview",dW:"Welcome back",dS:"Here are your goals.",byok:"Enter your API key",chAuth:"Change auth",rmKey:"Remove key",lSel:"Language",byokL:"API Key (Anthropic or OpenRouter)",byokPh:"sk-ant-... or sk-or-...",byokSave:"Save & continue",byokNote:"Stored locally only, never shared.",cred:"credits",credFree:"free credits",credOut:"Out of credits",credOutMsg:"Your free credits are used up. Add your own API key to keep going — free to get from Anthropic or OpenRouter.",credByok:"Add your own key →"},
+  {code:"de",label:"Deutsch",flag:"🇩🇪",ph:"Z.B. 'Besser schlafen' 🎸",hero:"Was willst du erreichen?",heroS:"Einfach tippen.",go:"Los geht's →",back:"← Zurück",out:"Abmelden",clr:"🗑️ Löschen",nG:"➕ Neues Ziel",noG:"Keine Ziele. Zeit anzufangen!",prog:"Fortschritt",allD:"🎉 Geschafft!",sOf:"von",eth:"🌍 Respekt für Mensch & Planet",err:"Ups!",resB:"← Zurück",dW:"Willkommen zurück",dS:"Deine Ziele.",byok:"API-Schlüssel eingeben",chAuth:"Auth ändern",rmKey:"Schlüssel entfernen",lSel:"Sprache",byokL:"API-Schlüssel (Anthropic oder OpenRouter)",byokPh:"sk-ant-... oder sk-or-...",byokSave:"Speichern & loslegen",byokNote:"Lokal gespeichert. Nie weitergegeben.",cred:"Credits",credFree:"Gratis-Credits",credOut:"Keine Credits mehr",credOutMsg:"Deine Gratis-Credits sind aufgebraucht. Füge deinen eigenen API-Schlüssel hinzu — kostenlos bei Anthropic oder OpenRouter.",credByok:"Eigenen Schlüssel hinzufügen →"},
+  {code:"fr",label:"Français",flag:"🇫🇷",ph:"Ex. 'Mieux dormir' 🎸",hero:"Que veux-tu accomplir ?",heroS:"Tape-le.",go:"Commençons →",back:"← Retour",out:"Déco",clr:"🗑️ Effacer",nG:"➕ Nouveau",noG:"Pas d'objectifs. On commence !",prog:"progrès",allD:"🎉 Fini !",sOf:"de",eth:"🌍 Conseils respectueux",err:"Oups !",resB:"← Retour",dW:"Re-bonjour",dS:"Tes objectifs.",byok:"Entrer la clé API",chAuth:"Changer auth",rmKey:"Supprimer clé",lSel:"Langue",byokL:"Clé API (Anthropic ou OpenRouter)",byokPh:"sk-ant-... ou sk-or-...",byokSave:"Enregistrer",byokNote:"Stockée localement. Jamais partagée.",cred:"crédits",credFree:"crédits gratuits",credOut:"Plus de crédits",credOutMsg:"Tes crédits gratuits sont épuisés. Ajoute ta propre clé API pour continuer — gratuite chez Anthropic ou OpenRouter.",credByok:"Ajouter ma clé →"},
+  {code:"es",label:"Español",flag:"🇪🇸",ph:"Ej. 'Quiero dormir mejor' 🎸",hero:"¿Qué quieres lograr?",heroS:"Solo escríbelo.",go:"Comencemos →",back:"← Volver",out:"Salir",clr:"🗑️ Borrar",nG:"➕ Nueva meta",noG:"Sin metas. ¡Hora de comenzar!",prog:"progreso",allD:"🎉 ¡Listo!",sOf:"de",eth:"🌍 Consejos con respeto",err:"¡Ups!",resB:"← Volver",dW:"Hola de nuevo",dS:"Tus metas.",byok:"Ingresar clave API",chAuth:"Cambiar auth",rmKey:"Eliminar clave",lSel:"Idioma",byokL:"Clave API (Anthropic u OpenRouter)",byokPh:"sk-ant-... o sk-or-...",byokSave:"Guardar",byokNote:"Solo local. Nunca compartida.",cred:"créditos",credFree:"créditos gratis",credOut:"Sin créditos",credOutMsg:"Tus créditos gratuitos se agotaron. Agrega tu propia clave API para continuar — gratis en Anthropic u OpenRouter.",credByok:"Agregar mi clave →"},
 ];
 
 const TH = {
@@ -100,13 +103,16 @@ function CheckItem({done,label,desc,onToggle,c}){
   </div>);
 }
 
-function AuthBadge({c,onManage}){
+function AuthBadge({c,onManage,credits,t}){
   const {key}=getCredential();
+  const showCredits=!key&&credits!==undefined;
+  const low=showCredits&&credits<=3;
   return(
     <button onClick={onManage} style={{display:"flex",alignItems:"center",gap:6,background:c.ab,border:"1px solid "+c.abr,borderRadius:20,padding:"4px 10px",cursor:"pointer",fontSize:12,color:c.ac}}>
       <span>🔑 API Key</span>
       <span style={{opacity:0.6}}>·</span>
       <span style={{color:c.tf}}>{key?key.slice(0,10)+"…":"set"}</span>
+      {showCredits&&<><span style={{opacity:0.4}}>·</span><span style={{color:low?"#ef4444":c.tf,fontWeight:low?700:400}}>{credits} {t?.cred||"credits"}</span></>}
     </button>
   );
 }
@@ -133,6 +139,7 @@ export default function App(){
   const [recents,setRecents]=useState([]);
   const [globalSugg,setGlobalSugg]=useState([]);
   const [usage,setUsage]=useState({calls:0,inputTokens:0,outputTokens:0,costUsd:0});
+  const [credits,setCredits]=useState(FREE_CREDITS);
   const userRef=useRef(null);
   const zone=useMemo(()=>tz(),[]);
 
@@ -156,9 +163,12 @@ export default function App(){
     const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     const rv=ls.get(KEYS.recents);if(rv){try{setRecents(JSON.parse(rv));}catch{}}
     const uv=ls.get(KEYS.usage);if(uv){try{setUsage(JSON.parse(uv));}catch{}}
+    const cv=ls.get(KEYS.credits);
+    if(cv===null){ls.set(KEYS.credits,String(FREE_CREDITS));setCredits(FREE_CREDITS);}
+    else{const n=parseInt(cv,10);setCredits(isNaN(n)?FREE_CREDITS:Math.max(0,n));}
     const {valid}=getCredential();
     const ss=ls.get(KEYS.session);
-    if(ss){try{const p=JSON.parse(ss);if(p.email&&p.lang){setUser(p.email);userRef.current=p.email;setLang(p.lang);ls.set("untangle_lang",p.lang);setAuth("in");const hv=ls.get(eKey(p.email));if(hv)setHist(JSON.parse(hv));setVw(valid?"dash":"byok");setReady(true);return;}}catch{}}
+    if(ss){try{const p=JSON.parse(ss);if(p.email&&p.lang){setUser(p.email);userRef.current=p.email;setLang(p.lang);ls.set("untangle_lang",p.lang);setAuth("in");const hv=ls.get(eKey(p.email));if(hv)setHist(JSON.parse(hv));setVw("dash");setReady(true);return;}}catch{}}
     const gh=ls.get(KEYS.guestHist);if(gh){try{setHist(JSON.parse(gh));}catch{}}
     setVw(valid?langSv?"home":"lang":"lang");
     setReady(true);
@@ -189,7 +199,7 @@ export default function App(){
     setVw(auth==="in"?"dash":lang?"home":"lang");
   };
 
-  const removeAuth=()=>{ls.del(KEYS.apiKey);setVw("byok");};
+  const removeAuth=()=>{ls.del(KEYS.apiKey);setVw(auth==="in"?"dash":"home");};
   const logout=()=>{ls.del(KEYS.session);setAuth("out");setUser(null);userRef.current=null;setHist([]);setSteps(null);setInp("");setVw("home");setActiveId(null);setLocalComp([]);};
   const pickLang=(code)=>{setLang(code);ls.set("untangle_lang",code);const {valid}=getCredential();setVw(valid?"home":"byok");};
 
@@ -222,16 +232,32 @@ export default function App(){
 
   const prompt=(ui)=>`You are a friendly, humorous coach. You are the AI behind Untangle.lol.\nRespond ENTIRELY in ${t.label}.\nGoal: "${ui}"\nPRINCIPLES: Wellbeing, honesty, sustainability.\nSTYLE: doable today/this week, casual, emoji in title, specific, 3-5 steps.\nJSON only, no markdown:\n{"titel":"Summary","stappen":[{"nummer":1,"actie":"Emoji + title","toelichting":"1-2 sentences"}]}`;
 
+  const deductCredit=()=>{
+    setCredits(prev=>{const next=Math.max(0,prev-1);ls.set(KEYS.credits,String(next));return next;});
+  };
+
   const submit=async()=>{
     if(!inp.trim()||busy)return;
     const {valid}=getCredential();
-    if(!valid){setVw("byok");return;}
+    if(!valid){
+      // Using public key path — check credits
+      if(credits<=0){setVw("no_credits");return;}
+    }
     setBusy(true);setErr(null);setSteps(null);setVw("loading");
     try{
-      const {text:tx,inputTokens,outputTokens}=await callAPI([{role:"user",content:prompt(inp.trim())}],1000);
+      let tx,inputTokens,outputTokens;
+      if(valid){
+        ({text:tx,inputTokens,outputTokens}=await callAPI([{role:"user",content:prompt(inp.trim())}],1000));
+      }else{
+        const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:prompt(inp.trim())}],lang})});
+        if(!r.ok)throw new Error("proxy fail");
+        const d=await r.json();if(d.error)throw new Error(d.error);
+        tx=d.text;inputTokens=d.inputTokens||0;outputTokens=d.outputTokens||0;
+      }
       const ps=JSON.parse(tx.replace(/```json\s?|```/g,"").trim());
       if(!ps.titel||!ps.stappen)throw new Error("bad");
       setSteps(ps);
+      if(!valid)deductCredit();
       setUsage(prev=>{const next={calls:prev.calls+1,inputTokens:prev.inputTokens+inputTokens,outputTokens:prev.outputTokens+outputTokens,costUsd:prev.costUsd+calcCost(inputTokens,outputTokens)};ls.set(KEYS.usage,JSON.stringify(next));return next;});
       const trimmed=inp.trim();
       setRecents(prev=>{const next=[trimmed,...prev.filter(r=>r!==trimmed)].slice(0,5);ls.set(KEYS.recents,JSON.stringify(next));return next;});
@@ -323,7 +349,7 @@ export default function App(){
 
   const BottomBar=()=>(
     <div style={{position:"fixed",bottom:0,left:0,right:0,padding:"8px 20px",paddingBottom:"calc(8px + env(safe-area-inset-bottom))",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderTop:"1px solid "+c.cb,display:"flex",justifyContent:"center",zIndex:100}}>
-      <AuthBadge c={c} onManage={()=>setVw("manage_auth")}/>
+      <AuthBadge c={c} onManage={()=>setVw("manage_auth")} credits={credits} t={t}/>
     </div>
   );
 
@@ -383,6 +409,20 @@ export default function App(){
     <BottomBar/><style>{GS}</style></div></div>
   );
 
+  if(vw==="no_credits")return(
+    <div style={sx.pg}><div style={sx.w}>
+      <Bar/>
+      <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/></div>
+      <div style={{...sx.cd,textAlign:"center",padding:"32px 24px"}}>
+        <div style={{fontSize:48,marginBottom:12}}>🪙</div>
+        <h2 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"0 0 8px"}}>{t.credOut}</h2>
+        <p style={{fontSize:14,color:c.tm,lineHeight:1.6,margin:"0 0 20px"}}>{t.credOutMsg}</p>
+        <button onClick={()=>setVw("byok")} style={sx.bo}>{t.credByok}</button>
+        <button onClick={()=>setVw(auth==="in"?"dash":"home")} style={sx.bg}>{t.back}</button>
+      </div>
+    <BottomBar/><style>{GS}</style></div></div>
+  );
+
   if(vw==="manage_auth"){
     const {key,provider}=getCredential();
     const providerLabel=provider==="openrouter"?"OpenRouter":"Anthropic";
@@ -395,6 +435,13 @@ export default function App(){
           {key&&<div style={{padding:"14px 16px",background:c.ab,borderRadius:10,marginBottom:12}}>
             <div style={{fontSize:13,color:c.tm,marginBottom:4}}>API Key · <span style={{fontWeight:600,color:c.ac}}>{providerLabel}</span></div>
             <div style={{fontSize:14,fontWeight:500,color:c.ac,fontFamily:"monospace"}}>{key.slice(0,14)}…</div>
+          </div>}
+          {!key&&<div style={{padding:"14px 16px",background:credits<=3?c.eb:c.sb,border:"1px solid "+(credits<=3?"rgba(239,68,68,0.3)":c.sr),borderRadius:10,marginBottom:12,display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+            <div>
+              <div style={{fontSize:13,fontWeight:600,color:credits<=3?"#ef4444":c.tm,marginBottom:2}}>🪙 {t.credFree}</div>
+              <div style={{fontSize:22,fontWeight:700,color:credits<=3?"#ef4444":c.tx}}>{credits}</div>
+            </div>
+            {credits<=3&&<button onClick={()=>setVw("byok")} style={{...sx.bo,marginTop:0,width:"auto",padding:"8px 14px",fontSize:12}}>{t.credByok}</button>}
           </div>}
           <div style={{padding:"14px 16px",background:c.sb,border:"1px solid "+c.sr,borderRadius:10,marginBottom:12}}>
             <div style={{fontSize:13,fontWeight:600,color:c.tm,marginBottom:10}}>Usage stats</div>

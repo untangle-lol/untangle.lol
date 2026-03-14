@@ -3,6 +3,8 @@ services:
     build: .
     container_name: untangle_web
     restart: unless-stopped
+    environment:
+      - ANTHROPIC_DEFAULT_KEY=${ANTHROPIC_DEFAULT_KEY:-}
     volumes:
       - suggestions_data:/data
     networks:
