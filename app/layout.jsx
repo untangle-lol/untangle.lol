@@ -77,6 +77,18 @@ const webAppSchema = {
   creator: { "@type": "Organization", name: "untangle.lol", url: "https://untangle.lol/" },
 };
 
+const orgSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "untangle.lol",
+  url: "https://untangle.lol/",
+  logo: "https://untangle.lol/og.png",
+  description: "untangle.lol builds free, private, AI-powered productivity tools. Our flagship product turns any goal into an instant, step-by-step to-do list using Claude AI.",
+  sameAs: [
+    "https://untangle.lol/",
+  ],
+};
+
 const faqSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -164,6 +176,10 @@ export default function RootLayout({ children }) {
         <meta name="mobile-web-app-capable" content="yes" />
         <meta property="fb:app_id" content="0" />
         <link rel="me" href="https://untangle.lol/" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppSchema) }}
