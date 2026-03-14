@@ -248,7 +248,7 @@ const PRIVACY = {
         list: [
           "Auskunftsrecht",
           "Recht auf Berichtigung",
-          "Recht auf Löschung („Recht auf Vergessenwerden")",
+          'Recht auf Löschung („Recht auf Vergessenwerden")',
           "Recht auf Einschränkung der Verarbeitung",
           "Recht auf Datenübertragbarkeit",
           "Widerspruchsrecht gegen die Verarbeitung",
