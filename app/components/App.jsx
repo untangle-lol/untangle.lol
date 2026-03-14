@@ -553,76 +553,35 @@ export default function App(){
 
   // Build plain-text share message from current steps
   const buildShareText=(ps)=>{
-    if(!ps)return"";
-    const lines=[t.shareMsg||"Check out my action plan on untangle.lol:",'',ps.titel,''];
+    if(!ps)return'';
+    const lines=[t.shareMsg||'Check out my action plan on untangle.lol:','',ps.titel,''];
     (ps.stappen||[]).forEach((s,i)=>{lines.push((i+1)+'. '+s.actie);lines.push('   '+s.toelichting);lines.push('');});
     lines.push('https://untangle.lol');
     return lines.join('\n').trim();
   };
 
-  // Share sheet component — inline panel below the back button
-  const ShareSheet=({ps})=>{
-    if(!shareOpen)return null;
+  const doShare=async(ps)=>{
     const text=buildShareText(ps);
-    const enc=encodeURIComponent(text);
-    const url=encodeURIComponent('https://untangle.lol');
-    const platforms=[
-      {id:'whatsapp',label:'WhatsApp',color:'#25D366',icon:(
-        <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor"><path d="M16 3C8.82 3 3 8.82 3 16c0 2.36.63 4.57 1.73 6.48L3 29l6.72-1.71A13 13 0 0 0 16 29c7.18 0 13-5.82 13-13S23.18 3 16 3zm6.4 17.88c-.27.76-1.58 1.44-2.16 1.52-.55.08-1.25.11-2.02-.13a18.4 18.4 0 0 1-1.83-.68c-3.22-1.39-5.32-4.62-5.48-4.84-.16-.22-1.3-1.73-1.3-3.3 0-1.57.82-2.35 1.11-2.67.3-.32.65-.4.87-.4h.62c.2 0 .47-.08.73.56.27.65.92 2.24.99 2.4.09.16.14.35.03.56-.11.22-.17.35-.33.54-.16.19-.34.42-.48.57-.16.16-.33.33-.14.65.19.32.84 1.38 1.8 2.24 1.23 1.1 2.27 1.44 2.59 1.6.32.16.51.14.7-.08.19-.22.81-.95 1.02-1.27.22-.32.44-.27.74-.16.3.11 1.89.89 2.22 1.05.32.16.54.24.62.38.08.14.08.8-.19 1.56z"/></svg>
-      ),href:'https://wa.me/?text='+enc},
-      {id:'telegram',label:'Telegram',color:'#229ED9',icon:(
-        <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor"><path d="M16 3C8.82 3 3 8.82 3 16s5.82 13 13 13 13-5.82 13-13S23.18 3 16 3zm6.38 8.9-2.14 10.1c-.16.72-.58.9-1.18.56l-3.26-2.4-1.57 1.51c-.17.17-.32.32-.65.32l.23-3.33 6.02-5.43c.26-.23-.06-.36-.4-.13l-7.44 4.68-3.2-1c-.7-.22-.71-.7.15-1.03l12.5-4.82c.58-.21 1.09.14.94.97z"/></svg>
-      ),href:'https://t.me/share/url?url='+url+'&text='+enc},
-      {id:'x',label:'X / Twitter',color:'#000',icon:(
-        <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor"><path d="M18.24 14.27 26.48 5h-1.96l-7.14 8.3L11.54 5H5l8.64 12.57L5 27h1.96l7.55-8.78L20.46 27H27l-8.76-12.73zm-2.67 3.1-.87-1.25L7.6 6.4h3l5.6 8.01.88 1.25 7.28 10.41h-3l-5.93-8.7z"/></svg>
-      ),href:'https://x.com/intent/tweet?text='+enc},
-      {id:'facebook',label:'Facebook',color:'#1877F2',icon:(
-        <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor"><path d="M16 3C8.82 3 3 8.82 3 16c0 6.47 4.73 11.84 10.94 12.82V19.7h-3.3V16h3.3v-2.86c0-3.25 1.94-5.05 4.9-5.05 1.42 0 2.9.25 2.9.25v3.2h-1.63c-1.61 0-2.1 1-2.1 2.02V16h3.58l-.57 3.7h-3v9.12C24.27 27.84 29 22.47 29 16c0-7.18-5.82-13-13-13z"/></svg>
-      ),href:'https://www.facebook.com/sharer/sharer.php?u='+url+'&quote='+enc},
-      {id:'viber',label:'Viber',color:'#7360F2',icon:(
-        <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor"><path d="M23.7 4.7C21.3 2.6 17.2 2 16 2S10.7 2.6 8.3 4.7C5.5 7.1 4 10.6 4 15c0 2.7.6 5.1 1.7 7l-1 5.4 5.5-1.1c1.8.9 3.8 1.4 5.8 1.4 6.6 0 12-5 12-11.7 0-4.4-1.5-7.9-4.3-10.3zm-2.5 15.6c-.3.8-1.4 1.5-2.4 1.7-.6.1-1.4.2-4.1-1-2.7-1.2-4.6-4.1-4.7-4.3-.1-.2-1.1-1.5-1.1-2.8 0-1.3.7-2 .9-2.2.2-.3.5-.3.7-.3h.5c.2 0 .4-.1.6.5.2.6.8 1.9.9 2 .1.1.1.3 0 .5-.1.2-.1.3-.3.5l-.4.5c-.1.1-.3.3-.1.6.2.3.7 1.2 1.5 1.9 1.1.9 1.9 1.2 2.2 1.3.3.1.4.1.6-.1.2-.2.7-.8.9-1.1.2-.3.4-.2.6-.1.2.1 1.6.8 1.9.9.3.1.5.2.5.3.1.1.1.7-.2 1.3z"/></svg>
-      ),href:'viber://forward?text='+enc},
-      {id:'signal',label:'Signal',color:'#3A76F0',icon:(
-        <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor"><path d="M16 3a13 13 0 1 0 0 26A13 13 0 0 0 16 3zm0 2.6a10.4 10.4 0 1 1 0 20.8A10.4 10.4 0 0 1 16 5.6zM11.3 10a.9.9 0 0 0-.7.3l-1.3 1.3a.9.9 0 0 0 0 1.3c.8.8 1.9 1.7 3.2 2.5l-1.2 1.2a.9.9 0 0 0 0 1.3l1.8 1.8a.9.9 0 0 0 1.3 0l1.2-1.2c.8 1.3 1.7 2.4 2.5 3.2a.9.9 0 0 0 1.3 0l1.3-1.3a.9.9 0 0 0 .3-.7c0-.2-.1-.5-.3-.6-3.2-3.2-7.1-8.8-9-9a.9.9 0 0 0-.4 0z"/></svg>
-      ),href:'https://signal.me/#p/?message='+enc},
-    ];
+    if(navigator.share){
+      try{await navigator.share({title:ps.titel,text});utrack('share_native');return;}catch(e){if(e.name==='AbortError')return;}
+    }
+    setShareOpen(o=>!o);
+    setShareCopied(false);
+    utrack('share_open');
+  };
 
-    const copyText=async()=>{
-      try{await navigator.clipboard.writeText(text);}catch{
-        // fallback
-        const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');}catch{}document.body.removeChild(ta);
+  const copyShareText=(text)=>{
+    const doIt=()=>{
+      if(navigator.clipboard){
+        navigator.clipboard.writeText(text).catch(()=>{});
+      }else{
+        const ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0;top:0;left:0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');}catch{}document.body.removeChild(ta);
       }
       setShareCopied(true);
       setTimeout(()=>setShareCopied(false),2000);
       utrack('share_copy');
     };
-
-    return(
-      <div style={{marginTop:10,padding:"14px 16px",background:c.sb,border:"1px solid "+c.sr,borderRadius:12,animation:"fadeIn 0.2s ease"}}>
-        <div style={{display:"flex",flexWrap:"wrap",gap:10,justifyContent:"center"}}>
-          {platforms.map(p=>(
-            <a key={p.id} href={p.href} target="_blank" rel="noreferrer"
-              onClick={()=>utrack('share_platform',{platform:p.id})}
-              style={{display:"flex",flexDirection:"column",alignItems:"center",gap:5,textDecoration:"none",minWidth:52}}>
-              <div style={{width:44,height:44,borderRadius:12,background:p.color,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",flexShrink:0}}>
-                {p.icon}
-              </div>
-              <span style={{fontSize:10,color:c.tm,textAlign:"center",lineHeight:1.2}}>{p.label}</span>
-            </a>
-          ))}
-          <button onClick={copyText}
-            style={{display:"flex",flexDirection:"column",alignItems:"center",gap:5,background:"none",border:"none",cursor:"pointer",minWidth:52}}>
-            <div style={{width:44,height:44,borderRadius:12,background:shareCopied?c.gr:c.ghb,border:"1px solid "+(shareCopied?c.gr:c.ghr),display:"flex",alignItems:"center",justifyContent:"center",transition:"background 0.2s"}}>
-              {shareCopied
-                ?<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                :<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke={c.tm} strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              }
-            </div>
-            <span style={{fontSize:10,color:shareCopied?c.gr:c.tm,textAlign:"center",lineHeight:1.2}}>{shareCopied?(t.shareCopied||'Copied!'):(t.shareCopy||'Copy')}</span>
-          </button>
-        </div>
-      </div>
-    );
+    doIt();
   };
 
   // Honeypot field — visually hidden, bots fill it
@@ -1003,11 +962,50 @@ export default function App(){
               </div>
             </div>
             <button onClick={goHome} style={sx.bg}>{t.resB}</button>
-            <button onClick={()=>{setShareOpen(o=>!o);setShareCopied(false);utrack('share_open');}} style={{...sx.bg,marginTop:8,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+            <button onClick={()=>doShare(steps)} style={{...sx.bg,marginTop:8,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
               <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
               {t.share||'Share'}
             </button>
-            <ShareSheet ps={steps}/>
+            {shareOpen&&(()=>{
+              const _text=buildShareText(steps);
+              const _enc=encodeURIComponent(_text);
+              const _url=encodeURIComponent('https://untangle.lol');
+              return(
+                <div style={{marginTop:8,padding:'14px 16px',background:c.sb,border:'1px solid '+c.sr,borderRadius:12}}>
+                  <div style={{display:'flex',flexWrap:'wrap',gap:8,justifyContent:'center',marginBottom:8}}>
+                    {[
+                      {id:'whatsapp',label:'WhatsApp',bg:'#25D366',href:'https://wa.me/?text='+_enc},
+                      {id:'telegram',label:'Telegram',bg:'#229ED9',href:'https://t.me/share/url?url='+_url+'&text='+_enc},
+                      {id:'x',label:'X',bg:'#000',href:'https://x.com/intent/tweet?text='+_enc},
+                      {id:'facebook',label:'Facebook',bg:'#1877F2',href:'https://www.facebook.com/sharer/sharer.php?u='+_url+'&quote='+_enc},
+                      {id:'viber',label:'Viber',bg:'#7360F2',href:'viber://forward?text='+_enc},
+                      {id:'signal',label:'Signal',bg:'#3A76F0',href:'https://signal.me/#p/?message='+_enc},
+                    ].map(p=>(
+                      <a key={p.id} href={p.href} target="_blank" rel="noreferrer"
+                        onClick={()=>utrack('share_platform',{platform:p.id})}
+                        style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4,textDecoration:'none',minWidth:48}}>
+                        <div style={{width:42,height:42,borderRadius:10,background:p.bg,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:18}}>
+                          {p.id==='whatsapp'&&'💬'}
+                          {p.id==='telegram'&&'✈️'}
+                          {p.id==='x'&&'𝕏'}
+                          {p.id==='facebook'&&'f'}
+                          {p.id==='viber'&&'📳'}
+                          {p.id==='signal'&&'🔒'}
+                        </div>
+                        <span style={{fontSize:9,color:c.tm,textAlign:'center'}}>{p.label}</span>
+                      </a>
+                    ))}
+                    <button onClick={()=>copyShareText(_text)}
+                      style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4,background:'none',border:'none',cursor:'pointer',minWidth:48,padding:0}}>
+                      <div style={{width:42,height:42,borderRadius:10,background:shareCopied?c.gr:c.ghb,border:'1px solid '+(shareCopied?c.gr:c.ghr),display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,transition:'background 0.2s'}}>
+                        {shareCopied?'✓':'📋'}
+                      </div>
+                      <span style={{fontSize:9,color:shareCopied?c.gr:c.tm,textAlign:'center'}}>{shareCopied?(t.shareCopied||'Copied!'):(t.shareCopy||'Copy')}</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         <BottomBar/><style>{GS}</style></div></div>
       );
