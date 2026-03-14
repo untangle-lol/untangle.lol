@@ -19,4 +19,4 @@ jobs:
           port: ${{ secrets.DEPLOY_PORT }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
-          script: /home/deploy/sites/untangle.lol/deploy.sh
+          script: /home/deploy/sites/untangle/deploy.sh
