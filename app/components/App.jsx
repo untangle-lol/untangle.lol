@@ -30,6 +30,7 @@ const KEYS = {
   usage:    "untangle_usage",
    credits:  "untangle_credits",
    creditsTs: "untangle_credits_ts",
+   altruismBonusTs: "untangle_altruism_bonus_ts",
    clientRef:"untangle_client_ref",
 };
 
@@ -470,12 +471,17 @@ export default function App(){
       const entry=hist.find(h=>h.id===activeId);
       const allDone=localComp.length>0&&localComp.every(Boolean);
       if(entry&&entry.isAltruistic&&!entry.altruismBonusClaimed&&allDone){
-        addCredits(ALTRUISM_BONUS_CREDITS);
-        utrack("altruism_bonus_earned",{credits:ALTRUISM_BONUS_CREDITS});
+        const lastBonus=parseInt(ls.get(KEYS.altruismBonusTs)||"0",10);
+        const canClaim=(Date.now()-lastBonus)>=24*60*60*1000;
+        if(canClaim){
+          addCredits(ALTRUISM_BONUS_CREDITS);
+          ls.set(KEYS.altruismBonusTs,String(Date.now()));
+          utrack("altruism_bonus_earned",{credits:ALTRUISM_BONUS_CREDITS});
+          setTimeout(()=>setAltruismBonusPopup(true),300);
+        }
         const markClaimed=(ph)=>ph.map(h=>h.id===activeId?{...h,altruismBonusClaimed:true}:h);
         if(auth==="in"){setHist(ph=>{const nh=markClaimed(ph);ls.set(eKey(userRef.current),JSON.stringify(nh));return nh;});}
         else{setHist(ph=>{const nh=markClaimed(ph);ls.set(KEYS.guestHist,JSON.stringify(nh));return nh;});}
-        setTimeout(()=>setAltruismBonusPopup(true),300);
       }
     }
     setInp("");setSteps(null);setErr(null);setActiveId(null);setLocalComp([]);setVw(auth==="in"?"dash":"home");
