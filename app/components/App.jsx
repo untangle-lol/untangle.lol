@@ -193,6 +193,8 @@ export default function App(){
   const [clientRef,setClientRef]=useState(null);
   const userRef=useRef(null);
   const zone=useMemo(()=>tz(),[]);
+
+  const t=lang?LANGS.find(l=>l.code===lang)||LANGS[1]:LANGS[1];
   const rt=tm==="system"?sys:tm;
   const c=TH[rt];
 
