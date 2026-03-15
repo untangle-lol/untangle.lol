@@ -178,6 +178,8 @@ export default function App(){
   // Share sheet
   const [shareOpen,setShareOpen]=useState(false);
   const [shareCopied,setShareCopied]=useState(false);
+  const [shareId,setShareId]=useState(null);
+  const [shareLoading,setShareLoading]=useState(false);
   // WOOP
   const [woopStep,setWoopStep]=useState(0); // 0=W,1=O,2=O,3=P
   const [woopData,setWoopData]=useState({wish:"",outcome:"",obstacle:"",plan:""});
@@ -341,6 +343,9 @@ export default function App(){
     const id=setInterval(()=>setHeroSIdx(i=>(i+1)%phrases.length),3000);
     return()=>clearInterval(id);
   },[inp,t]);
+
+  // Reset share state when switching entries
+  useEffect(()=>{setShareId(null);setShareOpen(false);setShareCopied(false);},[activeId]);
 
   const callAPI=async(messages,maxTokens=1000)=>{
     const {key,provider}=getCredential();
@@ -571,18 +576,30 @@ export default function App(){
   };
 
   // Build plain-text share message from current steps
-  const buildShareText=(ps)=>{
+  const buildShareText=(ps,url)=>{
     if(!ps)return'';
+    const link=url||'https://untangle.lol';
     const lines=[t.shareMsg||'Check out my action plan on untangle.lol:','',ps.titel,''];
     (ps.stappen||[]).forEach((s,i)=>{lines.push((i+1)+'. '+s.actie);lines.push('   '+s.toelichting);lines.push('');});
-    lines.push('https://untangle.lol');
+    lines.push(link);
     return lines.join('\n').trim();
   };
 
   const doShare=async(ps)=>{
-    const text=buildShareText(ps);
+    // Lazily create a permalink on first share
+    let sid=shareId;
+    if(!sid&&!shareLoading){
+      setShareLoading(true);
+      try{
+        const r=await fetch('/api/share',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({steps:ps,lang})});
+        if(r.ok){const d=await r.json();sid=d.id;setShareId(d.id);}
+      }catch{}
+      setShareLoading(false);
+    }
+    const url=sid?`https://untangle.lol/s/${sid}`:'https://untangle.lol';
+    const text=buildShareText(ps,url);
     if(navigator.share){
-      try{await navigator.share({title:ps.titel,text});utrack('share_native');return;}catch(e){if(e.name==='AbortError')return;}
+      try{await navigator.share({title:ps.titel,text,url});utrack('share_native');return;}catch(e){if(e.name==='AbortError')return;}
     }
     setShareOpen(o=>!o);
     setShareCopied(false);
@@ -994,7 +1011,7 @@ export default function App(){
                 <span style={{fontSize:12,color:c.gr,fontWeight:600}}>{t.altruismBonusTitle}</span>
               </div>
             )}
-            <div style={{position:"sticky",top:0,zIndex:10,paddingBottom:8,marginBottom:4}}>
+            <div style={{position:"sticky",top:0,zIndex:10,background:c.bg,paddingBottom:8,marginBottom:4}}>
               <div style={{background:c.card,borderRadius:12,padding:"10px 16px",border:"1px solid "+c.cb,boxShadow:c.sh}}>
                 <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}><span style={{fontSize:13,color:c.tm}}>{t.prog}</span><span style={{fontSize:13,color:all?c.gr:c.ac,fontWeight:600}}>{dn} {t.sOf} {tt}</span></div>
                 <PBar done={dn} total={tt} c={c}/>
@@ -1040,11 +1057,21 @@ export default function App(){
               {t.share||'Share'}
             </button>
             {shareOpen&&(()=>{
-              const _text=buildShareText(steps);
+              const _shareUrl=shareId?`https://untangle.lol/s/${shareId}`:'https://untangle.lol';
+              const _text=buildShareText(steps,_shareUrl);
               const _enc=encodeURIComponent(_text);
-              const _url=encodeURIComponent('https://untangle.lol');
+              const _url=encodeURIComponent(_shareUrl);
               return(
                 <div style={{marginTop:8,padding:'14px 16px',background:c.sb,border:'1px solid '+c.sr,borderRadius:12}}>
+                  {shareId&&(
+                    <div style={{marginBottom:12,display:'flex',alignItems:'center',gap:8,background:c.card,border:'1px solid '+c.cb,borderRadius:10,padding:'8px 12px'}}>
+                      <span style={{flex:1,fontSize:12,color:c.tx,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{_shareUrl}</span>
+                      <button onClick={()=>copyShareText(_shareUrl)}
+                        style={{flexShrink:0,padding:'5px 10px',borderRadius:8,border:'none',background:shareCopied?c.gr:c.ac,color:'#fff',fontSize:12,fontWeight:600,cursor:'pointer',transition:'background 0.2s'}}>
+                        {shareCopied?(t.shareCopied||'Copied!'):(t.shareCopy||'Copy')}
+                      </button>
+                    </div>
+                  )}
                   <div style={{display:'flex',flexWrap:'wrap',gap:8,justifyContent:'center',marginBottom:8}}>
                     {[
                       {id:'whatsapp',label:'WhatsApp',bg:'#25D366',href:'https://wa.me/?text='+_enc},
@@ -1068,13 +1095,15 @@ export default function App(){
                         <span style={{fontSize:9,color:c.tm,textAlign:'center'}}>{p.label}</span>
                       </a>
                     ))}
-                    <button onClick={()=>copyShareText(_text)}
-                      style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4,background:'none',border:'none',cursor:'pointer',minWidth:48,padding:0}}>
-                      <div style={{width:42,height:42,borderRadius:10,background:shareCopied?c.gr:c.ghb,border:'1px solid '+(shareCopied?c.gr:c.ghr),display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,transition:'background 0.2s'}}>
-                        {shareCopied?'✓':'📋'}
-                      </div>
-                      <span style={{fontSize:9,color:shareCopied?c.gr:c.tm,textAlign:'center'}}>{shareCopied?(t.shareCopied||'Copied!'):(t.shareCopy||'Copy')}</span>
-                    </button>
+                    {!shareId&&(
+                      <button onClick={()=>copyShareText(_text)}
+                        style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4,background:'none',border:'none',cursor:'pointer',minWidth:48,padding:0}}>
+                        <div style={{width:42,height:42,borderRadius:10,background:shareCopied?c.gr:c.ghb,border:'1px solid '+(shareCopied?c.gr:c.ghr),display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,transition:'background 0.2s'}}>
+                          {shareCopied?'✓':'📋'}
+                        </div>
+                        <span style={{fontSize:9,color:shareCopied?c.gr:c.tm,textAlign:'center'}}>{shareCopied?(t.shareCopied||'Copied!'):(t.shareCopy||'Copy')}</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               );
