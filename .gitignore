@@ -1,3 +1,4 @@
 .env
 .next/
 server.js
+node_modules/
