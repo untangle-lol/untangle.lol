@@ -600,7 +600,7 @@ export default function App(){
       setShareLoading(true);
       try{
         const r=await fetch('/api/share',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({steps:ps,lang})});
-        if(r.ok){const d=await r.json();sid=d.id;setShareId(d.id);window.history.pushState(null,'',`/s/${d.id}`);}
+        if(r.ok){const d=await r.json();sid=d.id;setShareId(d.id);}
       }catch{}
       setShareLoading(false);
     }
