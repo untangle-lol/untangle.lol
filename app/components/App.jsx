@@ -997,7 +997,15 @@ export default function App(){
       const ae=hist.find(h=>h.id===activeId);
       const isAlt=ae?.isAltruistic&&!ae?.altruismBonusClaimed;
       return(
-        <div dir={dir} style={sx.pg}><div style={sx.w}>
+        <>
+        <div style={{position:"fixed",top:"calc(48px + env(safe-area-inset-top))",left:0,right:0,zIndex:99,background:c.bg,borderBottom:"1px solid "+c.cb,padding:"10px 20px"}}>
+          <div style={{maxWidth:540,margin:"0 auto"}}>
+            <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}><span style={{fontSize:13,color:c.tm}}>{t.prog}</span><span style={{fontSize:13,color:all?c.gr:c.ac,fontWeight:600}}>{dn} {t.sOf} {tt}</span></div>
+            <PBar done={dn} total={tt} c={c}/>
+          </div>
+        </div>
+        <div dir={dir} style={{...sx.pg,paddingTop:"calc(104px + env(safe-area-inset-top))"}}>
+        <div style={sx.w}>
           <div style={{animation:"fadeIn 0.4s ease"}}>
             {/* Altruistic goal progress indicator */}
             {ae?.isAltruistic&&!ae?.altruismBonusClaimed&&(
@@ -1012,12 +1020,6 @@ export default function App(){
                 <span style={{fontSize:12,color:c.gr,fontWeight:600}}>{t.altruismBonusTitle}</span>
               </div>
             )}
-            <div style={{position:"sticky",top:0,zIndex:10,background:c.bg,paddingBottom:8,marginBottom:4}}>
-              <div style={{background:c.card,borderRadius:12,padding:"10px 16px",border:"1px solid "+c.cb,boxShadow:c.sh}}>
-                <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}><span style={{fontSize:13,color:c.tm}}>{t.prog}</span><span style={{fontSize:13,color:all?c.gr:c.ac,fontWeight:600}}>{dn} {t.sOf} {tt}</span></div>
-                <PBar done={dn} total={tt} c={c}/>
-              </div>
-            </div>
             <div style={sx.cd}>
               <h2 style={{fontSize:17,fontWeight:600,color:all?c.gr:c.ac,margin:"0 0 6px"}}>{all?"✅ ":""}{steps.titel}</h2>
               {ae?.timestamp&&<div style={{fontSize:12,color:c.tf,marginBottom:10}}>{fmtDate(ae.timestamp,ae.timezone||zone,ae.lang||lang)}</div>}
@@ -1108,9 +1110,10 @@ export default function App(){
                   </div>
                 </div>
               );
-            })()}
+             })()}
           </div>
         <BottomBar/><style>{GS}</style></div></div>
+        </>
       );
     })()}
 
