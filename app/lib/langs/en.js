@@ -32,7 +32,7 @@ const en = {
   altruismBonusTitle:"🎁 +10 credits earned!",
   altruismBonusMsg:"Congratulations! You completed your altruistic goal. As a thank-you for your efforts to help others, we've added 10 free credits to your account.",
   altruismBonusBtn:"Awesome, thank you!",
-  altruismTeaser:"💛 Is your goal about helping others? Then earn 10 free credits when you complete all steps.",
+  altruismTeaser:"💛 Got a goal that helps others? Complete all steps and earn 10 free credits.",
   altruismPopupMsgRepeat:"Your goal is about helping others — which is truly wonderful. Complete all the steps and make a real difference!",
   analyticsNote:"We collect anonymous usage statistics (no cookies, no personal data).",
   signIn:"Sign in with Google",signInSub:"Save your goals across all devices",signOut:"Sign out",

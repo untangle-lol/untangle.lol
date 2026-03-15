@@ -32,7 +32,7 @@ const sw = {
   altruismBonusTitle:"🎁 +10 mikopo imepatikana!",
   altruismBonusMsg:"Hongera! Umekamilisha lengo lako la kujitolea. Kama shukrani kwa juhudi zako za kusaidia wengine, tumeongeza mikopo 10 ya bure kwenye akaunti yako.",
   altruismBonusBtn:"Ajabu, asante!",
-  altruismTeaser:"💛 Je, lengo lako kuhusu kusaidia wengine? Basi pata mikopo 10 ya bure ukikamilisha hatua zote.",
+  altruismTeaser:"💛 Unataka kusaidia wengine? Ingiza lengo la kujitolea na upate mikopo 10 ya bure ukikamilisha hatua zote.",
   altruismPopupMsgRepeat:"Lengo lako kuhusu kusaidia wengine — ambayo ni ya kupendeza kweli kweli. Kamilisha hatua zote na fanya tofauti halisi!",
   analyticsNote:"Tunakusanya takwimu za matumizi zisizo na jina (hakuna vidakuzi, hakuna data ya kibinafsi).",
   signIn:"Ingia na Google",signInSub:"Hifadhi malengo yako kwenye vifaa vyote",signOut:"Toka",
