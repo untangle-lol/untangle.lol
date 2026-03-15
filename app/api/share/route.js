@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getShare, createShare } from "@/app/lib/shares";
+import { getShare, createShare } from "../../lib/shares.js";
 
 // GET /api/share?id=xxx
 export async function GET(request) {

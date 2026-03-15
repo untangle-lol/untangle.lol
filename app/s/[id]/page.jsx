@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { notFound } from "next/navigation";
-import { getShare } from "@/app/lib/shares";
+import { getShare } from "../../lib/shares.js";
 
 export default async function SharePage({ params }) {
   const share = getShare(params.id);
