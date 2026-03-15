@@ -994,13 +994,15 @@ export default function App(){
                 <span style={{fontSize:12,color:c.gr,fontWeight:600}}>{t.altruismBonusTitle}</span>
               </div>
             )}
-            <div style={sx.cd}>
-              <h2 style={{fontSize:17,fontWeight:600,color:all?c.gr:c.ac,margin:"0 0 6px"}}>{all?"✅ ":""}{steps.titel}</h2>
-              {ae?.timestamp&&<div style={{fontSize:12,color:c.tf,marginBottom:10}}>{fmtDate(ae.timestamp,ae.timezone||zone,ae.lang||lang)}</div>}
-              <div style={{marginBottom:18}}>
+            <div style={{position:"sticky",top:0,zIndex:10,background:c.bg,paddingBottom:8,marginBottom:4}}>
+              <div style={{background:c.card,borderRadius:12,padding:"10px 16px",border:"1px solid "+c.cb,boxShadow:c.sh}}>
                 <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}><span style={{fontSize:13,color:c.tm}}>{t.prog}</span><span style={{fontSize:13,color:all?c.gr:c.ac,fontWeight:600}}>{dn} {t.sOf} {tt}</span></div>
                 <PBar done={dn} total={tt} c={c}/>
               </div>
+            </div>
+            <div style={sx.cd}>
+              <h2 style={{fontSize:17,fontWeight:600,color:all?c.gr:c.ac,margin:"0 0 6px"}}>{all?"✅ ":""}{steps.titel}</h2>
+              {ae?.timestamp&&<div style={{fontSize:12,color:c.tf,marginBottom:10}}>{fmtDate(ae.timestamp,ae.timezone||zone,ae.lang||lang)}</div>}
               {all&&<div style={{textAlign:"center",padding:"10px 0 16px",fontSize:14,color:c.gr,fontWeight:600,animation:"pop 0.4s ease"}}>{t.allD}</div>}
               {/* WOOP summary card — collapsible, shown when entry was created via WOOP */}
               {ae?.woop&&(()=>{
