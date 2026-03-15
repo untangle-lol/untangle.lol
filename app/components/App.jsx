@@ -237,11 +237,11 @@ export default function App(){
     if(!ref){ref=genClientRef();ls.set(KEYS.clientRef,ref);}
     setClientRef(ref);
     const {valid}=getCredential();
-    // Check for URL flags from Google OAuth redirect
     const params=new URLSearchParams(window.location.search);
     const signedIn=params.get("signed_in")==="1";
     const authErr=params.get("auth_error")==="1";
     const topupSuccess=params.get("topup")==="success";
+    const restoreId=params.get("id");
     if(signedIn||authErr||topupSuccess){window.history.replaceState({},"",window.location.pathname);}
     // Try Google session cookie first
     try{
@@ -254,14 +254,20 @@ export default function App(){
         const savedLang=ls.get("untangle_lang");
         if(savedLang)setLang(savedLang);
         setAuth("in");
-        const hv=ls.get(eKey(email));if(hv){try{setHist(JSON.parse(hv));}catch{}}
+        let parsedHist=[];
+        const hv=ls.get(eKey(email));if(hv){try{parsedHist=JSON.parse(hv);}catch{}}
+        setHist(parsedHist);
         if(signedIn)utrack("sign_in");
         if(topupSuccess){setTopUpMsg("pending");pollCredits(ref);}
+        if(restoreId){const e=parsedHist.find(h=>String(h.id)===restoreId);if(e){setSteps(e.resultaat);setActiveId(e.id);setLocalComp(e.completed||e.resultaat.stappen.map(()=>false));setVw("result");setReady(true);return;}}
         setVw("dash");setReady(true);return;
       }
     }catch{}
-    const gh=ls.get(KEYS.guestHist);if(gh){try{setHist(JSON.parse(gh));}catch{}}
+    let parsedGuestHist=[];
+    const gh=ls.get(KEYS.guestHist);if(gh){try{parsedGuestHist=JSON.parse(gh);}catch{}}
+    setHist(parsedGuestHist);
     if(topupSuccess){setTopUpMsg("pending");pollCredits(ref);}
+    if(restoreId){const e=parsedGuestHist.find(h=>String(h.id)===restoreId);if(e){setSteps(e.resultaat);setActiveId(e.id);setLocalComp(e.completed||e.resultaat.stappen.map(()=>false));setVw("result");setReady(true);return;}}
     setVw(langSv?"home":"lang");
     setReady(true);
   })();},[]);
@@ -413,6 +419,7 @@ export default function App(){
       const navigate=()=>{
         if(auth==="in"){const nh=[entry,...hist];setHist(nh);ls.set(eKey(userRef.current),JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
         else{const nh=[entry,...hist].slice(0,10);setHist(nh);ls.set(KEYS.guestHist,JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
+        window.history.replaceState(null,'','/?id='+entry.id);
         // Show altruism popup after a short delay so result view renders first
         if(isAltruistic){setTimeout(()=>setAltruismPopup(true),600);}
         utrack("goal_result",{lang,isAltruistic,steps:ps.stappen?.length||0});
@@ -455,6 +462,7 @@ export default function App(){
       const navigate=()=>{
         if(auth==="in"){const nh=[entry,...hist];setHist(nh);ls.set(eKey(userRef.current),JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
         else{const nh=[entry,...hist].slice(0,10);setHist(nh);ls.set(KEYS.guestHist,JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
+        window.history.replaceState(null,'','/?id='+entry.id);
         if(isAltruistic){setTimeout(()=>setAltruismPopup(true),600);}
         utrack("woop_result",{lang,isAltruistic,steps:ps.stappen?.length||0});
       };
@@ -499,7 +507,7 @@ export default function App(){
     setTopUpBusy(false);
   };
 
-  const openEntry=(entry)=>{setSteps(entry.resultaat);setActiveId(entry.id);setLocalComp(entry.completed||entry.resultaat.stappen.map(()=>false));setShareOpen(false);setVw("result");};
+  const openEntry=(entry)=>{setSteps(entry.resultaat);setActiveId(entry.id);setLocalComp(entry.completed||entry.resultaat.stappen.map(()=>false));setShareOpen(false);setVw("result");window.history.replaceState(null,'','/?id='+entry.id);};
   const del=(id)=>{const nh=hist.filter(h=>h.id!==id);setHist(nh);if(auth==="in")ls.set(eKey(userRef.current),JSON.stringify(nh));else ls.set(KEYS.guestHist,JSON.stringify(nh));};
   const clrAll=()=>{setHist([]);if(auth==="in")ls.set(eKey(userRef.current),"[]");else ls.set(KEYS.guestHist,"[]");};
   const goHome=()=>{
