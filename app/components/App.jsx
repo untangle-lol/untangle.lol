@@ -994,7 +994,7 @@ export default function App(){
                 <span style={{fontSize:12,color:c.gr,fontWeight:600}}>{t.altruismBonusTitle}</span>
               </div>
             )}
-            <div style={{position:"sticky",top:0,zIndex:10,background:c.bg,paddingBottom:8,marginBottom:4}}>
+            <div style={{position:"sticky",top:0,zIndex:10,paddingBottom:8,marginBottom:4}}>
               <div style={{background:c.card,borderRadius:12,padding:"10px 16px",border:"1px solid "+c.cb,boxShadow:c.sh}}>
                 <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}><span style={{fontSize:13,color:c.tm}}>{t.prog}</span><span style={{fontSize:13,color:all?c.gr:c.ac,fontWeight:600}}>{dn} {t.sOf} {tt}</span></div>
                 <PBar done={dn} total={tt} c={c}/>
