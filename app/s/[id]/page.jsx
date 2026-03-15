@@ -20,7 +20,10 @@ export default async function SharePage({ params }) {
           *{box-sizing:border-box;margin:0;padding:0}
           body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8fafc;color:#1e293b;min-height:100dvh;padding:24px 16px 48px}
           .wrap{max-width:540px;margin:0 auto}
-          .logo{font-size:13px;font-weight:700;color:#94a3b8;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:24px}
+          .logo{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin-bottom:28px;text-decoration:none}
+          .logo-icon{font-size:32px;line-height:1}
+          .logo-name{font-size:20px;font-weight:800;letter-spacing:-0.03em;color:#1e293b;line-height:1}
+          .logo-tld{font-size:9px;font-weight:500;letter-spacing:0.15em;color:#94a3b8;text-transform:uppercase}
           h1{font-size:22px;font-weight:700;color:#1e293b;margin-bottom:20px;line-height:1.3}
           .step{display:flex;gap:12px;align-items:flex-start;background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.07);border:1px solid rgba(0,0,0,0.08)}
           .num{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:#b45309;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
@@ -31,7 +34,8 @@ export default async function SharePage({ params }) {
           .footer{margin-top:16px;text-align:center;font-size:12px;color:#94a3b8}
           @media(prefers-color-scheme:dark){
             body{background:#0f172a;color:#f1f5f9}
-            .logo{color:#475569}
+            .logo-name{color:#f1f5f9}
+            .logo-tld{color:#475569}
             h1{color:#f1f5f9}
             .step{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.08);box-shadow:none}
             .num{background:#facc15;color:#0f172a}
@@ -44,7 +48,11 @@ export default async function SharePage({ params }) {
       </head>
       <body>
         <div className="wrap">
-          <div className="logo">untangle</div>
+          <div className="logo">
+            <span className="logo-icon">🪢</span>
+            <span className="logo-name">untangle</span>
+            <span className="logo-tld">.lol</span>
+          </div>
           <h1>{steps.titel}</h1>
           {(steps.stappen || []).map((s, i) => (
             <div key={i} className="step">
