@@ -521,7 +521,7 @@ export default function App(){
         else{setHist(ph=>{const nh=markClaimed(ph);ls.set(KEYS.guestHist,JSON.stringify(nh));return nh;});}
       }
     }
-    setInp("");setSteps(null);setErr(null);setActiveId(null);setLocalComp([]);setShareOpen(false);setVw(auth==="in"?"dash":"home");
+    setInp("");setSteps(null);setErr(null);setActiveId(null);setLocalComp([]);setShareOpen(false);setVw(auth==="in"?"dash":"home");window.history.replaceState(null,'','/');
   };
   const prog=(e)=>{const tt=e.resultaat?.stappen?.length||0;const dn=(e.completed||[]).filter(Boolean).length;return{dn,tt,pct:tt>0?Math.round(dn/tt*100):0};};
 
@@ -592,7 +592,7 @@ export default function App(){
       setShareLoading(true);
       try{
         const r=await fetch('/api/share',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({steps:ps,lang})});
-        if(r.ok){const d=await r.json();sid=d.id;setShareId(d.id);}
+        if(r.ok){const d=await r.json();sid=d.id;setShareId(d.id);window.history.pushState(null,'',`/s/${d.id}`);}
       }catch{}
       setShareLoading(false);
     }
