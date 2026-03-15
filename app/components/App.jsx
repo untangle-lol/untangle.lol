@@ -334,13 +334,6 @@ export default function App(){
       .catch(()=>{});
   },[lang]);
 
-  // Pre-fill textarea with last used goal when navigating to home/new_goal
-  useEffect(()=>{
-    if((vw==="home"||vw==="new_goal")&&!inp&&recents[0]){
-      setInp(recents[0]);
-    }
-  },[vw]);
-
   // Cycle heroS phrases when textarea is empty
   useEffect(()=>{
     if(inp)return;
