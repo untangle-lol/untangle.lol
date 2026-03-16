@@ -36,7 +36,7 @@ const es = {
   altruismPopupMsgRepeat:"Tu meta consiste en ayudar a otros — eso es realmente maravilloso. ¡Completa todos los pasos y marca la diferencia!",
   analyticsNote:"Recopilamos estadísticas de uso anónimas (sin cookies ni datos personales).",
   signIn:"Iniciar sesión con Google",signInSub:"Guarda tus metas en todos tus dispositivos",signOut:"Cerrar sesión",
-  profile:"Perfil",terms:"Términos",privacy:"Privacidad",stats:"Estadísticas",donate:"❤️ Donar",revenue:"Ingresos",
+  profile:"Perfil",terms:"Términos",privacy:"Privacidad",stats:"Estadísticas",donate:"❤️ Donar",revenue:"Ingresos",revTotal:"Ingresos totales",revEmpty:"Sin transacciones aún.",revMore:"Cargar más",
   share:"Compartir",shareCopy:"Copiar",shareCopied:"¡Copiado!",shareMsg:"Mira mi plan de acción en untangle.lol:",
   altruismLoadingMsg:"💛 Estás haciendo algo maravilloso por los demás.",
   altruisticSugg:["Quiero hacer voluntariado en un banco de alimentos","Quiero cuidar a un familiar","Quiero crear un huerto comunitario","Quiero donar sangre regularmente","Quiero ser mentor de un joven"],

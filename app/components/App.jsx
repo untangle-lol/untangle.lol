@@ -175,6 +175,12 @@ export default function App(){
   const [topUpMsg,setTopUpMsg]=useState(null);
   const [topUpPopup,setTopUpPopup]=useState(null); // { credits: N }
   const [clientRef,setClientRef]=useState(null);
+  // Revenue
+  const [revenueTxns,setRevenueTxns]=useState([]);
+  const [revenueBusy,setRevenueBusy]=useState(false);
+  const [revenueErr,setRevenueErr]=useState(null);
+  const [revenueHasMore,setRevenueHasMore]=useState(false);
+  const [revenueCursor,setRevenueCursor]=useState(null);
   // Share sheet
   const [shareOpen,setShareOpen]=useState(false);
   const [shareCopied,setShareCopied]=useState(false);
@@ -485,9 +491,22 @@ export default function App(){
     });
   };
 
+  const loadRevenue=async(cursor)=>{
+    setRevenueBusy(true);setRevenueErr(null);
+    try{
+      const url="/api/stripe/income"+(cursor?"?starting_after="+cursor:"");
+      const res=await fetch(url);
+      const json=await res.json();
+      if(!res.ok)throw new Error(json.error||"Error");
+      setRevenueTxns(p=>cursor?[...p,...json.data]:json.data);
+      setRevenueHasMore(json.has_more);
+      setRevenueCursor(json.next_cursor);
+    }catch(e){setRevenueErr(e.message);}
+    setRevenueBusy(false);
+  };
+
   // Stripe top-up
   const startTopUp=async()=>{
-    if(topUpBusy)return;
     setTopUpBusy(true);
     utrack("topup_started");
     try{
@@ -678,7 +697,7 @@ export default function App(){
         <a href={"/privacy?lang="+(lang||"en")} target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none"}}>{t.privacy||"Privacy"}</a>
         <a href="https://stats.fabrikage.nl/share/AE078t90MeCuVl4I" target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none"}}>{t.stats||"Stats"}</a>
         <a href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{fontSize:10,color:c.ac,textDecoration:"none",fontWeight:500}}>{t.donate||"❤️ Donate"}</a>
-        <a href="/api/stripe/income" target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none"}}>{t.revenue||"Revenue"}</a>
+        <button onClick={()=>{setVw("revenue");if(revenueTxns.length===0)loadRevenue();}} style={{fontSize:10,color:c.tf,background:"none",border:"none",cursor:"pointer",padding:0,fontFamily:"inherit"}}>{t.revenue||"Revenue"}</button>
       </div>
     </div>
   );};
@@ -1199,7 +1218,55 @@ export default function App(){
       );
     })()}
 
-    {!["lang","byok","no_credits","manage_auth","loading","home","new_goal","dash","result","save_prompt","woop_input"].includes(vw)&&(
+    {vw==="revenue"&&(()=>{
+      const fmtAmt=(cents,cur)=>{
+        const abs=Math.abs(cents/100);
+        const sym=cur==="eur"?"€":cur==="usd"?"$":cur.toUpperCase()+" ";
+        return (cents<0?"-":"")+sym+abs.toFixed(2);
+      };
+      const TYPE_ICON={charge:"💳",payment:"💳",payout:"🏦",refund:"↩️",adjustment:"⚙️",stripe_fee:"📋"};
+      const totalNet=revenueTxns.filter(t=>t.type==="charge"||t.type==="payment").reduce((s,t)=>s+t.net,0);
+      const cur=revenueTxns[0]?.currency||"eur";
+      return(
+        <div dir={dir} style={sx.pg}><div style={sx.w}>
+          <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"6px 0 0"}}>{t.revenue||"Revenue"}</h1></div>
+          {revenueTxns.length>0&&(
+            <div style={{...sx.cd,marginBottom:12,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+              <span style={{fontSize:13,color:c.tm,fontWeight:500}}>{t.revTotal||"Total income"}</span>
+              <span style={{fontSize:22,fontWeight:800,color:c.gr}}>{fmtAmt(totalNet,cur)}</span>
+            </div>
+          )}
+          <div style={{display:"flex",flexDirection:"column",gap:8}}>
+            {revenueTxns.length===0&&!revenueBusy&&(
+              <div style={{...sx.cd,textAlign:"center",padding:40,color:c.tf}}>{revenueErr||t.revEmpty||"No transactions yet."}</div>
+            )}
+            {revenueTxns.map((tx,i)=>(
+              <div key={tx.id} style={{...sx.cd,padding:"12px 16px",animation:"slideUp 0.25s ease "+Math.min(i*0.03,0.4)+"s both"}}>
+                <div style={{display:"flex",alignItems:"center",gap:12}}>
+                  <div style={{fontSize:22,flexShrink:0}}>{TYPE_ICON[tx.type]||"📋"}</div>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontSize:13,fontWeight:600,color:c.tx,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{tx.description||tx.type}</div>
+                    <div style={{fontSize:11,color:c.tf,marginTop:2}}>{new Date(tx.created*1000).toLocaleDateString(lang||undefined,{day:"numeric",month:"short",year:"numeric"})}</div>
+                  </div>
+                  <div style={{textAlign:"right",flexShrink:0}}>
+                    <div style={{fontSize:14,fontWeight:700,color:tx.amount<0?c.et:c.tx}}>{fmtAmt(tx.amount,tx.currency)}</div>
+                    <div style={{fontSize:11,color:c.tf}}>net {fmtAmt(tx.net,tx.currency)}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          {revenueBusy&&<div style={{textAlign:"center",padding:24,color:c.tm}}>…</div>}
+          {revenueErr&&revenueTxns.length>0&&<div style={sx.err}>{revenueErr}</div>}
+          {revenueHasMore&&!revenueBusy&&(
+            <button onClick={()=>loadRevenue(revenueCursor)} style={{...sx.bg,marginTop:8}}>{t.revMore||"Load more"}</button>
+          )}
+          <button onClick={()=>setVw(auth==="in"?"dash":"home")} style={sx.bg}>{t.back}</button>
+        <BottomBar/><style>{GS}</style></div></div>
+      );
+    })()}
+
+    {!["lang","byok","no_credits","manage_auth","loading","home","new_goal","dash","result","save_prompt","woop_input","revenue"].includes(vw)&&(
       <div dir={dir} style={sx.pg}><div style={sx.w}><div style={{textAlign:"center",padding:40}}><BrandMark c={c} size="large"/><button onClick={()=>setVw("lang")} style={sx.bo}>Start</button></div><BottomBar/><style>{GS}</style></div></div>
     )}
   </>);

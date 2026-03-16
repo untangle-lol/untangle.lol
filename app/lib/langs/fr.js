@@ -36,7 +36,7 @@ const fr = {
   altruismPopupMsgRepeat:"Ton objectif consiste à aider les autres — c'est vraiment magnifique. Complète toutes les étapes et fais une vraie différence !",
   analyticsNote:"Nous collectons des statistiques d'utilisation anonymes (sans cookies ni données personnelles).",
   signIn:"Se connecter avec Google",signInSub:"Sauvegarde tes objectifs sur tous tes appareils",signOut:"Déconnexion",
-  profile:"Profil",terms:"CGU",privacy:"Confidentialité",stats:"Statistiques",donate:"❤️ Faire un don",revenue:"Revenus",
+  profile:"Profil",terms:"CGU",privacy:"Confidentialité",stats:"Statistiques",donate:"❤️ Faire un don",revenue:"Revenus",revTotal:"Total des revenus",revEmpty:"Aucune transaction pour l'instant.",revMore:"Charger plus",
   share:"Partager",shareCopy:"Copier",shareCopied:"Copié !",shareMsg:"Découvre mon plan d'action sur untangle.lol :",
   altruismLoadingMsg:"💛 Tu fais quelque chose de merveilleux pour les autres.",
   altruisticSugg:["Je veux faire du bénévolat dans une banque alimentaire","Je veux devenir aidant·e pour un proche","Je veux créer un jardin partagé","Je veux donner mon sang régulièrement","Je veux encadrer un jeune en difficulté"],

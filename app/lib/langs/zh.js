@@ -36,7 +36,7 @@ const zh = {
   altruismPopupMsgRepeat:"你的目标是帮助他人——这真的很了不起。完成所有步骤，创造真正的改变！",
   analyticsNote:"我们收集匿名使用统计数据（无 Cookie，无个人数据）。",
   signIn:"使用 Google 登录",signInSub:"在所有设备上保存你的目标",signOut:"退出登录",
-  profile:"个人资料",terms:"条款",privacy:"隐私",stats:"统计",donate:"❤️ 捐赠",revenue:"收入",
+  profile:"个人资料",terms:"条款",privacy:"隐私",stats:"统计",donate:"❤️ 捐赠",revenue:"收入",revTotal:"总收入",revEmpty:"暂无交易。",revMore:"加载更多",
   share:"分享",shareCopy:"复制",shareCopied:"已复制！",shareMsg:"查看我在 untangle.lol 上的行动计划：",
   altruismLoadingMsg:"💛 你正在为他人做一件美好的事。",
   altruisticSugg:["我想在食物银行做志愿者","我想照顾家人","我想成为年轻人的导师","我想定期献血","我想创建一个社区花园"],

@@ -36,7 +36,7 @@ const de = {
   altruismPopupMsgRepeat:"Dein Ziel geht darum, anderen zu helfen — das ist wirklich wunderbar. Schließe alle Schritte ab und bewirke echten Unterschied!",
   analyticsNote:"Wir erheben anonyme Nutzungsstatistiken (keine Cookies, keine personenbezogenen Daten).",
   signIn:"Mit Google anmelden",signInSub:"Ziele auf allen Geräten speichern",signOut:"Abmelden",
-  profile:"Profil",terms:"AGB",privacy:"Datenschutz",stats:"Statistiken",donate:"❤️ Spenden",revenue:"Einnahmen",
+  profile:"Profil",terms:"AGB",privacy:"Datenschutz",stats:"Statistiken",donate:"❤️ Spenden",revenue:"Einnahmen",revTotal:"Gesamteinnahmen",revEmpty:"Noch keine Transaktionen.",revMore:"Mehr laden",
   share:"Teilen",shareCopy:"Kopieren",shareCopied:"Kopiert!",shareMsg:"Sieh dir meinen Aktionsplan auf untangle.lol an:",
   altruismLoadingMsg:"💛 Du tust gerade etwas Wundervolles für andere.",
   altruisticSugg:["Ich möchte bei einer Tafel ehrenamtlich helfen","Ich möchte einen Angehörigen pflegen","Ich möchte einen Jugendlichen mentoren","Ich möchte regelmäßig Blut spenden","Ich möchte einen Gemeinschaftsgarten starten"],
