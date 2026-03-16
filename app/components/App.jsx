@@ -678,6 +678,7 @@ export default function App(){
         <a href={"/privacy?lang="+(lang||"en")} target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none"}}>{t.privacy||"Privacy"}</a>
         <a href="https://stats.fabrikage.nl/share/AE078t90MeCuVl4I" target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none"}}>{t.stats||"Stats"}</a>
         <a href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{fontSize:10,color:c.ac,textDecoration:"none",fontWeight:500}}>{t.donate||"❤️ Donate"}</a>
+        <a href="/api/stripe/income" target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none"}}>{t.revenue||"Revenue"}</a>
       </div>
     </div>
   );};

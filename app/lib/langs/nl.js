@@ -36,7 +36,7 @@ const nl = {
   altruismPopupMsgRepeat:"Je doel gaat over het helpen van anderen — wat ontzettend mooi is. Rond álle stappen af en maak echt het verschil!",
   analyticsNote:"We verzamelen anonieme gebruiksstatistieken (geen cookies, geen persoonsgegevens).",
   signIn:"Inloggen met Google",signInSub:"Sla je doelen op via al je apparaten",signOut:"Uitloggen",
-  profile:"Profiel",terms:"Voorwaarden",privacy:"Privacy",stats:"Statistieken",donate:"❤️ Doneer",
+  profile:"Profiel",terms:"Voorwaarden",privacy:"Privacy",stats:"Statistieken",donate:"❤️ Doneer",revenue:"Omzet",
   share:"Delen",shareCopy:"Kopiëren",shareCopied:"Gekopieerd!",shareMsg:"Bekijk mijn stappenplan op untangle.lol:",
   altruismLoadingMsg:"💛 Je bent iets moois aan het doen voor anderen.",
   altruisticSugg:["Ik wil vrijwilligerswerk doen bij een voedselbank","Ik wil mantelzorger worden voor een familielid","Ik wil een buurtmoestuin starten","Ik wil bloed doneren","Ik wil een mentorrol op me nemen voor een jongere"],

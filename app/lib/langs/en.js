@@ -36,7 +36,7 @@ const en = {
   altruismPopupMsgRepeat:"Your goal is about helping others — which is truly wonderful. Complete all the steps and make a real difference!",
   analyticsNote:"We collect anonymous usage statistics (no cookies, no personal data).",
   signIn:"Sign in with Google",signInSub:"Save your goals across all devices",signOut:"Sign out",
-  profile:"Profile",terms:"Terms",privacy:"Privacy",stats:"Stats",donate:"❤️ Donate",
+  profile:"Profile",terms:"Terms",privacy:"Privacy",stats:"Stats",donate:"❤️ Donate",revenue:"Revenue",
   share:"Share",shareCopy:"Copy",shareCopied:"Copied!",shareMsg:"Check out my action plan on untangle.lol:",
   altruismLoadingMsg:"💛 You're doing something wonderful for others.",
   altruisticSugg:["I want to volunteer at a food bank","I want to become a caregiver for a family member","I want to mentor a young person","I want to donate blood regularly","I want to start a community garden"],
