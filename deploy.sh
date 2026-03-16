@@ -6,6 +6,20 @@ ENV_FILE="$REPO_DIR/.env"
 IMAGE="untanglelol-web"
 NEW_CONTAINER="untangle_web_new"
 OLD_CONTAINER="untangle_web"
+LOCK_FILE="/tmp/untangle-deploy.lock"
+
+# Serialize concurrent deploys — wait up to 10 min for any in-flight deploy to finish
+exec 9>"$LOCK_FILE"
+if ! flock -w 600 9; then
+  echo "[deploy] ERROR: could not acquire deploy lock after 10 minutes, aborting"
+  exit 1
+fi
+
+# Clean up any stale new container left by a previous failed/interrupted deploy
+if docker inspect "$NEW_CONTAINER" &>/dev/null; then
+  echo "[deploy] cleaning up stale $NEW_CONTAINER from previous run..."
+  docker rm -f "$NEW_CONTAINER" || true
+fi
 
 echo "[deploy] pulling latest code..."
 export GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/github_actions_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
