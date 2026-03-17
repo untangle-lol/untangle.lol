@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import confetti from "canvas-confetti";
 import LANGS from "../lib/langs/index.js";
+import FeedbackWidget from "./FeedbackWidget.jsx";
 
 const ALTRUISM_BONUS_CREDITS = 10;
 
@@ -25,6 +26,8 @@ const ls = {
 
 const KEYS = {
   theme:    "untangle_theme",
+  dyslexia: "untangle_dyslexia",
+  braille:  "untangle_braille",
   session:  "untangle_session",
   apiKey:   "untangle_apikey",
   recents:  "untangle_recents",
@@ -37,6 +40,11 @@ const KEYS = {
 };
 
 const FREE_CREDITS = 10;
+
+// ─── Braille Unicode conversion (Grade 1 English Braille) ────────────────────
+const BRAILLE={a:'⠁',b:'⠃',c:'⠉',d:'⠙',e:'⠑',f:'⠋',g:'⠛',h:'⠓',i:'⠊',j:'⠚',k:'⠅',l:'⠇',m:'⠍',n:'⠝',o:'⠕',p:'⠏',q:'⠟',r:'⠗',s:'⠎',t:'⠞',u:'⠥',v:'⠧',w:'⠺',x:'⠭',y:'⠽',z:'⠵','0':'⠚','1':'⠁','2':'⠃','3':'⠉','4':'⠙','5':'⠑','6':'⠋','7':'⠛','8':'⠓','9':'⠊'};
+const toBraille=s=>s.replace(/[a-z0-9]/gi,c=>BRAILLE[c.toLowerCase()]||c);
+const isBrailleText=s=>/[\u2800-\u28FF]/.test(s);
 
 function eKey(email) { return "untangle_hist_" + email.toLowerCase().replace(/[^a-z0-9]/g,"_"); }
 
@@ -95,7 +103,33 @@ function PBar({done,total,c}){
 }
 function TTog({mode,set,c}){
   const ic={light:"☀️",dark:"🌙",system:"💻"};const nx={light:"dark",dark:"system",system:"light"};
-  return(<button onClick={()=>set(nx[mode])} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:8,padding:"4px 10px",cursor:"pointer",fontSize:14,color:c.tm}}>{ic[mode]} {mode}</button>);
+  return(<button onClick={()=>set(nx[mode])} title={mode} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:8,padding:"4px 8px",cursor:"pointer",fontSize:16,lineHeight:1,display:"flex",alignItems:"center",justifyContent:"center"}}>{ic[mode]}</button>);
+}
+function DyTog({on,set,c,label}){
+  return(
+    <button
+      onClick={()=>set(!on)}
+      title={label||"Dyslexia-friendly font"}
+      style={{background:on?c.ab:c.ghb,border:"1px solid "+(on?c.abr:c.ghr),borderRadius:8,padding:"4px 8px",cursor:"pointer",display:"flex",alignItems:"center",gap:3,color:on?c.ac:c.tm,transition:"background 0.15s,color 0.15s,border-color 0.15s"}}
+    >
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style={{display:"block",flexShrink:0}}>
+        <circle cx="8" cy="7" r="5" stroke="currentColor" strokeWidth="1.4"/>
+        <circle cx="6" cy="6.5" r="0.85" fill="currentColor"/>
+        <circle cx="10" cy="6.5" r="0.85" fill="currentColor"/>
+        <path d="M5.5 9 Q8 11.5 10.5 9" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" fill="none"/>
+      </svg>
+      <span style={{fontFamily:"serif",fontWeight:700,fontSize:12,letterSpacing:"-0.02em",lineHeight:1}}>Aa</span>
+    </button>
+  );
+}
+function BrTog({on,set,c,label}){
+  return(
+    <button
+      onClick={()=>set(!on)}
+      title={label||"Braille font"}
+      style={{background:on?c.ab:c.ghb,border:"1px solid "+(on?c.abr:c.ghr),borderRadius:8,padding:"4px 8px",cursor:"pointer",fontSize:15,lineHeight:1,display:"flex",alignItems:"center",justifyContent:"center",transition:"background 0.15s,border-color 0.15s"}}
+    >😆</button>
+  );
 }
 function BrandMark({c,size}){
   const s=size==="large";
@@ -140,6 +174,8 @@ export default function App(){
   useEffect(()=>{try{const q=window.matchMedia("(prefers-color-scheme:dark)");const h=e=>setSys(e.matches?"dark":"light");q.addEventListener("change",h);return()=>q.removeEventListener("change",h);}catch{}},[]);
 
   const [tm,setTm]=useState("system");
+  const [dy,setDy]=useState(false);
+  const [br,setBr]=useState(false);
   const [lang,setLang]=useState(null);
   const [auth,setAuth]=useState("out");
   const [user,setUser]=useState(null);
@@ -202,6 +238,9 @@ export default function App(){
     else{clearTimeout(taClearTimer.current);setTaClearConfirm(false);setInp("");}
   };
   const userRef=useRef(null);
+  const brModeRef=useRef(false);
+  const brObsRef=useRef(null);
+  const brOriginalsRef=useRef(new WeakMap());
   const zone=useMemo(()=>tz(),[]);
 
   const t=lang?LANGS.find(l=>l.code===lang)||LANGS[1]:LANGS[1];
@@ -210,6 +249,40 @@ export default function App(){
   const dir=t.rtl?"rtl":"ltr";
 
   const chTm=(m)=>{setTm(m);ls.set(KEYS.theme,m);};
+  const chDy=(v)=>{setDy(v);ls.set(KEYS.dyslexia,v?"1":"");};
+  const chBr=(v)=>{setBr(v);ls.set(KEYS.braille,v?"1":"");};
+
+  useEffect(()=>{document.documentElement.classList.toggle("od",dy);},[dy]);
+  useEffect(()=>{
+    brModeRef.current=br;
+    if(br){
+      const originals=new WeakMap();brOriginalsRef.current=originals;
+      function convertNode(node){
+        if(node.nodeType===Node.TEXT_NODE){
+          const tag=node.parentElement?.tagName;
+          if(tag==='SCRIPT'||tag==='STYLE'||tag==='INPUT'||tag==='TEXTAREA')return;
+          if(!isBrailleText(node.nodeValue)){originals.set(node,node.nodeValue);const b=toBraille(node.nodeValue);if(b!==node.nodeValue)node.nodeValue=b;}
+        }else{node.childNodes.forEach(convertNode);}
+      }
+      convertNode(document.body);
+      const obs=new MutationObserver(mutations=>{
+        if(!brModeRef.current)return;
+        mutations.forEach(m=>{
+          if(m.type==='characterData'){const node=m.target;const val=node.nodeValue;if(!isBrailleText(val)){originals.set(node,val);const b=toBraille(val);if(b!==val)node.nodeValue=b;}}
+          else if(m.type==='childList'){m.addedNodes.forEach(convertNode);}
+        });
+      });
+      obs.observe(document.body,{childList:true,subtree:true,characterData:true});
+      brObsRef.current=obs;
+    }else{
+      brObsRef.current?.disconnect();brObsRef.current=null;
+      const originals=brOriginalsRef.current;
+      function restoreNode(node){if(node.nodeType===Node.TEXT_NODE){if(originals.has(node))node.nodeValue=originals.get(node);}else{node.childNodes.forEach(restoreNode);}}
+      restoreNode(document.body);
+      brOriginalsRef.current=new WeakMap();
+    }
+    document.documentElement.classList.toggle("ob",br);
+  },[br]);
 
   useEffect(()=>{
     const color=rt==="dark"?"#0f172a":"#f8fafc";
@@ -220,11 +293,17 @@ export default function App(){
     document.body.style.background=color;
   },[rt]);
 
+  // Persist current view so refresh restores the same page
+  useEffect(()=>{
+    if(vw&&vw!=="splash"&&vw!=="loading")ls.set(KEYS.view,vw);
+  },[vw]);
 
 
   // Boot
   useEffect(()=>{(async()=>{
     const sv=ls.get(KEYS.theme);if(sv)setTm(sv);
+    const dv=ls.get(KEYS.dyslexia);if(dv==="1")setDy(true);
+    const bv=ls.get(KEYS.braille);if(bv==="1")setBr(true);
     const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     const rv=ls.get(KEYS.recents);if(rv){try{setRecents(JSON.parse(rv));}catch{}}
     const uv=ls.get(KEYS.usage);if(uv){try{setUsage(JSON.parse(uv));}catch{}}
@@ -266,7 +345,9 @@ export default function App(){
         if(signedIn)utrack("sign_in");
         if(topupSuccess){setTopUpMsg("pending");pollCredits(ref);}
         if(restoreId){const e=parsedHist.find(h=>String(h.id)===restoreId);if(e){setSteps(e.resultaat);setActiveId(e.id);setLocalComp(e.completed||e.resultaat.stappen.map(()=>false));setVw("result");setReady(true);return;}}
-        setVw("dash");setReady(true);return;
+        const AUTH_VWS=["dash","new_goal","woop_input","byok","no_credits","manage_auth","revenue","lang"];
+        const savedVw=ls.get(KEYS.view);
+        setVw(savedVw&&AUTH_VWS.includes(savedVw)?savedVw:"dash");setReady(true);return;
       }
     }catch{}
     let parsedGuestHist=[];
@@ -274,7 +355,9 @@ export default function App(){
     setHist(parsedGuestHist);
     if(topupSuccess){setTopUpMsg("pending");pollCredits(ref);}
     if(restoreId){const e=parsedGuestHist.find(h=>String(h.id)===restoreId);if(e){setSteps(e.resultaat);setActiveId(e.id);setLocalComp(e.completed||e.resultaat.stappen.map(()=>false));setVw("result");setReady(true);return;}}
-    setVw(langSv?"home":"lang");
+    const GUEST_VWS=["home","woop_input","byok","no_credits","lang"];
+    const savedVwG=ls.get(KEYS.view);
+    setVw(savedVwG&&GUEST_VWS.includes(savedVwG)?savedVwG:(langSv?"home":"lang"));
     setReady(true);
   })();},[]);
 
@@ -455,6 +538,10 @@ export default function App(){
       setSteps(ps);
       if(!valid)deductCredit();
       setUsage(prev=>{const next={calls:prev.calls+1,inputTokens:prev.inputTokens+inputTokens,outputTokens:prev.outputTokens+outputTokens,costUsd:prev.costUsd+calcCost(inputTokens,outputTokens)};ls.set(KEYS.usage,JSON.stringify(next));return next;});
+      const trimmedWish=woopData.wish.trim();
+      fetch("/api/suggestions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({lang,text:trimmedWish})})
+        .then(()=>fetch("/api/suggestions?lang="+lang).then(r=>r.ok?r.json():null).then(d=>{if(d?.suggestions)setGlobalSugg(d.suggestions);}))
+        .catch(()=>{});
       const comp=ps.stappen.map(()=>false);
       const woop={wish:woopData.wish.trim(),outcome:woopData.outcome.trim(),obstacle:woopData.obstacle.trim(),plan:woopData.plan.trim()};
       const entry={id:Date.now(),timestamp:new Date().toISOString(),timezone:zone,behoefte:woop.wish,resultaat:ps,lang,completed:comp,isAltruistic,altruismBonusClaimed:false,woop};
@@ -661,9 +748,14 @@ export default function App(){
   };
 
   const Bar=()=>(
-    <div dir={dir} style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 20px",paddingTop:"calc(8px + env(safe-area-inset-top))",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+c.cb}}>
-      <button onClick={()=>setVw("lang")} style={{background:"none",border:"none",color:c.tf,fontSize:12,cursor:"pointer",padding:0,flexShrink:0}}>🌍 {t.lSel}</button>
-      <div style={{display:"flex",alignItems:"center",gap:10}}>
+    <div dir={dir} style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 16px",paddingTop:"calc(8px + env(safe-area-inset-top))",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+c.cb}}>
+      <button onClick={goHome} style={{background:"none",border:"none",padding:0,cursor:"pointer",display:"flex",alignItems:"center",gap:5,flexShrink:0}}>
+        <span style={{fontSize:20,filter:"drop-shadow(0 0 8px "+c.am+")",lineHeight:1}}>🪢</span>
+        <span style={{fontSize:14,fontWeight:800,letterSpacing:"-0.03em",color:c.tx,lineHeight:1}}>untangle</span>
+        <span style={{fontSize:8,fontWeight:500,letterSpacing:"0.15em",color:c.tf,textTransform:"uppercase",lineHeight:1}}>.lol</span>
+      </button>
+      <div style={{display:"flex",alignItems:"center",gap:8}}>
+        <button onClick={()=>setVw("lang")} title={t.lSel} style={{background:"none",border:"none",color:c.tf,fontSize:14,cursor:"pointer",padding:"4px 6px",flexShrink:0,lineHeight:1}}>🌍</button>
         {user&&(
           <button onClick={()=>setVw("manage_auth")} style={{background:"none",border:"none",padding:0,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>
             {user.picture
@@ -673,6 +765,8 @@ export default function App(){
           </button>
         )}
         <TTog mode={tm} set={chTm} c={c}/>
+        <DyTog on={dy} set={chDy} c={c} label={t.dyslexia||"Dyslexia-friendly font"}/>
+        <BrTog on={br} set={chBr} c={c} label={t.braille||"Braille font"}/>
       </div>
     </div>
   );
@@ -711,6 +805,8 @@ export default function App(){
   return(<>
     {/* ── Persistent top bar ── */}
     {ready&&<Bar/>}
+    {/* ── Feedback widget (fixed, bottom-right, above bottom bar) ── */}
+    {ready&&<FeedbackWidget c={c} rt={rt} t={t}/>}
 
     {/* ── Altruism Announcement Popup ── */}
     {altruismPopup&&(
@@ -767,7 +863,7 @@ export default function App(){
 
     {vw==="lang"&&(
       <div style={{...sx.pg,direction:"ltr"}}><div style={sx.w}>
-        <div style={{textAlign:"center",marginBottom:28}}><BrandMark c={c} size="large"/><p style={{color:c.tm,fontSize:14,marginTop:10}}>{t.chooseLang}</p></div>
+        <p style={{color:c.tm,fontSize:15,fontWeight:600,textAlign:"center",marginBottom:20}}>{t.chooseLang}</p>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
           {LANGS.map(l=>(
             <button key={l.code} onClick={()=>pickLang(l.code)} style={{...sx.cd,padding:"16px 14px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,textAlign:"left"}}
@@ -794,7 +890,7 @@ export default function App(){
 
     {vw==="byok"&&(
       <div dir={dir} style={sx.pg}><div style={sx.w}>
-        <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>{t.byokH1}</h1></div>
+        <div style={{textAlign:"center",marginBottom:20}}><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:0}}>{t.byokH1}</h1></div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
           <div style={{...sx.cd,padding:"14px 16px"}}>
             <div style={{fontSize:13,fontWeight:700,color:c.tx,marginBottom:6}}>{t.byokAnthTitle}</div>
@@ -825,7 +921,6 @@ export default function App(){
 
     {vw==="no_credits"&&(
       <div dir={dir} style={sx.pg}><div style={sx.w}>
-        <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/></div>
         <div style={{...sx.cd,textAlign:"center",padding:"32px 24px"}}>
           <div style={{fontSize:48,marginBottom:12}}>🪙</div>
           <h2 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"0 0 8px"}}>{t.credOut}</h2>
@@ -845,7 +940,7 @@ export default function App(){
       const resetUsage=()=>{const z={calls:0,inputTokens:0,outputTokens:0,costUsd:0};setUsage(z);ls.del(KEYS.usage);};
       return(
         <div dir={dir} style={sx.pg}><div style={sx.w}>
-          <div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>{t.chAuth}</h1></div>
+          <div style={{textAlign:"center",marginBottom:24}}><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:0}}>{t.chAuth}</h1></div>
           <div style={sx.cd}>
             {/* Google profile card or sign-in */}
             {auth==="in"&&user?(
@@ -917,11 +1012,11 @@ export default function App(){
       );
     })()}
 
-    {vw==="loading"&&(<div dir={dir} style={sx.pg}><div style={sx.w}><div style={{textAlign:"center",marginBottom:24}}><BrandMark c={c}/></div><div style={sx.cd}><Loader c={c} lp={t.lp}/>{loadingAltruistic&&<div style={{marginTop:16,padding:"10px 16px",borderRadius:12,background:c.am,border:`1px solid ${c.abr}`,color:c.ac,fontSize:14,fontWeight:600,textAlign:"center",animation:"fadeIn 0.5s ease forwards"}}>{t.altruismLoadingMsg}</div>}</div><BottomBar/><style>{GS}</style></div></div>)}
+    {vw==="loading"&&(<div dir={dir} style={sx.pg}><div style={sx.w}><div style={sx.cd}><Loader c={c} lp={t.lp}/>{loadingAltruistic&&<div style={{marginTop:16,padding:"10px 16px",borderRadius:12,background:c.am,border:`1px solid ${c.abr}`,color:c.ac,fontSize:14,fontWeight:600,textAlign:"center",animation:"fadeIn 0.5s ease forwards"}}>{t.altruismLoadingMsg}</div>}</div><BottomBar/><style>{GS}</style></div></div>)}
 
     {(vw==="home"||vw==="new_goal")&&auth!=="in"&&(
       <div dir={dir} style={sx.pg}><div style={sx.w}>
-        <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c} size="large"/><h1 style={{fontSize:26,fontWeight:700,color:c.tx,margin:"10px 0 0"}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:14,marginTop:4,animation:"heroFade 3s ease forwards",minHeight:"1.4em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
+        <div style={{textAlign:"center",marginTop:20,marginBottom:20}}><h1 style={{fontSize:26,fontWeight:700,color:c.tx,margin:0}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:14,marginTop:4,animation:"heroFade 3s ease forwards",minHeight:"1.4em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
         <div style={{...sx.cd,position:"relative"}}>
           <HoneypotField/>
           {canEarnAltruismBonus&&<div style={{marginBottom:12,padding:"8px 12px",borderRadius:10,background:c.ab,border:"1px solid "+c.abr}}><span style={{fontSize:12,color:c.ac}}>{t.altruismTeaser}</span></div>}
@@ -970,7 +1065,7 @@ export default function App(){
 
     {vw==="dash"&&(
       <div dir={dir} style={sx.pg}><div style={sx.w}>
-        <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"6px 0 0"}}>{t.dW} 👋</h1><p style={{color:c.tm,fontSize:13,marginTop:2}}>{t.dS}</p></div>
+        <div style={{textAlign:"center",marginTop:20,marginBottom:20}}><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:0}}>{t.dW} 👋</h1><p style={{color:c.tm,fontSize:13,marginTop:2}}>{t.dS}</p></div>
         <button onClick={()=>setVw("new_goal")} style={{...sx.bo,marginTop:0,marginBottom:16}}>{t.nG}</button>
         {hist.length===0?(<div style={{...sx.cd,textAlign:"center",padding:40}}><div style={{fontSize:40,marginBottom:10}}>🪢</div><p style={{color:c.tf,margin:0}}>{t.noG}</p></div>):(
           <div style={{display:"flex",flexDirection:"column",gap:10}}>{hist.map((h,i)=>{const p=prog(h);return(
@@ -993,7 +1088,7 @@ export default function App(){
 
     {vw==="new_goal"&&auth==="in"&&(
       <div dir={dir} style={sx.pg}><div style={sx.w}>
-        <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/><h1 style={{fontSize:22,fontWeight:700,color:c.tx,margin:"8px 0 0"}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:13,marginTop:2,animation:"heroFade 3s ease forwards",minHeight:"1.3em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
+        <div style={{textAlign:"center",marginTop:20,marginBottom:20}}><h1 style={{fontSize:22,fontWeight:700,color:c.tx,margin:0}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:13,marginTop:2,animation:"heroFade 3s ease forwards",minHeight:"1.3em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
         <div style={{...sx.cd,position:"relative"}}>
           <HoneypotField/>
           <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
@@ -1149,8 +1244,7 @@ export default function App(){
       return(
         <div dir={dir} style={sx.pg}><div style={sx.w}>
           <div style={{textAlign:"center",marginBottom:20}}>
-            <BrandMark c={c}/>
-            <h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"8px 0 2px"}}>{t.woopTitle||"WOOP Method"}</h1>
+            <h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"0 0 2px"}}>{t.woopTitle||"WOOP Method"}</h1>
             <p style={{color:c.tm,fontSize:13,margin:0,lineHeight:1.5,maxWidth:380,marginInline:"auto"}}>{t.woopSub||""}</p>
             <a href="https://woopmylife.org/en/science" target="_blank" rel="noopener noreferrer" style={{color:c.ac,fontSize:12,marginTop:4,display:"inline-block",textDecoration:"none",opacity:0.8}}>{t.woopLink||"Learn about the science"} ↗</a>
           </div>
@@ -1229,7 +1323,7 @@ export default function App(){
       const cur=revenueTxns[0]?.currency||"eur";
       return(
         <div dir={dir} style={sx.pg}><div style={sx.w}>
-          <div style={{textAlign:"center",marginBottom:20}}><BrandMark c={c}/><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"6px 0 0"}}>{t.revenue||"Revenue"}</h1></div>
+          <div style={{textAlign:"center",marginBottom:20}}><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:0}}>{t.revenue||"Revenue"}</h1></div>
           {revenueTxns.length>0&&(
             <div style={{...sx.cd,marginBottom:12,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
               <span style={{fontSize:13,color:c.tm,fontWeight:500}}>{t.revTotal||"Total income"}</span>
@@ -1267,7 +1361,7 @@ export default function App(){
     })()}
 
     {!["lang","byok","no_credits","manage_auth","loading","home","new_goal","dash","result","save_prompt","woop_input","revenue"].includes(vw)&&(
-      <div dir={dir} style={sx.pg}><div style={sx.w}><div style={{textAlign:"center",padding:40}}><BrandMark c={c} size="large"/><button onClick={()=>setVw("lang")} style={sx.bo}>Start</button></div><BottomBar/><style>{GS}</style></div></div>
+      <div dir={dir} style={sx.pg}><div style={sx.w}><div style={{textAlign:"center",padding:40}}><button onClick={()=>setVw("lang")} style={sx.bo}>Start</button></div><BottomBar/><style>{GS}</style></div></div>
     )}
   </>);
 }

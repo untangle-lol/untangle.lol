@@ -1,7 +1,7 @@
 // ─── Config & Helpers ─────────────────────────────────────────────────────────
 
-export const ALTRUISM_BONUS_CREDITS = 10;
-export const FREE_CREDITS = 10;
+export const ALTRUISM_BONUS_CREDITS = 3;
+export const FREE_CREDITS = 3;
 
 // Umami custom event helper — safe no-op if script hasn't loaded yet
 export const utrack = (event, data) => { try { window.umami?.track(event, data); } catch {} };
@@ -35,6 +35,7 @@ export const KEYS = {
   creditsTs:       "untangle_credits_ts",
   altruismBonusTs: "untangle_altruism_bonus_ts",
   clientRef:       "untangle_client_ref",
+  view:            "untangle_view",
 };
 
 export function eKey(email) { return "untangle_hist_" + email.toLowerCase().replace(/[^a-z0-9]/g, "_"); }

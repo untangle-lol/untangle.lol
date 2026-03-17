@@ -4,7 +4,7 @@ export const metadata = {
   metadataBase: new URL("https://untangle.lol"),
   title: "Untangle.lol — Free AI To-Do List & Goal Planner",
   description:
-    "Untangle.lol is a free AI-powered to-do list and goal planner. Type any goal and instantly get a clear, step-by-step action plan. No account, no ads, fully private. Works in English, Dutch, German, French and Spanish.",
+    "Untangle.lol is a free AI-powered to-do list and goal planner. Type any goal and instantly get a clear, step-by-step action plan. No account, no ads, fully private. Works in English, Dutch, German, French, Spanish, Arabic, Bengali, Hindi, Indonesian, Japanese, Portuguese, Russian, Swahili, Turkish, and Chinese.",
   authors: [{ name: "untangle.lol", url: "https://untangle.lol" }],
   keywords: [
     "AI to-do list",
@@ -26,7 +26,7 @@ export const metadata = {
     siteName: "untangle.lol",
     title: "Untangle.lol — Free AI To-Do List & Goal Planner",
     description:
-      "Type any goal, get an instant step-by-step to-do list powered by AI. Free, private, no account needed. The smartest to-do list app you'll ever use.",
+      "Type any goal, get an instant step-by-step to-do list powered by AI. Free, private, no account needed. Supports 15 languages including English, Spanish, Arabic, Hindi, and Chinese.",
     images: [{ url: "/og.png", width: 1200, height: 630 }],
     locale: "en_US",
   },
@@ -34,7 +34,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Untangle.lol — Free AI To-Do List & Goal Planner",
     description:
-      "Type any goal, get an instant step-by-step to-do list powered by AI. Free, private, no account needed.",
+      "Type any goal, get an instant step-by-step to-do list powered by AI. Free, private, no account needed. Supports 15 languages.",
     images: ["/og.png"],
   },
   appleWebApp: {
@@ -56,7 +56,7 @@ const webAppSchema = {
   applicationSubCategory: "To-Do List",
   operatingSystem: "Any",
   browserRequirements: "Requires JavaScript",
-  inLanguage: ["en", "nl", "de", "fr", "es"],
+  inLanguage: ["en", "nl", "de", "fr", "es", "ar", "bn", "hi", "id", "ja", "pt", "ru", "sw", "tr", "zh"],
   offers: {
     "@type": "Offer",
     price: "0",
@@ -69,7 +69,7 @@ const webAppSchema = {
     "Progress tracking with checkboxes",
     "No account or sign-up required",
     "Fully private — all data stored locally in your browser",
-    "Multi-language: English, Dutch, German, French, Spanish",
+    "Multi-language: English, Dutch, German, French, Spanish, Arabic, Bengali, Hindi, Indonesian, Japanese, Portuguese, Russian, Swahili, Turkish, Chinese",
     "Works on mobile and desktop",
     "Supports Anthropic (Claude) and OpenRouter API keys",
   ],
@@ -84,9 +84,7 @@ const orgSchema = {
   url: "https://untangle.lol/",
   logo: "https://untangle.lol/og.png",
   description: "untangle.lol builds free, private, AI-powered productivity tools. Our flagship product turns any goal into an instant, step-by-step to-do list using Claude AI.",
-  sameAs: [
-    "https://untangle.lol/",
-  ],
+  sameAs: [],
 };
 
 const faqSchema = {
@@ -138,7 +136,7 @@ const faqSchema = {
       name: "What languages does untangle.lol support?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Untangle.lol currently supports English, Dutch (Nederlands), German (Deutsch), French (Français), and Spanish (Español). The AI responds in whichever language you select, and the entire interface is localised for each language.",
+        text: "Untangle.lol currently supports English, Dutch (Nederlands), German (Deutsch), French (Français), Spanish (Español), Arabic (العربية), Bengali (বাংলা), Hindi (हिन्दी), Indonesian (Bahasa Indonesia), Japanese (日本語), Portuguese (Português), Russian (Русский), Swahili (Kiswahili), Turkish (Türkçe), and Chinese (中文). The AI responds in whichever language you select, and the entire interface is localised for each language.",
       },
     },
     {
@@ -234,7 +232,7 @@ export default function RootLayout({ children }) {
             <li>No account or sign-up required</li>
             <li>Completely private — zero data sent to untangle.lol servers</li>
             <li>Free to use with your own Anthropic or OpenRouter API key</li>
-            <li>Available in English, Dutch, German, French, and Spanish</li>
+            <li>Available in 15 languages: English, Dutch, German, French, Spanish, Arabic, Bengali, Hindi, Indonesian, Japanese, Portuguese, Russian, Swahili, Turkish, and Chinese</li>
             <li>Works on any device — mobile, tablet, desktop</li>
             <li>History of past goals saved locally for easy reference</li>
           </ul>
@@ -280,7 +278,7 @@ export default function RootLayout({ children }) {
           </p>
 
           <h2>Supported languages</h2>
-          <p>English, Dutch (Nederlands), German (Deutsch), French (Français), Spanish (Español).</p>
+          <p>English, Dutch (Nederlands), German (Deutsch), French (Français), Spanish (Español), Arabic (العربية), Bengali (বাংলা), Hindi (हिन्दी), Indonesian (Bahasa Indonesia), Japanese (日本語), Portuguese (Português), Russian (Русский), Swahili (Kiswahili), Turkish (Türkçe), Chinese (中文).</p>
         </div>
 
         {children}

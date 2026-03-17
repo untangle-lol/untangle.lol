@@ -3,14 +3,46 @@ export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
 import { getShare } from "../../lib/shares.js";
 
+export async function generateMetadata({ params }) {
+  const share = getShare(params.id);
+  if (!share) {
+    return {
+      title: "Plan not found — untangle.lol",
+      robots: { index: false, follow: false },
+    };
+  }
+  const title = `${share.steps.titel} — untangle.lol`;
+  const description = `Action plan: ${share.steps.titel}. Created with untangle.lol — free AI goal planner.`;
+  return {
+    title,
+    description,
+    robots: { index: false, follow: false },
+    openGraph: {
+      type: "article",
+      url: `https://untangle.lol/s/${params.id}`,
+      siteName: "untangle.lol",
+      title,
+      description,
+      images: [{ url: "/og.png", width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og.png"],
+    },
+  };
+}
+
 export default async function SharePage({ params }) {
   const share = getShare(params.id);
   if (!share) notFound();
 
-  const { steps } = share;
+  const { steps, lang } = share;
+  const htmlLang = (lang || "en").split("-")[0];
 
   return (
-    <html lang="en">
+    <html lang={htmlLang}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

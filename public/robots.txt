@@ -43,4 +43,16 @@ User-agent: cohere-ai
 Allow: /
 Disallow: /api/
 
+User-agent: meta-externalagent
+Allow: /
+Disallow: /api/
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /api/
+
+User-agent: YouBot
+Allow: /
+Disallow: /api/
+
 Sitemap: https://untangle.lol/sitemap.xml

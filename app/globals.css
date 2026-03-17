@@ -1,3 +1,35 @@
 *, *::before, *::after { box-sizing: border-box; }
 html { margin: 0; padding: 0; height: 100%; }
 body { margin: 0; padding: 0; min-height: 100%; background: #0f172a; }
+
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("/fonts/opendyslexic-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("/fonts/opendyslexic-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Braille joke mode — toggled via .ob on <html> */
+html.ob,
+html.ob body,
+html.ob * {
+  letter-spacing: 0.08em !important;
+}
+
+/* Dyslexia-friendly font mode — toggled via .od on <html> */
+html.od,
+html.od body,
+html.od * {
+  font-family: "OpenDyslexic", sans-serif !important;
+  letter-spacing: 0.02em;
+  word-spacing:   0.1em;
+  line-height:    1.6 !important;
+}

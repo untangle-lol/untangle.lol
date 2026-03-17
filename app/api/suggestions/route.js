@@ -4,7 +4,7 @@ import path from "path";
 
 const DATA_FILE = "/data/suggestions.json";
 const MAX_PER_LANG = 20;
-const VALID_LANGS = new Set(["en", "nl", "de", "fr", "es", "ar", "zh", "hi", "pt"]);
+const VALID_LANGS = new Set(["en", "nl", "de", "fr", "es", "ar", "zh", "hi", "pt", "bn", "ru", "id", "ja", "sw", "tr"]);
 const MAX_LEN = 120;
 
 // In-memory fallback (used if /data is not mounted / not writable)
