@@ -5,8 +5,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2024-06-20",
 });
 
-// 10 credits for €1.00
-const BUNDLE = { credits: 10, amount: 100, currency: "eur" };
+// 10 credits for €2.50
+const BUNDLE = { credits: 10, amount: 250, currency: "eur" };
 
 export async function POST(request) {
   let body;

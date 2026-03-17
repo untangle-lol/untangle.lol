@@ -21,7 +21,7 @@ const fr = {
   credOutMsg:"Tes crédits gratuits sont épuisés. Ajoute ta propre clé API pour continuer — gratuite chez Anthropic ou OpenRouter.",
   credByok:"Ajouter ma clé →",
   lp:["🧠 Réflexion...","☕ Brassage d'idées...","🔮 Boule de cristal en chauffe...","🧙 Sorts en cours...","🤔 Pensée profonde...","🎯 Concentration..."],
-  topUp:"Recharger les crédits",topUpDesc:"10 crédits pour €1,00",topUpBtn:"Payer avec Stripe →",
+  topUp:"Recharger les crédits",topUpDesc:"10 crédits pour €2,50",topUpBtn:"Payer avec Stripe →",
   topUpSuccess:"Paiement réussi ! Les crédits seront ajoutés sous peu.",topUpPending:"Traitement des crédits...",
   topUpPopupTitle:"Crédits ajoutés ! 🎉",
   topUpPopupMsg:"untangle.lol est gratuit et privé — sans pub ni collecte de données. Les crédits font tourner l'IA et soutiennent un produit équitable et indépendant. Merci !",

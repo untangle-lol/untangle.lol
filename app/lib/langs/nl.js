@@ -21,7 +21,7 @@ const nl = {
   credOutMsg:"Je gratis credits zijn op. Voeg je eigen API-sleutel toe om door te gaan — gratis bij Anthropic en OpenRouter.",
   credByok:"Eigen sleutel toevoegen →",
   lp:["🧠 Nadenken...","☕ Ideeën brouwen...","🔮 Kristallen bol opwarmen...","🧙 Spreuken uitspreken...","🤔 Diep nadenken...","🎯 Scherp stellen..."],
-  topUp:"Credits bijkopen",topUpDesc:"10 credits voor €1,00",topUpBtn:"Betalen met Stripe →",
+  topUp:"Credits bijkopen",topUpDesc:"10 credits voor €2,50",topUpBtn:"Betalen met Stripe →",
   topUpSuccess:"Betaling geslaagd! Credits worden bijgeschreven.",topUpPending:"Credits worden verwerkt...",
   topUpPopupTitle:"Credits bijgeschreven! 🎉",
   topUpPopupMsg:"untangle.lol is gratis en privé — zonder advertenties of dataverzameling. Met credits houd je de AI aan het draaien en steun je een eerlijk, onafhankelijk product. Dank je wel!",

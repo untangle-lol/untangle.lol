@@ -21,7 +21,7 @@ const tr = {
   credOutMsg:"Ücretsiz krediniz bitti. Devam etmek için kendi API anahtarınızı ekleyin — Anthropic veya OpenRouter'dan ücretsiz alabilirsiniz.",
   credByok:"Kendi anahtarımı ekle →",
   lp:["🧠 Düşünüyorum...","☕ Fikirler demleniyor...","🔮 Kristal küre ısınıyor...","🧙 Büyü yapılıyor...","🤔 Derin düşünce...","🎯 Odaklanıyorum..."],
-  topUp:"Kredi yükle",topUpDesc:"€1,00 için 10 kredi",topUpBtn:"Stripe ile öde →",
+  topUp:"Kredi yükle",topUpDesc:"€2,50 için 10 kredi",topUpBtn:"Stripe ile öde →",
   topUpSuccess:"Ödeme başarılı! Kredi yakında eklenecek.",topUpPending:"Kredi işleniyor...",
   topUpPopupTitle:"Kredi eklendi! 🎉",
   topUpPopupMsg:"untangle.lol ücretsiz ve özeldir — reklam yok, veri toplama yok. Krediler yapay zekayı çalıştırır ve adil, bağımsız bir ürünü destekler. Teşekkür ederiz!",

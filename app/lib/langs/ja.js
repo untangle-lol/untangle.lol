@@ -21,7 +21,7 @@ const ja = {
   credOutMsg:"無料クレジットがなくなりました。続けるには自分のAPIキーを追加してください — AnthropicまたはOpenRouterから無料で取得できます。",
   credByok:"自分のキーを追加 →",
   lp:["🧠 考え中...","☕ アイデアを醸造中...","🔮 水晶球が温まっています...","🧙 魔法をかけています...","🤔 深く考えています...","🎯 目標に集中中..."],
-  topUp:"クレジットを追加",topUpDesc:"10クレジットで€1.00",topUpBtn:"Stripeで支払う →",
+  topUp:"クレジットを追加",topUpDesc:"10クレジットで€2.50",topUpBtn:"Stripeで支払う →",
   topUpSuccess:"支払い完了！クレジットはまもなく追加されます。",topUpPending:"クレジットを処理中...",
   topUpPopupTitle:"クレジットが追加されました！ 🎉",
   topUpPopupMsg:"untangle.lolは無料でプライベートです — 広告なし、データ収集なし。クレジットでAIを動かし続け、公正で独立したプロダクトを支えています。ご支援ありがとうございます！",

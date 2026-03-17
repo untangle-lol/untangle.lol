@@ -21,7 +21,7 @@ const id = {
   credOutMsg:"Kredit gratis Anda habis. Tambahkan kunci API sendiri untuk melanjutkan — gratis dari Anthropic atau OpenRouter.",
   credByok:"Tambah kunci sendiri →",
   lp:["🧠 Berpikir...","☕ Menyeduh ide...","🔮 Bola kristal memanas...","🧙 Menjalankan sihir...","🤔 Berpikir mendalam...","🎯 Mengunci tujuan..."],
-  topUp:"Isi ulang kredit",topUpDesc:"10 kredit seharga €1,00",topUpBtn:"Bayar dengan Stripe →",
+  topUp:"Isi ulang kredit",topUpDesc:"10 kredit seharga €2,50",topUpBtn:"Bayar dengan Stripe →",
   topUpSuccess:"Pembayaran berhasil! Kredit akan segera ditambahkan.",topUpPending:"Memproses kredit...",
   topUpPopupTitle:"Kredit ditambahkan! 🎉",
   topUpPopupMsg:"untangle.lol gratis dan privat — tanpa iklan, tanpa pengumpulan data. Kredit membuat AI tetap berjalan dan mendukung produk yang adil dan independen. Terima kasih!",

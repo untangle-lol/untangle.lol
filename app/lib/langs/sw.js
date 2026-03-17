@@ -21,7 +21,7 @@ const sw = {
   credOutMsg:"Mikopo yako ya bure imeisha. Ongeza ufunguo wako wa API ili kuendelea — bure kutoka Anthropic au OpenRouter.",
   credByok:"Ongeza ufunguo wako →",
   lp:["🧠 Nafikiri...","☕ Ninatengeneza mawazo...","🔮 Mpira wa kioo unawaka...","🧙 Ninafanya uchawi...","🤔 Mawazo ya kina...","🎯 Ninalenga..."],
-  topUp:"Ongeza mikopo",topUpDesc:"Mikopo 10 kwa €1.00",topUpBtn:"Lipa na Stripe →",
+  topUp:"Ongeza mikopo",topUpDesc:"Mikopo 10 kwa €2.50",topUpBtn:"Lipa na Stripe →",
   topUpSuccess:"Malipo yamefanikiwa! Mikopo itaongezwa hivi karibuni.",topUpPending:"Inashughulikia mikopo...",
   topUpPopupTitle:"Mikopo imeongezwa! 🎉",
   topUpPopupMsg:"untangle.lol ni bure na ya faragha — hakuna matangazo, hakuna kukusanya data. Mikopo inaweka AI ikifanya kazi na inasaidia bidhaa ya haki na huru. Asante!",

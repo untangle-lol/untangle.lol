@@ -21,7 +21,7 @@ const zh = {
   credOutMsg:"你的免费积分已用完。添加自己的 API 密钥继续使用——可从 Anthropic 或 OpenRouter 免费获取。",
   credByok:"添加我的密钥 →",
   lp:["🧠 思考中...","☕ 整理想法...","🔮 水晶球预热中...","🧙 施展魔法...","🤔 深度思考...","🎯 锁定目标..."],
-  topUp:"充值积分",topUpDesc:"€1.00 兑换 10 积分",topUpBtn:"通过 Stripe 付款 →",
+  topUp:"充值积分",topUpDesc:"€2.50 兑换 10 积分",topUpBtn:"通过 Stripe 付款 →",
   topUpSuccess:"支付成功！积分即将到账。",topUpPending:"处理积分中...",
   topUpPopupTitle:"积分已到账！🎉",
   topUpPopupMsg:"untangle.lol 免费且私密——没有广告，不收集数据。积分让 AI 持续运转，支持公平独立的产品。谢谢你的支持！",
