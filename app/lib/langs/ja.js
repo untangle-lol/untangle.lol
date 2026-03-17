@@ -36,7 +36,7 @@ const ja = {
   altruismPopupMsgRepeat:"あなたの目標は他者を助けること — それは本当に素晴らしいです。すべてのステップを完了して、本当の違いを生み出しましょう！",
   analyticsNote:"匿名の使用統計を収集しています（Cookieなし、個人データなし）。",
   signIn:"Googleでサインイン",signInSub:"すべてのデバイスで目標を保存",signOut:"サインアウト",
-  profile:"プロフィール",terms:"利用規約",privacy:"プライバシー",stats:"統計",donate:"❤️ 寄付",revenue:"収益",revTotal:"総収益",revEmpty:"まだ取引がありません。",revMore:"もっと読み込む",
+  profile:"プロフィール",terms:"利用規約",privacy:"プライバシー",stats:"統計",donate:"❤️ 寄付",donateMsg:"❤️ あなたの寄付が世界を少し良くします",revenue:"収益",revTotal:"総収益",revEmpty:"まだ取引がありません。",revMore:"もっと読み込む",
   share:"シェア",shareCopy:"コピー",shareCopied:"コピーしました！",shareMsg:"untangle.lolで私のアクションプランを見てください：",
   altruismLoadingMsg:"💛 あなたは他者のために素晴らしいことをしています。",
   altruisticSugg:["フードバンクでボランティアしたい","家族の介護をしたい","若者のメンターになりたい","定期的に献血したい","コミュニティガーデンを始めたい"],

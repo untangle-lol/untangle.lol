@@ -30,7 +30,7 @@ const KEYS = {
   braille:  "untangle_braille",
   session:  "untangle_session",
   apiKey:   "untangle_apikey",
-  recents:  "untangle_recents",
+  recents:  "untangle_recents", // legacy key (not used for new lang-scoped reads)
   guestHist:"untangle_guest_hist",
   usage:    "untangle_usage",
    credits:  "untangle_credits",
@@ -38,6 +38,8 @@ const KEYS = {
    altruismBonusTs: "untangle_altruism_bonus_ts",
    clientRef:"untangle_client_ref",
 };
+
+const recentsKey=(lang)=>"untangle_recents_"+(lang||"nl");
 
 const FREE_CREDITS = 3;
 
@@ -305,7 +307,7 @@ export default function App(){
     const dv=ls.get(KEYS.dyslexia);if(dv==="1")setDy(true);
     const bv=ls.get(KEYS.braille);if(bv==="1")setBr(true);
     const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
-    const rv=ls.get(KEYS.recents);if(rv){try{setRecents(JSON.parse(rv));}catch{}}
+    // recents are loaded per-lang in a separate useEffect below
     const uv=ls.get(KEYS.usage);if(uv){try{setUsage(JSON.parse(uv));}catch{}}
     const cv=ls.get(KEYS.credits);
     const now=Date.now();
@@ -360,6 +362,14 @@ export default function App(){
     setVw(savedVwG&&GUEST_VWS.includes(savedVwG)?savedVwG:(langSv?"home":"lang"));
     setReady(true);
   })();},[]);
+
+  // Load lang-scoped recents whenever lang changes
+  useEffect(()=>{
+    if(!lang)return;
+    const rv=ls.get(recentsKey(lang));
+    if(rv){try{setRecents(JSON.parse(rv));}catch{setRecents([]);}}
+    else{setRecents([]);}
+  },[lang]);
 
   // Poll /api/credits/claim until credits land (after Stripe redirect)
   const pollCredits=async(ref,attempts=0)=>{
@@ -491,7 +501,7 @@ export default function App(){
       if(!valid)deductCredit();
       setUsage(prev=>{const next={calls:prev.calls+1,inputTokens:prev.inputTokens+inputTokens,outputTokens:prev.outputTokens+outputTokens,costUsd:prev.costUsd+calcCost(inputTokens,outputTokens)};ls.set(KEYS.usage,JSON.stringify(next));return next;});
       const trimmed=inp.trim();
-      setRecents(prev=>{const next=[trimmed,...prev.filter(r=>r!==trimmed)].slice(0,5);ls.set(KEYS.recents,JSON.stringify(next));return next;});
+      setRecents(prev=>{const next=[trimmed,...prev.filter(r=>r!==trimmed)].slice(0,5);ls.set(recentsKey(lang),JSON.stringify(next));return next;});
       fetch("/api/suggestions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({lang,text:trimmed})})
         .then(r=>r.ok?r.json():null)
         .then(()=>fetch("/api/suggestions?lang="+lang).then(r=>r.ok?r.json():null).then(d=>{if(d?.suggestions)setGlobalSugg(d.suggestions);}))
@@ -633,7 +643,7 @@ export default function App(){
   const prog=(e)=>{const tt=e.resultaat?.stappen?.length||0;const dn=(e.completed||[]).filter(Boolean).length;return{dn,tt,pct:tt>0?Math.round(dn/tt*100):0};};
 
   const delRecent=(text)=>{
-    setRecents(prev=>{const next=prev.filter(r=>r!==text);ls.set(KEYS.recents,JSON.stringify(next));return next;});
+    setRecents(prev=>{const next=prev.filter(r=>r!==text);ls.set(recentsKey(lang),JSON.stringify(next));return next;});
   };
   const delGlobal=(text)=>{
     setGlobalSugg(prev=>prev.filter(s=>s!==text));
@@ -642,7 +652,7 @@ export default function App(){
 
   const SuggChips=()=>{
     const localSet=new Set(recents.map(r=>r.toLowerCase()));
-    const globals=globalSugg.filter(s=>!localSet.has(s.toLowerCase())).slice(0,4);
+    const globals=[];// community suggestions hidden — cross-language contamination
     const altPool=(t.altruisticSugg||[]).filter(s=>!localSet.has(s.toLowerCase())&&!dismissedAlts.includes(s));
     // Cycle 2 altruistic picks using altOffset so each open shows different ones
     const altPick=altPool.length===0?[]:altPool.length<=2?altPool:[altPool[altOffset%altPool.length],altPool[(altOffset+1)%altPool.length]];
@@ -755,7 +765,7 @@ export default function App(){
         <span style={{fontSize:8,fontWeight:500,letterSpacing:"0.15em",color:c.tf,textTransform:"uppercase",lineHeight:1}}>.lol</span>
       </button>
       <div style={{display:"flex",alignItems:"center",gap:8}}>
-        <button onClick={()=>setVw("lang")} title={t.lSel} style={{background:"none",border:"none",color:c.tf,fontSize:14,cursor:"pointer",padding:"4px 6px",flexShrink:0,lineHeight:1}}>🌍</button>
+        <button onClick={()=>setVw("lang")} title={t.lSel} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:8,padding:"4px 8px",cursor:"pointer",fontSize:16,lineHeight:1,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{t.flag||"🌍"}</button>
         {user&&(
           <button onClick={()=>setVw("manage_auth")} style={{background:"none",border:"none",padding:0,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>
             {user.picture
@@ -778,7 +788,7 @@ export default function App(){
     return(
     <div dir={dir} style={{position:"fixed",bottom:0,left:0,right:0,paddingBottom:"env(safe-area-inset-bottom)",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderTop:"1px solid "+c.cb,display:"flex",flexDirection:"column",alignItems:"center",zIndex:100}}>
       <div style={{display:"flex",justifyContent:"center",gap:8,alignItems:"center",padding:"8px 20px",width:"100%",boxSizing:"border-box",flexWrap:"wrap"}}>
-        <AuthBadge c={c} onManage={()=>setVw("manage_auth")} t={t}/>
+        {/* <AuthBadge c={c} onManage={()=>setVw("manage_auth")} t={t}/> */}
         {showCredits&&(
           <button onClick={()=>setVw("manage_auth")} style={{display:"flex",alignItems:"center",gap:5,background:low?"rgba(239,68,68,0.1)":c.ab,border:"1px solid "+(low?"rgba(239,68,68,0.35)":c.abr),borderRadius:20,padding:"4px 10px",cursor:"pointer",fontSize:12,color:low?"#ef4444":c.ac,fontWeight:low?700:400,whiteSpace:"nowrap"}}>
             🪙 <span>{credits}</span><span style={{opacity:0.7}}>{" "}{t.cred}</span>
@@ -928,7 +938,7 @@ export default function App(){
           <button onClick={startTopUp} disabled={topUpBusy} style={sx.stripe}>
             💳 {topUpBusy?"...":t.topUpBtn} <span style={{opacity:0.7,fontSize:12}}>({t.topUpDesc})</span>
           </button>
-          <button onClick={()=>setVw("byok")} style={sx.bo}>{t.credByok}</button>
+          {/* <button onClick={()=>setVw("byok")} style={sx.bo}>{t.credByok}</button> */}
           <button onClick={()=>setVw(auth==="in"?"dash":"home")} style={sx.bg}>{t.back}</button>
           <a href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{display:"block",textAlign:"center",marginTop:16,fontSize:13,color:c.ac,textDecoration:"none",fontWeight:600}}>{t.donate||"❤️ Donate"}</a>
         </div>
@@ -978,10 +988,11 @@ export default function App(){
                 </div>
               </div>
             </div>}
+            {/* API key card hidden — BYOK temporarily disabled
             {key&&<div style={{padding:"14px 16px",background:c.ab,borderRadius:10,marginBottom:12}}>
               <div style={{fontSize:13,color:c.tm,marginBottom:4}}>{t.apiKeyBadge} · <span style={{fontWeight:600,color:c.ac}}>{providerLabel}</span></div>
               <div style={{fontSize:14,fontWeight:500,color:c.ac,fontFamily:"monospace"}}>{key.slice(0,14)}…</div>
-            </div>}
+            </div>} */}
             {/* Usage stats */}
             <div style={{padding:"14px 16px",background:c.sb,border:"1px solid "+c.sr,borderRadius:10,marginBottom:12}}>
               <div style={{fontSize:13,fontWeight:600,color:c.tm,marginBottom:10}}>{t.usageStat}</div>
@@ -1005,8 +1016,10 @@ export default function App(){
               </div>
               <button onClick={resetUsage} style={{...sx.bg,marginTop:10,fontSize:12,padding:"8px 14px"}}>{t.resetStats}</button>
             </div>
+            {/* BYOK buttons hidden — temporarily disabled
             <button onClick={()=>setVw("byok")} style={sx.bo}>{t.apiKeyBadge}</button>
             <button onClick={removeAuth} style={{...sx.bg,color:"#ef4444",borderColor:"rgba(239,68,68,0.3)",marginTop:12}}>{t.rmKey}</button>
+            */}
             <button onClick={()=>setVw(auth==="in"?"dash":"home")} style={sx.bg}>{t.back}</button>
           </div>
         <BottomBar/><style>{GS}</style></div></div>
@@ -1036,7 +1049,7 @@ export default function App(){
           <Err/>
         </div>
         <div style={{textAlign:"center",marginTop:14,padding:"10px 16px",borderRadius:10,background:c.gb,border:"1px solid "+c.gbr}}><span style={{fontSize:12,color:c.gt}}>{t.eth}</span></div>
-        <div style={{textAlign:"center",marginTop:10}}><a href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{fontSize:12,color:c.ac,textDecoration:"none",fontWeight:500}}>{t.donate||"❤️ Donate"}</a></div>
+        <div style={{textAlign:"center",marginTop:10}}><a href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{fontSize:12,color:"#c9a227",textDecoration:"none",fontWeight:500}}>{t.donateMsg||"❤️ Your donation makes the world a little better"}</a></div>
         {auth!=="in"&&(
           <div style={{marginTop:20,textAlign:"center"}}>
             <p style={{fontSize:12,color:c.tf,marginBottom:12}}>{t.signInSub}</p>

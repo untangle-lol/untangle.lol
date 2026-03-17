@@ -23,7 +23,17 @@ fi
 
 echo "[deploy] pulling latest code..."
 export GIT_SSH_COMMAND="ssh -i /home/deploy/.ssh/github_actions_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+STASHED=0
+if ! git -C "$REPO_DIR" diff --quiet || ! git -C "$REPO_DIR" diff --cached --quiet; then
+  echo "[deploy] stashing local changes..."
+  git -C "$REPO_DIR" stash push -m "deploy-autostash"
+  STASHED=1
+fi
 git -C "$REPO_DIR" pull origin main
+if [ "$STASHED" -eq 1 ]; then
+  echo "[deploy] restoring local changes..."
+  git -C "$REPO_DIR" stash pop || echo "[deploy] WARNING: stash pop had conflicts, continuing anyway"
+fi
 
 echo "[deploy] building new image..."
 docker build -t "$IMAGE:new" "$REPO_DIR"

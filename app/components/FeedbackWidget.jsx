@@ -201,6 +201,7 @@ export default function FeedbackWidget({ c, rt, t }) {
               backdropFilter: "blur(14px)",
               boxShadow:      "0 8px 32px rgba(0,0,0,0.22)",
               animation:      "fadeIn 0.18s ease",
+              fontFamily:     "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
             }}
           >
             {/* Header */}
@@ -294,7 +295,9 @@ export default function FeedbackWidget({ c, rt, t }) {
                     fontFamily:   "inherit",
                     opacity:      !text.trim() || busy ? 0.5 : 1,
                     transition:   "opacity 0.15s",
-                    minWidth:     48,
+                    minWidth:     64,
+                    textAlign:    "center",
+                    whiteSpace:   "nowrap",
                   }}
                 >
                   {btnLabel}

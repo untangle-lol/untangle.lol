@@ -36,7 +36,7 @@ const id = {
   altruismPopupMsgRepeat:"Tujuanmu tentang membantu orang lain — sungguh luar biasa. Selesaikan semua langkah dan buat perbedaan nyata!",
   analyticsNote:"Kami mengumpulkan statistik penggunaan anonim (tanpa cookie, tanpa data pribadi).",
   signIn:"Masuk dengan Google",signInSub:"Simpan tujuanmu di semua perangkat",signOut:"Keluar",
-  profile:"Profil",terms:"Ketentuan",privacy:"Privasi",stats:"Statistik",donate:"❤️ Donasi",revenue:"Pendapatan",revTotal:"Total pendapatan",revEmpty:"Belum ada transaksi.",revMore:"Muat lebih banyak",
+  profile:"Profil",terms:"Ketentuan",privacy:"Privasi",stats:"Statistik",donate:"❤️ Donasi",donateMsg:"❤️ Donasi Anda membuat dunia sedikit lebih baik",revenue:"Pendapatan",revTotal:"Total pendapatan",revEmpty:"Belum ada transaksi.",revMore:"Muat lebih banyak",
   share:"Bagikan",shareCopy:"Salin",shareCopied:"Tersalin!",shareMsg:"Lihat rencana aksi saya di untangle.lol:",
   altruismLoadingMsg:"💛 Kamu sedang melakukan sesuatu yang luar biasa untuk orang lain.",
   altruisticSugg:["Saya ingin menjadi sukarelawan di bank makanan","Saya ingin menjadi pengasuh anggota keluarga","Saya ingin menjadi mentor bagi pemuda","Saya ingin rutin mendonorkan darah","Saya ingin memulai taman komunitas"],

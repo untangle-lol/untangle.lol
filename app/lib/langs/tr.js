@@ -36,7 +36,7 @@ const tr = {
   altruismPopupMsgRepeat:"Hedefiniz başkalarına yardım etmekle ilgili — bu gerçekten harika. Tüm adımları tamamlayın ve gerçek bir fark yaratın!",
   analyticsNote:"Anonim kullanım istatistikleri topluyoruz (çerez yok, kişisel veri yok).",
   signIn:"Google ile giriş yap",signInSub:"Hedeflerinizi tüm cihazlarınızda kaydedin",signOut:"Çıkış yap",
-  profile:"Profil",terms:"Koşullar",privacy:"Gizlilik",stats:"İstatistikler",donate:"❤️ Bağış yap",revenue:"Gelir",revTotal:"Toplam gelir",revEmpty:"Henüz işlem yok.",revMore:"Daha fazla yükle",
+  profile:"Profil",terms:"Koşullar",privacy:"Gizlilik",stats:"İstatistikler",donate:"❤️ Bağış yap",donateMsg:"❤️ Bağışınız dünyayı biraz daha iyi yapar",revenue:"Gelir",revTotal:"Toplam gelir",revEmpty:"Henüz işlem yok.",revMore:"Daha fazla yükle",
   share:"Paylaş",shareCopy:"Kopyala",shareCopied:"Kopyalandı!",shareMsg:"untangle.lol'daki eylem planıma göz atın:",
   altruismLoadingMsg:"💛 Başkaları için harika bir şey yapıyorsunuz.",
   altruisticSugg:["Bir gıda bankasında gönüllü olmak istiyorum","Bir aile üyesine bakıcı olmak istiyorum","Bir gence rehberlik etmek istiyorum","Düzenli kan bağışlamak istiyorum","Bir toplum bahçesi başlatmak istiyorum"],
