@@ -1,7 +1,7 @@
 // ─── Config & Helpers ─────────────────────────────────────────────────────────
 
 export const ALTRUISM_BONUS_CREDITS = 10;
-export const FREE_CREDITS = 10;
+export const FREE_CREDITS = 3;
 
 // Umami custom event helper — safe no-op if script hasn't loaded yet
 export const utrack = (event, data) => { try { window.umami?.track(event, data); } catch {} };
