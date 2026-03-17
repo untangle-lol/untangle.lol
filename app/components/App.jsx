@@ -39,7 +39,7 @@ const KEYS = {
    clientRef:"untangle_client_ref",
 };
 
-const FREE_CREDITS = 10;
+const FREE_CREDITS = 3;
 
 // ─── Braille Unicode conversion (Grade 1 English Braille) ────────────────────
 const BRAILLE={a:'⠁',b:'⠃',c:'⠉',d:'⠙',e:'⠑',f:'⠋',g:'⠛',h:'⠓',i:'⠊',j:'⠚',k:'⠅',l:'⠇',m:'⠍',n:'⠝',o:'⠕',p:'⠏',q:'⠟',r:'⠗',s:'⠎',t:'⠞',u:'⠥',v:'⠧',w:'⠺',x:'⠭',y:'⠽',z:'⠵','0':'⠚','1':'⠁','2':'⠃','3':'⠉','4':'⠙','5':'⠑','6':'⠋','7':'⠛','8':'⠓','9':'⠊'};
@@ -930,6 +930,7 @@ export default function App(){
           </button>
           <button onClick={()=>setVw("byok")} style={sx.bo}>{t.credByok}</button>
           <button onClick={()=>setVw(auth==="in"?"dash":"home")} style={sx.bg}>{t.back}</button>
+          <a href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{display:"block",textAlign:"center",marginTop:16,fontSize:13,color:c.ac,textDecoration:"none",fontWeight:600}}>{t.donate||"❤️ Donate"}</a>
         </div>
       <BottomBar/><style>{GS}</style></div></div>
     )}
@@ -1035,6 +1036,7 @@ export default function App(){
           <Err/>
         </div>
         <div style={{textAlign:"center",marginTop:14,padding:"10px 16px",borderRadius:10,background:c.gb,border:"1px solid "+c.gbr}}><span style={{fontSize:12,color:c.gt}}>{t.eth}</span></div>
+        <div style={{textAlign:"center",marginTop:10}}><a href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{fontSize:12,color:c.ac,textDecoration:"none",fontWeight:500}}>{t.donate||"❤️ Donate"}</a></div>
         {auth!=="in"&&(
           <div style={{marginTop:20,textAlign:"center"}}>
             <p style={{fontSize:12,color:c.tf,marginBottom:12}}>{t.signInSub}</p>
@@ -1083,7 +1085,9 @@ export default function App(){
             </div>);})}
             {hist.length>3&&<button onClick={clrAll} style={{...sx.bg,marginTop:4,color:"#ef4444",borderColor:"rgba(239,68,68,0.2)"}}>{t.clr}</button>}
           </div>
-        )}<BottomBar/><style>{GS}</style></div></div>
+        )}
+        <div style={{textAlign:"center",marginTop:14}}><a href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{fontSize:12,color:c.ac,textDecoration:"none",fontWeight:500}}>{t.donate||"❤️ Donate"}</a></div>
+        <BottomBar/><style>{GS}</style></div></div>
     )}
 
     {vw==="new_goal"&&auth==="in"&&(
