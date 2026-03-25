@@ -32,7 +32,7 @@ const tr = {
   altruismBonusTitle:"🎁 +3 kredi kazanıldı!",
   altruismBonusMsg:"Tebrikler! Özgecil hedefinizi tamamladınız. Başkalarına yardım etme çabanız için teşekkür olarak hesabınıza 3 ücretsiz kredi ekledik.",
   altruismBonusBtn:"Harika, teşekkürler!",
-  altruismTeaser:"💛 Başkalarına yardım etmek ister misin? Özgecil bir hedef gir ve tüm adımları tamamlayarak 3 ücretsiz kredi kazan.",
+  altruismTeaser:"💛 Başkaları için bir şey yap ve 3 ücretsiz kredi kazan.",
   altruismPopupMsgRepeat:"Hedefiniz başkalarına yardım etmekle ilgili — bu gerçekten harika. Tüm adımları tamamlayın ve gerçek bir fark yaratın!",
   analyticsNote:"Anonim kullanım istatistikleri topluyoruz (çerez yok, kişisel veri yok).",
   signIn:"Google ile giriş yap",signInSub:"Hedeflerinizi tüm cihazlarınızda kaydedin",signOut:"Çıkış yap",

@@ -32,7 +32,7 @@ const zh = {
   altruismBonusTitle:"🎁 +3 积分已获得！",
   altruismBonusMsg:"恭喜！你完成了利他目标。为感谢你对他人的付出，我们为你的账户添加了 3 个免费积分。",
   altruismBonusBtn:"太棒了，谢谢！",
-  altruismTeaser:"💛 想帮助他人？输入一个利他目标，完成所有步骤即可获得 3 个免费积分。",
+  altruismTeaser:"💛 为他人做点好事，赚取 3 个免费积分。",
   altruismPopupMsgRepeat:"你的目标是帮助他人——这真的很了不起。完成所有步骤，创造真正的改变！",
   analyticsNote:"我们收集匿名使用统计数据（无 Cookie，无个人数据）。",
   signIn:"使用 Google 登录",signInSub:"在所有设备上保存你的目标",signOut:"退出登录",

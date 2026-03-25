@@ -32,7 +32,7 @@ const fr = {
   altruismBonusTitle:"🎁 +3 crédits gagnés !",
   altruismBonusMsg:"Félicitations ! Tu as accompli ton objectif altruiste. En remerciement de ton engagement envers les autres, nous avons ajouté 3 crédits gratuits à ton compte.",
   altruismBonusBtn:"Super, merci !",
-  altruismTeaser:"💛 Tu veux aider les autres ? Entre un objectif altruiste et gagne 3 crédits gratuits en le complétant.",
+  altruismTeaser:"💛 Aide les autres et gagne 3 crédits gratuits.",
   altruismPopupMsgRepeat:"Ton objectif consiste à aider les autres — c'est vraiment magnifique. Complète toutes les étapes et fais une vraie différence !",
   analyticsNote:"Nous collectons des statistiques d'utilisation anonymes (sans cookies ni données personnelles).",
   signIn:"Se connecter avec Google",signInSub:"Sauvegarde tes objectifs sur tous tes appareils",signOut:"Déconnexion",

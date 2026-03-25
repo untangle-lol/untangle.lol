@@ -32,7 +32,7 @@ const pt = {
   altruismBonusTitle:"🎁 +3 créditos ganhos!",
   altruismBonusMsg:"Parabéns! Você concluiu sua meta altruísta. Como agradecimento pelo seu esforço em ajudar os outros, adicionamos 3 créditos grátis à sua conta.",
   altruismBonusBtn:"Incrível, obrigado!",
-  altruismTeaser:"💛 Quer ajudar outras pessoas? Insira uma meta altruísta e ganhe 3 créditos grátis ao concluí-la.",
+  altruismTeaser:"💛 Faça algo pelos outros e ganhe 3 créditos grátis.",
   altruismPopupMsgRepeat:"Sua meta é ajudar outras pessoas — o que é verdadeiramente maravilhoso. Conclua todas as etapas e faça uma diferença real!",
   analyticsNote:"Coletamos estatísticas de uso anônimas (sem cookies, sem dados pessoais).",
   signIn:"Entrar com Google",signInSub:"Salve suas metas em todos os dispositivos",signOut:"Sair",

@@ -32,7 +32,7 @@ const id = {
   altruismBonusTitle:"🎁 +3 kredit diperoleh!",
   altruismBonusMsg:"Selamat! Kamu menyelesaikan tujuan altruistikmu. Sebagai ucapan terima kasih atas usahamu membantu orang lain, kami telah menambahkan 3 kredit gratis ke akunmu.",
   altruismBonusBtn:"Luar biasa, terima kasih!",
-  altruismTeaser:"💛 Ingin membantu orang lain? Masukkan tujuan altruistik dan dapatkan 3 kredit gratis saat menyelesaikannya.",
+  altruismTeaser:"💛 Lakukan sesuatu untuk orang lain dan dapatkan 3 kredit gratis.",
   altruismPopupMsgRepeat:"Tujuanmu tentang membantu orang lain — sungguh luar biasa. Selesaikan semua langkah dan buat perbedaan nyata!",
   analyticsNote:"Kami mengumpulkan statistik penggunaan anonim (tanpa cookie, tanpa data pribadi).",
   signIn:"Masuk dengan Google",signInSub:"Simpan tujuanmu di semua perangkat",signOut:"Keluar",
