@@ -32,7 +32,7 @@ const ja = {
   altruismBonusTitle:"🎁 +3クレジット獲得！",
   altruismBonusMsg:"おめでとうございます！利他的な目標を達成しました。他者への貢献に感謝して、アカウントに3の無料クレジットを追加しました。",
   altruismBonusBtn:"素晴らしい、ありがとう！",
-  altruismTeaser:"💛 他の人のために何かをして、3クレジット無料で獲得しよう。",
+  altruismTeaser:"💡 他の人のために何かをして、3クレジット無料で獲得しよう。",
   altruismPopupMsgRepeat:"あなたの目標は他者を助けること — それは本当に素晴らしいです。すべてのステップを完了して、本当の違いを生み出しましょう！",
   analyticsNote:"匿名の使用統計を収集しています（Cookieなし、個人データなし）。",
   signIn:"Googleでサインイン",signInSub:"すべてのデバイスで目標を保存",signOut:"サインアウト",

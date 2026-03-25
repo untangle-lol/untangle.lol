@@ -677,7 +677,7 @@ export default function App(){
     return(
       <div style={{marginTop:10,border:"1px solid "+c.cb,borderRadius:10,overflow:"hidden"}}>
         <div style={{background:c.sb,borderBottom:"1px solid "+c.cb,padding:"8px 12px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-          <span style={{fontSize:12,fontWeight:600,color:c.tf}}>{t.suggLabel||"💡 Pick a suggestion"}</span>
+          <span style={{fontSize:13,fontWeight:600,color:c.tf}}>{t.suggLabel||"💡 Pick a suggestion"}</span>
           <button onClick={()=>{setSuggPicks(computeSuggPicks());setDiceAnim(true);setTimeout(()=>setDiceAnim(false),600);}} style={{background:"none",border:"none",cursor:"pointer",fontSize:18,opacity:0.7,padding:"0 2px",lineHeight:1,color:c.tf,display:"inline-flex",alignItems:"center",justifyContent:"center"}} title="Randomize"><span className={diceAnim?"dice-roll":""}>🎲</span></button>
         </div>
         <div style={{display:"flex",flexDirection:"column",gap:0}}>

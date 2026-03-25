@@ -32,7 +32,7 @@ const nl = {
   altruismBonusTitle:"🎁 +3 credits verdiend!",
   altruismBonusMsg:"Gefeliciteerd! Je hebt je altruïstische doel afgerond. Als dank voor je inzet voor anderen hebben we 3 gratis credits aan je account toegevoegd.",
   altruismBonusBtn:"Super, bedankt!",
-  altruismTeaser:"💛 Als je iets doet voor een ander verdien je 3 gratis credits.",
+  altruismTeaser:"💡 Als je iets doet voor een ander verdien je 3 gratis credits.",
   altruismPopupMsgRepeat:"Je doel gaat over het helpen van anderen — wat ontzettend mooi is. Rond álle stappen af en maak echt het verschil!",
   analyticsNote:"We verzamelen anonieme gebruiksstatistieken (geen cookies, geen persoonsgegevens).",
   signIn:"Inloggen met Google",signInSub:"Sla je doelen op via al je apparaten",signOut:"Uitloggen",
