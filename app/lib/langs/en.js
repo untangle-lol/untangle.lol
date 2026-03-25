@@ -57,7 +57,7 @@ const en = {
     "E.g. 'If I snooze my alarm, I will lay out my gym clothes the night before'",
   ],
   woopGo:"Create my plan →",woopLink:"Learn about the science",woopSummaryTitle:"Your WOOP",
-  suggLabel:"💡 Pick a suggestion",
+  suggLabel:"Not sure what to type? Pick a suggestion below",
   taClrConfirm:"clear?",
   celebTitle:"Congratulations! 🎉",
   celebMsg:"You've completed every step. Well done — this calls for a celebration!",

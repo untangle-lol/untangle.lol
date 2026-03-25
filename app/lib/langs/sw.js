@@ -57,7 +57,7 @@ const sw = {
     "Mf. 'Ikiwa ninazima kengele, nitaweka nguo za mazoezi usiku uliopita'",
   ],
   woopGo:"Unda mpango wangu →",woopLink:"Jifunze kuhusu sayansi",woopSummaryTitle:"WOOP yako",
-  suggLabel:"💡 Chagua pendekezo",
+  suggLabel:"Hujui cha kuandika? Chagua pendekezo hapa chini",
   taClrConfirm:"futa?",
   celebTitle:"Hongera! 🎉",
   celebMsg:"Umekamilisha hatua zote. Vizuri sana — hii inastahili kusherehekewa!",

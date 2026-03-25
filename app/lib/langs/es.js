@@ -57,7 +57,7 @@ const es = {
     "Ej. 'Si apago la alarma, prepararé mi ropa de deporte la noche anterior'",
   ],
   woopGo:"Crear mi plan →",woopLink:"Más sobre la ciencia",woopSummaryTitle:"Tu WOOP",
-  suggLabel:"💡 Elige una sugerencia",
+  suggLabel:"¿No sabes qué escribir? Elige una sugerencia",
   taClrConfirm:"¿borrar?",
   celebTitle:"¡Felicitaciones! 🎉",
   celebMsg:"Has completado todos los pasos. ¡Bien hecho — esto merece una celebración!",

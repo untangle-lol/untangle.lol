@@ -57,7 +57,7 @@ const zh = {
     "例如：'如果我关掉闹钟，我会在前一晚准备好运动服'",
   ],
   woopGo:"创建我的计划 →",woopLink:"了解相关科学",woopSummaryTitle:"你的 WOOP",
-  suggLabel:"💡 选择建议",
+  suggLabel:"不知道写什么？从下面选一个建议",
   taClrConfirm:"清除？",
   celebTitle:"恭喜！🎉",
   celebMsg:"你已完成所有步骤。做得好——值得庆祝！",

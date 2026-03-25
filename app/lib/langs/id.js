@@ -57,7 +57,7 @@ const id = {
     "Mis. 'Jika saya mematikan alarm, saya akan menyiapkan pakaian olahraga malam sebelumnya'",
   ],
   woopGo:"Buat rencanaku →",woopLink:"Pelajari tentang ilmunya",woopSummaryTitle:"WOOP-mu",
-  suggLabel:"💡 Pilih saran",
+  suggLabel:"Tidak tahu mau menulis apa? Pilih saran di bawah",
   taClrConfirm:"hapus?",
   celebTitle:"Selamat! 🎉",
   celebMsg:"Kamu telah menyelesaikan semua langkah. Bagus sekali — ini layak dirayakan!",

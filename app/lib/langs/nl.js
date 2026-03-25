@@ -57,7 +57,7 @@ const nl = {
     "Bijv. 'Als ik de wekker afzet, leg ik mijn sportkleren klaar de avond ervoor'",
   ],
   woopGo:"Maak mijn plan →",woopLink:"Meer over de wetenschap",woopSummaryTitle:"Jouw WOOP",
-  suggLabel:"💡 Kies een suggestie",
+  suggLabel:"Kom je er niet uit? Kies een suggestie hieronder",
   taClrConfirm:"wis?",
   celebTitle:"Gefeliciteerd! 🎉",
   celebMsg:"Je hebt alle stappen afgerond. Goed gedaan — dit verdient een feestje!",

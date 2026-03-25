@@ -57,7 +57,7 @@ const tr = {
     "Örn. 'Alarmı kapatırsam, önceki gece spor kıyafetlerimi hazırlayacağım'",
   ],
   woopGo:"Planımı oluştur →",woopLink:"Bilim hakkında öğren",woopSummaryTitle:"Senin WOOP'un",
-  suggLabel:"💡 Öneri seç",
+  suggLabel:"Ne yazacağını bilmiyor musun? Aşağıdan bir öneri seç",
   taClrConfirm:"temizle?",
   celebTitle:"Tebrikler! 🎉",
   celebMsg:"Tüm adımları tamamladınız. Aferin — bu kutlamayı hak ediyor!",

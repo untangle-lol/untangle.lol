@@ -57,7 +57,7 @@ const de = {
     "Z.B. 'Wenn ich auf Snooze drücke, lege ich meine Sportsachen am Abend vorher bereit'",
   ],
   woopGo:"Meinen Plan erstellen →",woopLink:"Mehr zur Wissenschaft",woopSummaryTitle:"Dein WOOP",
-  suggLabel:"💡 Vorschlag wählen",
+  suggLabel:"Nicht sicher? Wähle einen Vorschlag unten",
   taClrConfirm:"löschen?",
   celebTitle:"Glückwunsch! 🎉",
   celebMsg:"Du hast alle Schritte abgeschlossen. Gut gemacht — das muss gefeiert werden!",

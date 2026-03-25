@@ -57,7 +57,7 @@ const pt = {
     "Ex.: 'Se eu desligar o alarme, separo a roupa de treino na noite anterior'",
   ],
   woopGo:"Criar meu plano →",woopLink:"Saiba mais sobre a ciência",woopSummaryTitle:"Seu WOOP",
-  suggLabel:"💡 Escolha uma sugestão",
+  suggLabel:"Não sabe o que escrever? Escolha uma sugestão",
   taClrConfirm:"limpar?",
   celebTitle:"Parabéns! 🎉",
   celebMsg:"Você concluiu todas as etapas. Muito bem — isso merece comemoração!",

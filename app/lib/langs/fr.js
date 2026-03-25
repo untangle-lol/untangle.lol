@@ -57,7 +57,7 @@ const fr = {
     "Ex. 'Si je remets mon réveil, je prépare mes affaires de sport la veille au soir'",
   ],
   woopGo:"Créer mon plan →",woopLink:"En savoir plus sur la science",woopSummaryTitle:"Ton WOOP",
-  suggLabel:"💡 Choisir une suggestion",
+  suggLabel:"Pas sûr(e) quoi écrire ? Choisis une suggestion",
   taClrConfirm:"effacer?",
   celebTitle:"Félicitations ! 🎉",
   celebMsg:"Tu as complété toutes les étapes. Bravo — ça se fête !",

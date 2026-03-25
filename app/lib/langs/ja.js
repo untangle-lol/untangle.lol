@@ -57,7 +57,7 @@ const ja = {
     "例：「アラームを止めたら、前夜にジムの服を用意する」",
   ],
   woopGo:"プランを作成 →",woopLink:"科学について学ぶ",woopSummaryTitle:"あなたのWOOP",
-  suggLabel:"💡 提案を選ぶ",
+  suggLabel:"何を書けばいいかわからない？下から提案を選ぼう",
   taClrConfirm:"クリアしますか？",
   celebTitle:"おめでとうございます！ 🎉",
   celebMsg:"すべてのステップを完了しました。よくできました — これはお祝いに値します！",
