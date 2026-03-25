@@ -84,7 +84,7 @@ const TH = {
   light:{bg:"linear-gradient(135deg,#f8fafc,#e2e8f0,#f8fafc)",card:"rgba(255,255,255,0.9)",cb:"rgba(0,0,0,0.08)",ib:"#fff",ibr:"rgba(0,0,0,0.15)",tx:"#1e293b",tm:"#64748b",tf:"#94a3b8",ac:"#b45309",ag:"linear-gradient(135deg,#f59e0b,#d97706)",ab:"rgba(245,158,11,0.12)",abr:"rgba(245,158,11,0.4)",am:"rgba(245,158,11,0.15)",bt:"#fff",gr:"#16a34a",gb:"rgba(22,163,74,0.06)",gbr:"rgba(22,163,74,0.15)",gt:"#16a34a",eb:"rgba(239,68,68,0.08)",et:"#dc2626",ghb:"rgba(0,0,0,0.03)",ghr:"rgba(0,0,0,0.1)",ckb:"#fff",ckr:"rgba(0,0,0,0.2)",cm:"#fff",dt:"#4d7c56",sb:"rgba(0,0,0,0.015)",sr:"rgba(0,0,0,0.06)",dm:"#94a3b8",sh:"0 1px 3px rgba(0,0,0,0.06)",hp:"rgba(245,158,11,0.06)",hpr:"rgba(245,158,11,0.2)"},
 };
 
-const GS=`@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes heroFade{0%{opacity:0;transform:translateY(6px)}15%{opacity:1;transform:translateY(0)}85%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-6px)}}@keyframes pulse{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.4);opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}@keyframes modalIn{from{opacity:0;transform:translateY(24px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes spinBorder{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}.ta-glow{display:block;position:relative;border-radius:12px;padding:1px;overflow:hidden;isolation:isolate;background:var(--ta-border-color,#d1d5db)}.ta-glow::before{content:"";position:absolute;inset:-100%;width:300%;height:300%;background:conic-gradient(from 0deg,transparent 60%,rgba(250,204,21,0.9) 75%,rgba(254,240,138,1) 80%,rgba(250,204,21,0.9) 85%,transparent 100%);animation:spinBorder 2.4s linear infinite;z-index:0;opacity:1;transition:opacity 0.4s ease}.ta-glow::after{content:"";position:absolute;inset:0;border-radius:12px;background:rgba(250,204,21,0.9);z-index:0;opacity:0;transition:opacity 0.4s ease}.ta-glow-focused::before{opacity:0}.ta-glow-focused::after{opacity:1;animation:glowPulse 2s ease-in-out infinite}@keyframes glowPulse{0%,100%{opacity:1}50%{opacity:0.55}}.ta-glow textarea{position:relative;z-index:1;border:none!important;border-radius:10px;display:block;width:100%;box-sizing:border-box;margin:0}@media(min-width:768px){.uw{max-width:640px!important}.uw h1{font-size:clamp(26px,2vw,34px)!important}.uw label{font-size:clamp(13px,1vw,15px)!important}.uw p{font-size:clamp(13px,1vw,15px)!important}.uw span{font-size:inherit}}`;
+const GS=`@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes heroFade{0%{opacity:0;transform:translateY(6px)}15%{opacity:1;transform:translateY(0)}85%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-6px)}}@keyframes pulse{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.4);opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}@keyframes modalIn{from{opacity:0;transform:translateY(24px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes spinBorder{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}.ta-glow{display:block;position:relative;border-radius:12px;padding:1px;overflow:hidden;isolation:isolate;background:var(--ta-border-color,#d1d5db)}.ta-glow::before{content:"";position:absolute;inset:-100%;width:300%;height:300%;background:conic-gradient(from 0deg,transparent 60%,rgba(250,204,21,0.9) 75%,rgba(254,240,138,1) 80%,rgba(250,204,21,0.9) 85%,transparent 100%);animation:spinBorder 2.4s linear infinite;z-index:0;opacity:1;transition:opacity 0.4s ease}.ta-glow::after{content:"";position:absolute;inset:0;border-radius:12px;background:rgba(250,204,21,0.9);z-index:0;opacity:0;transition:opacity 0.4s ease}.ta-glow-focused::before{opacity:0}.ta-glow-focused::after{opacity:1;animation:glowPulse 2s ease-in-out infinite}@keyframes glowPulse{0%,100%{opacity:1}50%{opacity:0.55}}.ta-glow textarea{position:relative;z-index:1;border:none!important;border-radius:10px;display:block;width:100%;box-sizing:border-box;margin:0}@media(min-width:768px){.uw{max-width:640px!important}.uw h1{font-size:34px!important}.uw h2{font-size:24px!important}.uw label{font-size:17px!important;line-height:1.5!important}.uw p{font-size:16px!important}.uw input,.uw textarea{font-size:18px!important}.uw button{font-size:16px!important}.uw .ci-lbl{font-size:17px!important}.uw .ci-dsc{font-size:15px!important}}`;
 
 function tz(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone}catch{return"UTC"}}
 function fmtDate(iso,z,lc){try{return new Date(iso).toLocaleString(lc||undefined,{timeZone:z,day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}catch{return new Date(iso).toLocaleString()}}
@@ -144,7 +144,7 @@ function BrandMark({c,size}){
 function CheckItem({done,label,desc,onToggle,c}){
   return(<div onClick={onToggle} style={{display:"flex",gap:14,alignItems:"flex-start",padding:"12px 14px",borderRadius:12,cursor:onToggle?"pointer":"default",background:done?c.gb:c.sb,border:"1px solid "+(done?c.gbr:c.sr),transition:"all 0.2s",opacity:done?0.75:1,userSelect:"none"}}>
     <div style={{width:28,height:28,minWidth:28,borderRadius:8,background:done?c.gr:c.ckb,border:"2px solid "+(done?c.gr:c.ckr),display:"flex",alignItems:"center",justifyContent:"center",marginTop:2,flexShrink:0,fontSize:16,color:c.cm}}>{done?"✓":""}</div>
-    <div style={{flex:1}}><div style={{fontSize:15,fontWeight:600,color:done?c.gr:c.tx,marginBottom:3,textDecoration:done?"line-through":"none"}}>{label}</div><div style={{fontSize:13,color:done?c.dt:c.tm,lineHeight:1.5}}>{desc}</div></div>
+    <div style={{flex:1}}><div className="ci-lbl" style={{fontSize:15,fontWeight:600,color:done?c.gr:c.tx,marginBottom:3,textDecoration:done?"line-through":"none"}}>{label}</div><div className="ci-dsc" style={{fontSize:13,color:done?c.dt:c.tm,lineHeight:1.5}}>{desc}</div></div>
   </div>);
 }
 
@@ -228,7 +228,6 @@ export default function App(){
   const [woopStep,setWoopStep]=useState(0); // 0=W,1=O,2=O,3=P
   const [woopData,setWoopData]=useState({wish:"",outcome:"",obstacle:"",plan:""});
   const woopKeys=["wish","outcome","obstacle","plan"];
-  const [suggOpen,setSuggOpen]=useState(false);
   const [suggPicks,setSuggPicks]=useState([]);
   const [dismissedAlts,setDismissedAlts]=useState([]);
   const [taFocused,setTaFocused]=useState(false);
@@ -369,7 +368,6 @@ export default function App(){
     const rv=ls.get(recentsKey(lang));
     if(rv){try{setRecents(JSON.parse(rv));}catch{setRecents([]);}}
     else{setRecents([]);}
-    setSuggPicks([]); // reset picks so next open draws from new lang's pool
   },[lang]);
 
   // Poll /api/credits/claim until credits land (after Stripe redirect)
@@ -651,35 +649,37 @@ export default function App(){
     fetch("/api/suggestions",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({lang,text})}).catch(()=>{});
   };
 
-  const SuggChips=()=>{
+  const shuffle=(arr)=>{const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+  const computeSuggPicks=()=>{
     const localSet=new Set(recents.map(r=>r.toLowerCase()));
-    const shuffle=(arr)=>{const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
-    const computePicks=()=>{
-      const np=shuffle((t.phSugg||[]).filter(s=>!localSet.has(s.toLowerCase())&&!dismissedAlts.includes(s)));
-      const ap=shuffle((t.altruisticSugg||[]).filter(s=>!localSet.has(s.toLowerCase())&&!dismissedAlts.includes(s)));
-      const count=2+Math.floor(Math.random()*3); // 2, 3 or 4
-      const nc=Math.min(Math.ceil(count/2),np.length);
-      const ac=Math.min(count-nc,ap.length);
-      const picks=[];
-      for(let i=0;i<Math.max(nc,ac);i++){
-        if(i<nc)picks.push({text:np[i],kind:"normal"});
-        if(i<ac)picks.push({text:ap[i],kind:"alt"});
-      }
-      return picks;
-    };
+    const np=shuffle((t.phSugg||[]).filter(s=>!localSet.has(s.toLowerCase())&&!dismissedAlts.includes(s)));
+    const ap=shuffle((t.altruisticSugg||[]).filter(s=>!localSet.has(s.toLowerCase())&&!dismissedAlts.includes(s)));
+    const count=2+Math.floor(Math.random()*3);
+    const nc=Math.min(Math.ceil(count/2),np.length);
+    const ac=Math.min(count-nc,ap.length);
+    const picks=[];
+    for(let i=0;i<Math.max(nc,ac);i++){
+      if(i<nc)picks.push({text:np[i],kind:"normal"});
+      if(i<ac)picks.push({text:ap[i],kind:"alt"});
+    }
+    return picks;
+  };
+
+  useEffect(()=>{setSuggPicks(computeSuggPicks());},[t,recents,dismissedAlts]);// eslint-disable-line react-hooks/exhaustive-deps
+
+  const SuggChips=()=>{
     const hasSuggs=(t.phSugg||[]).length>0||(t.altruisticSugg||[]).length>0;
     if(recents.length===0&&!hasSuggs)return null;
-    const pick=(text)=>{setInp(text);setSuggOpen(false);};
-    const toggle=()=>{setSuggOpen(o=>{if(!o)setSuggPicks(computePicks());return!o;});};
+    const pick=(text)=>{setInp(text);};
     const chipRow={display:"flex",alignItems:"center",width:"100%",overflow:"hidden"};
     const delBtn=(onClick)=><button onClick={(e)=>{e.stopPropagation();onClick();}} style={{flexShrink:0,background:"none",border:"none",padding:"10px 14px",color:c.tm,cursor:"pointer",fontSize:16,opacity:0.5,lineHeight:1}} title="Remove">×</button>;
     return(
       <div style={{marginTop:10,border:"1px solid "+c.cb,borderRadius:10,overflow:"hidden"}}>
-        <button onClick={toggle} style={{width:"100%",background:c.sb,border:"none",borderBottom:suggOpen?"1px solid "+c.cb:"none",padding:"8px 12px",textAlign:"left",fontSize:12,fontWeight:600,color:c.tf,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-          <span>{t.suggLabel||"💡 Pick a suggestion"}</span>
-          <span style={{fontSize:10,opacity:0.6}}>{suggOpen?"▲":"▼"}</span>
-        </button>
-        {suggOpen&&<div style={{display:"flex",flexDirection:"column",gap:0}}>
+        <div style={{background:c.sb,borderBottom:"1px solid "+c.cb,padding:"8px 12px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+          <span style={{fontSize:12,fontWeight:600,color:c.tf}}>{t.suggLabel||"💡 Pick a suggestion"}</span>
+          <button onClick={()=>setSuggPicks(computeSuggPicks())} style={{background:"none",border:"none",cursor:"pointer",fontSize:14,opacity:0.6,padding:"0 2px",lineHeight:1,color:c.tf}} title="Randomize">🔀</button>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:0}}>
           {recents.map((r,i)=>(
             <div key={"l"+i} style={{...chipRow,borderTop:i>0?"1px solid "+c.cb:"none",background:c.ab}}>
               <button onClick={()=>pick(r)} style={{flex:1,background:"none",border:"none",padding:"9px 12px",color:c.ac,cursor:"pointer",fontSize:13,textAlign:"left",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r}</button>
@@ -692,7 +692,7 @@ export default function App(){
               {delBtn(()=>setDismissedAlts(d=>[...d,s.text]))}
             </div>
           ))}
-        </div>}
+        </div>
       </div>
     );
   };
@@ -753,10 +753,10 @@ export default function App(){
     pg:{minHeight:"100dvh",height:"100dvh",background:c.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-start",padding:"12px 20px",paddingTop:"calc(48px + env(safe-area-inset-top))",paddingBottom:"calc(68px + env(safe-area-inset-bottom))",fontFamily:"'Inter',-apple-system,sans-serif",transition:"background 0.4s",overflowY:"auto"},
     w:{width:"100%",maxWidth:540,flex:1,display:"flex",flexDirection:"column",justifyContent:"center"},
     cd:{background:c.card,borderRadius:16,padding:24,border:"1px solid "+c.cb,boxShadow:c.sh,transition:"all 0.3s"},
-    ip:{width:"100%",background:c.ib,border:"2px solid "+c.ibr,borderRadius:10,padding:"13px 16px",color:c.tx,fontSize:"clamp(16px,1.2vw,18px)",outline:"none",boxSizing:"border-box"},
-    bo:{width:"100%",marginTop:14,padding:"13px 20px",background:c.ag,color:c.bt,border:"none",borderRadius:10,fontSize:"clamp(15px,1.1vw,17px)",fontWeight:600,cursor:"pointer"},
-    bd:{width:"100%",marginTop:14,padding:"13px 20px",background:c.am,color:c.tm,border:"none",borderRadius:10,fontSize:"clamp(15px,1.1vw,17px)",fontWeight:600,cursor:"not-allowed"},
-    bg:{width:"100%",marginTop:12,padding:"12px 20px",background:c.ghb,color:c.tm,border:"1px solid "+c.ghr,borderRadius:10,fontSize:"clamp(14px,1.05vw,16px)",fontWeight:500,cursor:"pointer"},
+    ip:{width:"100%",background:c.ib,border:"2px solid "+c.ibr,borderRadius:10,padding:"13px 16px",color:c.tx,fontSize:16,outline:"none",boxSizing:"border-box"},
+    bo:{width:"100%",marginTop:14,padding:"13px 20px",background:c.ag,color:c.bt,border:"none",borderRadius:10,fontSize:15,fontWeight:600,cursor:"pointer"},
+    bd:{width:"100%",marginTop:14,padding:"13px 20px",background:c.am,color:c.tm,border:"none",borderRadius:10,fontSize:15,fontWeight:600,cursor:"not-allowed"},
+    bg:{width:"100%",marginTop:12,padding:"12px 20px",background:c.ghb,color:c.tm,border:"1px solid "+c.ghr,borderRadius:10,fontSize:14,fontWeight:500,cursor:"pointer"},
     note:{fontSize:12,color:c.tf,marginTop:8,textAlign:"center"},
     err:{marginTop:10,padding:"10px 14px",background:c.eb,borderRadius:8,color:c.et,fontSize:13},
     stripe:{width:"100%",marginTop:10,padding:"13px 20px",background:"linear-gradient(135deg,#6772e5,#4f46e5)",color:"#fff",border:"none",borderRadius:10,fontSize:15,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8},
