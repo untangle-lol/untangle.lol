@@ -808,6 +808,7 @@ export default function App(){
         <a href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{fontSize:10,color:c.ac,textDecoration:"none",fontWeight:500}}>{t.donate||"❤️ Donate"}</a>
         <button onClick={()=>{setVw("revenue");if(revenueTxns.length===0)loadRevenue();}} style={{fontSize:10,color:c.tf,background:"none",border:"none",cursor:"pointer",padding:0,fontFamily:"inherit"}}>{t.revenue||"Revenue"}</button>
       </div>
+      <div style={{paddingBottom:8}}><a href="https://bachsoftware.nl" target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none",opacity:0.6}}>Mogelijk gemaakt door Bach Software</a></div>
     </div>
   );};
 
