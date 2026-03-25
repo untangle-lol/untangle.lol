@@ -1,6 +1,6 @@
 const pt = {
   code:"pt",label:"Português",flag:"🇧🇷",
-  ph:"Ex.: 'Quero dormir melhor' ou 'Quero aprender guitarra' 🎸",
+  ph:"Comece a digitar...",
   hero:"O que você quer alcançar?",
   heroS:["É só digitar.","Nenhuma pergunta é estranha demais.","Grande ou pequeno — tudo vale.","O que está na sua cabeça?","Escreva, nós ajudamos você a avançar."],
   go:"Vamos começar →",back:"← Voltar",out:"Sair",clr:"🗑️ Limpar tudo",nG:"➕ Nova meta",noG:"Nenhuma meta ainda. Hora de começar!",
@@ -39,8 +39,8 @@ const pt = {
   profile:"Perfil",terms:"Termos",privacy:"Privacidade",stats:"Estatísticas",donate:"❤️ Doar",donateMsg:"❤️ A sua doação contribui para um mundo melhor",revenue:"Receita",revTotal:"Receita total",revEmpty:"Sem transações ainda.",revMore:"Carregar mais",
   share:"Compartilhar",shareCopy:"Copiar",shareCopied:"Copiado!",shareMsg:"Veja meu plano de ação no untangle.lol:",
   altruismLoadingMsg:"💛 Você está fazendo algo maravilhoso pelos outros.",
-  altruisticSugg:["Quero fazer voluntariado em um banco de alimentos","Quero cuidar de um familiar","Quero ser mentor de um jovem","Quero doar sangue regularmente","Quero criar uma horta comunitária"],
-  phSugg:["Quero dormir melhor","Quero aprender guitarra","Quero me exercitar todos os dias","Quero escrever um livro","Quero me alimentar de forma mais saudável"],
+  altruisticSugg:["Quero fazer voluntariado em um banco de alimentos","Quero cuidar de um familiar","Quero ser mentor de um jovem","Quero doar sangue regularmente","Quero criar uma horta comunitária","Quero organizar uma campanha beneficente","Quero ajudar idosos na minha comunidade","Quero fazer voluntariado em um abrigo de animais","Quero conscientizar sobre mudanças climáticas","Quero ajudar adultos a aprender a ler"],
+  phSugg:["Quero dormir melhor","Quero aprender guitarra","Quero me exercitar todos os dias","Quero escrever um livro","Quero me alimentar de forma mais saudável","Quero aprender um novo idioma","Quero usar menos as redes sociais","Quero abrir meu próprio negócio","Quero passar mais tempo com a minha família","Quero meditar toda manhã","Quero quitar minhas dívidas","Quero correr uma maratona","Quero aprender a cozinhar","Quero encontrar um novo emprego","Quero economizar mais dinheiro"],
   woop:"🎯 Experimentar WOOP",woopOr:"ou",woopTitle:"Método WOOP",
   woopSub:"Uma técnica comprovada para transformar desejos em ações — passo a passo.",
   woopLabels:["Desejo","Resultado","Obstáculo","Plano"],

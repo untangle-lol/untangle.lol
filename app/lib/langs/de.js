@@ -1,6 +1,6 @@
 const de = {
   code:"de",label:"Deutsch",flag:"🇩🇪",
-  ph:"Z.B. 'Besser schlafen' 🎸",
+  ph:"Beginne zu tippen...",
   hero:"Was willst du erreichen?",
   heroS:["Einfach tippen.","Keine Frage ist zu seltsam.","Groß oder klein — alles ist erlaubt.","Was beschäftigt dich?","Schreib es auf, wir helfen dir weiter."],
   go:"Los geht's →",back:"← Zurück",out:"Abmelden",clr:"🗑️ Löschen",nG:"➕ Neues Ziel",noG:"Keine Ziele. Zeit anzufangen!",
@@ -39,8 +39,8 @@ const de = {
   profile:"Profil",terms:"AGB",privacy:"Datenschutz",stats:"Statistiken",donate:"❤️ Spenden",donateMsg:"❤️ Deine Spende macht die Welt ein bisschen besser",revenue:"Einnahmen",revTotal:"Gesamteinnahmen",revEmpty:"Noch keine Transaktionen.",revMore:"Mehr laden",
   share:"Teilen",shareCopy:"Kopieren",shareCopied:"Kopiert!",shareMsg:"Sieh dir meinen Aktionsplan auf untangle.lol an:",
   altruismLoadingMsg:"💛 Du tust gerade etwas Wundervolles für andere.",
-  altruisticSugg:["Ich möchte bei einer Tafel ehrenamtlich helfen","Ich möchte einen Angehörigen pflegen","Ich möchte einen Jugendlichen mentoren","Ich möchte regelmäßig Blut spenden","Ich möchte einen Gemeinschaftsgarten starten"],
-  phSugg:["Ich möchte besser schlafen","Ich möchte Gitarre lernen","Ich möchte täglich Sport treiben","Ich möchte ein Buch schreiben","Ich möchte gesünder essen"],
+  altruisticSugg:["Ich möchte bei einer Tafel ehrenamtlich helfen","Ich möchte einen Angehörigen pflegen","Ich möchte einen Jugendlichen mentoren","Ich möchte regelmäßig Blut spenden","Ich möchte einen Gemeinschaftsgarten starten","Ich möchte eine Spendensammlung für einen guten Zweck organisieren","Ich möchte älteren Nachbarn helfen","Ich möchte in einem Tierheim helfen","Ich möchte eine Klimaschutzkampagne starten","Ich möchte Erwachsenen beim Lesen lernen helfen"],
+  phSugg:["Ich möchte besser schlafen","Ich möchte Gitarre lernen","Ich möchte täglich Sport treiben","Ich möchte ein Buch schreiben","Ich möchte gesünder essen","Ich möchte eine neue Sprache lernen","Ich möchte weniger Social Media nutzen","Ich möchte mein eigenes Unternehmen gründen","Ich möchte mehr Zeit mit meiner Familie verbringen","Ich möchte jeden Morgen meditieren","Ich möchte meine Schulden abbezahlen","Ich möchte einen Marathon laufen","Ich möchte kochen lernen","Ich möchte einen neuen Job finden","Ich möchte mehr Geld sparen"],
   woop:"🎯 WOOP ausprobieren",woopOr:"oder",woopTitle:"WOOP-Methode",
   woopSub:"Eine bewährte Technik, um Wünsche in Handlungen umzuwandeln — Schritt für Schritt.",
   woopLabels:["Wunsch","Ergebnis","Hindernis","Plan"],

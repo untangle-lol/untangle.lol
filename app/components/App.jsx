@@ -229,7 +229,7 @@ export default function App(){
   const [woopData,setWoopData]=useState({wish:"",outcome:"",obstacle:"",plan:""});
   const woopKeys=["wish","outcome","obstacle","plan"];
   const [suggOpen,setSuggOpen]=useState(false);
-  const [altOffset,setAltOffset]=useState(0);
+  const [suggPicks,setSuggPicks]=useState([]);
   const [dismissedAlts,setDismissedAlts]=useState([]);
   const [taFocused,setTaFocused]=useState(false);
   const [taClearConfirm,setTaClearConfirm]=useState(false);
@@ -369,6 +369,7 @@ export default function App(){
     const rv=ls.get(recentsKey(lang));
     if(rv){try{setRecents(JSON.parse(rv));}catch{setRecents([]);}}
     else{setRecents([]);}
+    setSuggPicks([]); // reset picks so next open draws from new lang's pool
   },[lang]);
 
   // Poll /api/credits/claim until credits land (after Stripe redirect)
@@ -652,19 +653,24 @@ export default function App(){
 
   const SuggChips=()=>{
     const localSet=new Set(recents.map(r=>r.toLowerCase()));
-    const globals=[];// community suggestions hidden — cross-language contamination
-    const altPool=(t.altruisticSugg||[]).filter(s=>!localSet.has(s.toLowerCase())&&!dismissedAlts.includes(s));
-    // Cycle 2 altruistic picks using altOffset so each open shows different ones
-    const altPick=altPool.length===0?[]:altPool.length<=2?altPool:[altPool[altOffset%altPool.length],altPool[(altOffset+1)%altPool.length]];
-    const interleaved=[];
-    let gi=0,ai=0;
-    while((gi<globals.length||ai<altPick.length)&&interleaved.length<4){
-      if(gi<globals.length)interleaved.push({text:globals[gi++],kind:"global"});
-      if(ai<altPick.length&&interleaved.length<4)interleaved.push({text:altPick[ai++],kind:"alt"});
-    }
-    if(recents.length===0&&interleaved.length===0)return null;
+    const shuffle=(arr)=>{const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+    const computePicks=()=>{
+      const np=shuffle((t.phSugg||[]).filter(s=>!localSet.has(s.toLowerCase())&&!dismissedAlts.includes(s)));
+      const ap=shuffle((t.altruisticSugg||[]).filter(s=>!localSet.has(s.toLowerCase())&&!dismissedAlts.includes(s)));
+      const count=2+Math.floor(Math.random()*3); // 2, 3 or 4
+      const nc=Math.min(Math.ceil(count/2),np.length);
+      const ac=Math.min(count-nc,ap.length);
+      const picks=[];
+      for(let i=0;i<Math.max(nc,ac);i++){
+        if(i<nc)picks.push({text:np[i],kind:"normal"});
+        if(i<ac)picks.push({text:ap[i],kind:"alt"});
+      }
+      return picks;
+    };
+    const hasSuggs=(t.phSugg||[]).length>0||(t.altruisticSugg||[]).length>0;
+    if(recents.length===0&&!hasSuggs)return null;
     const pick=(text)=>{setInp(text);setSuggOpen(false);};
-    const toggle=()=>{setSuggOpen(o=>{if(!o)setAltOffset(n=>n+2);return!o;});};
+    const toggle=()=>{setSuggOpen(o=>{if(!o)setSuggPicks(computePicks());return!o;});};
     const chipRow={display:"flex",alignItems:"center",width:"100%",overflow:"hidden"};
     const delBtn=(onClick)=><button onClick={(e)=>{e.stopPropagation();onClick();}} style={{flexShrink:0,background:"none",border:"none",padding:"10px 14px",color:c.tm,cursor:"pointer",fontSize:16,opacity:0.5,lineHeight:1}} title="Remove">×</button>;
     return(
@@ -680,11 +686,10 @@ export default function App(){
               {delBtn(()=>delRecent(r))}
             </div>
           ))}
-          {interleaved.map((s,i)=>(
+          {suggPicks.map((s,i)=>(
             <div key={"m"+i} style={{...chipRow,borderTop:(recents.length>0||i>0)?"1px solid "+c.cb:"none",background:s.kind==="alt"?"rgba(251,191,36,0.06)":"transparent"}}>
               <button onClick={()=>pick(s.text)} style={{flex:1,background:"none",border:"none",padding:"9px 12px",color:s.kind==="alt"?c.ac:c.tm,cursor:"pointer",fontSize:13,textAlign:"left",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{s.kind==="alt"?"💛 ":"💡 "}{s.text}</button>
-              {s.kind==="global"&&delBtn(()=>delGlobal(s.text))}
-              {s.kind==="alt"&&delBtn(()=>setDismissedAlts(d=>[...d,s.text]))}
+              {delBtn(()=>setDismissedAlts(d=>[...d,s.text]))}
             </div>
           ))}
         </div>}
@@ -1035,7 +1040,7 @@ export default function App(){
           <HoneypotField/>
           {canEarnAltruismBonus&&<div style={{marginBottom:12,padding:"8px 12px",borderRadius:10,background:c.ab,border:"1px solid "+c.abr}}><span style={{fontSize:12,color:c.ac}}>{t.altruismTeaser}</span></div>}
           <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
-          <div className={"ta-glow"+(taFocused?" ta-glow-focused":"")} style={{"--ta-tc":rt==="dark"?"rgba(255,255,255,0.12)":"rgba(180,120,0,0.25)","position":"relative"}}>            <textarea value={inp} onChange={e=>setInp(e.target.value)} onFocus={()=>setTaFocused(true)} onBlur={()=>{setTaFocused(false);setTaClearConfirm(false);}} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={cyclePh} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6,background:rt==="dark"?"#162032":"#ffffff",border:"none",paddingRight:inp.trim()?"36px":undefined}}/>
+          <div className={"ta-glow"+(taFocused?" ta-glow-focused":"")} style={{"--ta-tc":rt==="dark"?"rgba(255,255,255,0.12)":"rgba(180,120,0,0.25)","position":"relative"}}>            <textarea value={inp} onChange={e=>setInp(e.target.value)} onFocus={()=>setTaFocused(true)} onBlur={()=>{setTaFocused(false);setTaClearConfirm(false);}} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6,background:rt==="dark"?"#162032":"#ffffff",border:"none",paddingRight:inp.trim()?"36px":undefined}}/>
             {inp.trim()&&<button onMouseDown={e=>{e.preventDefault();handleTaClear();}} title={t.rmTip} style={{position:"absolute",top:"50%",right:8,transform:"translateY(-50%)",zIndex:2,background:taClearConfirm?"rgba(239,68,68,0.12)":"transparent",border:"1px solid "+(taClearConfirm?"rgba(239,68,68,0.35)":"transparent"),borderRadius:6,color:taClearConfirm?"#ef4444":c.tf,fontSize:taClearConfirm?11:16,fontWeight:600,width:24,height:24,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"all 0.18s",lineHeight:1,opacity:taFocused||taClearConfirm?1:0.4}}>{taClearConfirm?(t.taClrConfirm||"clear?"):"×"}</button>}
           </div>
           <SuggChips/>
@@ -1109,7 +1114,7 @@ export default function App(){
         <div style={{...sx.cd,position:"relative"}}>
           <HoneypotField/>
           <label style={{display:"block",fontSize:13,fontWeight:600,color:c.tm,marginBottom:8,letterSpacing:"0.02em"}}>{t.hero}</label>
-          <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={cyclePh} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
+          <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
           <SuggChips/>
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button>
           <div style={{display:"flex",alignItems:"center",gap:8,marginTop:10,marginBottom:10}}>

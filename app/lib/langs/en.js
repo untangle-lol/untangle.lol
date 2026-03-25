@@ -1,6 +1,6 @@
 const en = {
   code:"en",label:"English",flag:"🇬🇧",
-  ph:"E.g. 'I want to sleep better' or 'I want to learn guitar' 🎸",
+  ph:"Start typing...",
   hero:"What do you want to achieve?",
   heroS:["Just type it in.","No question is too weird.","Big or small — anything goes.","What's on your mind?","Write it down, we'll help you figure it out."],
   go:"Let's begin →",back:"← Back",out:"Log out",clr:"🗑️ Clear all",nG:"➕ New goal",noG:"No goals yet. Time to begin!",
@@ -39,8 +39,8 @@ const en = {
   profile:"Profile",terms:"Terms",privacy:"Privacy",stats:"Stats",donate:"❤️ Donate",donateMsg:"❤️ Your donation makes the world a little better",revenue:"Revenue",revTotal:"Total income",revEmpty:"No transactions yet.",revMore:"Load more",
   share:"Share",shareCopy:"Copy",shareCopied:"Copied!",shareMsg:"Check out my action plan on untangle.lol:",
   altruismLoadingMsg:"💛 You're doing something wonderful for others.",
-  altruisticSugg:["I want to volunteer at a food bank","I want to become a caregiver for a family member","I want to mentor a young person","I want to donate blood regularly","I want to start a community garden"],
-  phSugg:["I want to sleep better","I want to learn guitar","I want to exercise every day","I want to write a book","I want to eat healthier"],
+  altruisticSugg:["I want to volunteer at a food bank","I want to become a caregiver for a family member","I want to mentor a young person","I want to donate blood regularly","I want to start a community garden","I want to organize a charity fundraiser","I want to help elderly neighbors","I want to volunteer at an animal shelter","I want to raise awareness about climate change","I want to help adults learn to read"],
+  phSugg:["I want to sleep better","I want to learn guitar","I want to exercise every day","I want to write a book","I want to eat healthier","I want to learn a new language","I want to spend less time on social media","I want to start my own business","I want to spend more time with my family","I want to meditate every morning","I want to pay off my debt","I want to run a marathon","I want to learn to cook","I want to find a new job","I want to save more money"],
   woop:"🎯 Try WOOP",woopOr:"or",woopTitle:"WOOP Method",
   woopSub:"A proven technique to turn wishes into action — step by step.",
   woopLabels:["Wish","Outcome","Obstacle","Plan"],

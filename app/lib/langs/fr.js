@@ -1,6 +1,6 @@
 const fr = {
   code:"fr",label:"Français",flag:"🇫🇷",
-  ph:"Ex. 'Mieux dormir' 🎸",
+  ph:"Commencez à taper...",
   hero:"Que veux-tu accomplir ?",
   heroS:["Tape-le.","Aucune question n'est trop bizarre.","Grand ou petit — tout est permis.","Qu'est-ce qui t'occupe l'esprit ?","Écris-le, on t'aide à avancer."],
   go:"Commençons →",back:"← Retour",out:"Déco",clr:"🗑️ Effacer",nG:"➕ Nouveau",noG:"Pas d'objectifs. On commence !",
@@ -39,8 +39,8 @@ const fr = {
   profile:"Profil",terms:"CGU",privacy:"Confidentialité",stats:"Statistiques",donate:"❤️ Faire un don",donateMsg:"❤️ Votre don contribue à un monde meilleur",revenue:"Revenus",revTotal:"Total des revenus",revEmpty:"Aucune transaction pour l'instant.",revMore:"Charger plus",
   share:"Partager",shareCopy:"Copier",shareCopied:"Copié !",shareMsg:"Découvre mon plan d'action sur untangle.lol :",
   altruismLoadingMsg:"💛 Tu fais quelque chose de merveilleux pour les autres.",
-  altruisticSugg:["Je veux faire du bénévolat dans une banque alimentaire","Je veux devenir aidant·e pour un proche","Je veux créer un jardin partagé","Je veux donner mon sang régulièrement","Je veux encadrer un jeune en difficulté"],
-  phSugg:["Je veux mieux dormir","Je veux apprendre la guitare","Je veux faire du sport chaque jour","Je veux écrire un livre","Je veux manger plus sainement"],
+  altruisticSugg:["Je veux faire du bénévolat dans une banque alimentaire","Je veux devenir aidant·e pour un proche","Je veux créer un jardin partagé","Je veux donner mon sang régulièrement","Je veux encadrer un jeune en difficulté","Je veux organiser une collecte pour une association","Je veux aider les personnes âgées de mon quartier","Je veux m'occuper d'animaux dans un refuge","Je veux sensibiliser au changement climatique","Je veux aider des adultes à apprendre à lire"],
+  phSugg:["Je veux mieux dormir","Je veux apprendre la guitare","Je veux faire du sport chaque jour","Je veux écrire un livre","Je veux manger plus sainement","Je veux apprendre une nouvelle langue","Je veux moins utiliser les réseaux sociaux","Je veux créer ma propre entreprise","Je veux passer plus de temps en famille","Je veux méditer chaque matin","Je veux rembourser mes dettes","Je veux courir un marathon","Je veux apprendre à cuisiner","Je veux trouver un nouvel emploi","Je veux épargner davantage"],
   woop:"🎯 Essayer WOOP",woopOr:"ou",woopTitle:"Méthode WOOP",
   woopSub:"Une technique éprouvée pour transformer les souhaits en actions — étape par étape.",
   woopLabels:["Souhait","Résultat","Obstacle","Plan"],

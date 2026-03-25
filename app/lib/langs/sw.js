@@ -1,6 +1,6 @@
 const sw = {
   code:"sw",label:"Kiswahili",flag:"🇰🇪",
-  ph:"Mf. 'Nataka kulala vizuri' au 'Nataka kujifunza gitaa' 🎸",
+  ph:"Anza kuandika...",
   hero:"Unataka kufikia nini?",
   heroS:["Andika tu.","Hakuna swali la ajabu.","Kubwa au dogo — chochote kinafaa.","Unafikiri nini?","Andika, tutakusaidia kusonga mbele."],
   go:"Tuanze →",back:"← Rudi",out:"Toka",clr:"🗑️ Futa yote",nG:"➕ Lengo jipya",noG:"Bado hakuna malengo. Ni wakati wa kuanza!",
@@ -39,8 +39,8 @@ const sw = {
   profile:"Wasifu",terms:"Masharti",privacy:"Faragha",stats:"Takwimu",donate:"❤️ Changia",donateMsg:"❤️ Mchango wako unafanya dunia kuwa bora zaidi",revenue:"Mapato",revTotal:"Mapato yote",revEmpty:"Bado hakuna miamala.",revMore:"Pakia zaidi",
   share:"Shiriki",shareCopy:"Nakili",shareCopied:"Imenakiliwa!",shareMsg:"Angalia mpango wangu wa hatua kwenye untangle.lol:",
   altruismLoadingMsg:"💛 Unafanya kitu cha ajabu kwa wengine.",
-  altruisticSugg:["Nataka kujitolea kwenye benki ya chakula","Nataka kuwa mtunzaji wa mwanafamilia","Nataka kuwa mshauri kwa kijana","Nataka kutoa damu mara kwa mara","Nataka kuanzisha bustani ya jamii"],
-  phSugg:["Nataka kulala vizuri","Nataka kujifunza gitaa","Nataka kufanya mazoezi kila siku","Nataka kuandika kitabu","Nataka kula vyakula vya afya"],
+  altruisticSugg:["Nataka kujitolea kwenye benki ya chakula","Nataka kuwa mtunzaji wa mwanafamilia","Nataka kuwa mshauri kwa kijana","Nataka kutoa damu mara kwa mara","Nataka kuanzisha bustani ya jamii","Nataka kupanga mkusanyiko wa michango kwa ajili ya hisani","Nataka kusaidia wazee katika jirani zangu","Nataka kujitolea katika makazi ya wanyama","Nataka kuongeza ufahamu kuhusu mabadiliko ya tabianchi","Nataka kusaidia watu wazima kujifunza kusoma"],
+  phSugg:["Nataka kulala vizuri","Nataka kujifunza gitaa","Nataka kufanya mazoezi kila siku","Nataka kuandika kitabu","Nataka kula vyakula vya afya","Nataka kujifunza lugha mpya","Nataka kutumia mitandao ya kijamii kidogo zaidi","Nataka kuanzisha biashara yangu","Nataka kutumia muda zaidi na familia yangu","Nataka kutafakari kila asubuhi","Nataka kulipa madeni yangu","Nataka kukimbia marathon","Nataka kujifunza kupika","Nataka kupata kazi mpya","Nataka kuhifadhi pesa zaidi"],
   woop:"🎯 Jaribu WOOP",woopOr:"au",woopTitle:"Njia ya WOOP",
   woopSub:"Mbinu iliyothibitishwa ya kubadilisha matakwa kuwa vitendo — hatua kwa hatua.",
   woopLabels:["Tamaa","Matokeo","Kikwazo","Mpango"],

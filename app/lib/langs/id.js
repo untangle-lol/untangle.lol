@@ -1,6 +1,6 @@
 const id = {
   code:"id",label:"Bahasa Indonesia",flag:"🇮🇩",
-  ph:"Mis. 'Saya ingin tidur lebih baik' atau 'Saya ingin belajar gitar' 🎸",
+  ph:"Mulai mengetik...",
   hero:"Apa yang ingin Anda capai?",
   heroS:["Cukup ketik saja.","Tidak ada pertanyaan yang aneh.","Besar atau kecil — semua boleh.","Apa yang ada di pikiranmu?","Tulis saja, kami bantu kamu melangkah maju."],
   go:"Ayo mulai →",back:"← Kembali",out:"Keluar",clr:"🗑️ Hapus semua",nG:"➕ Tujuan baru",noG:"Belum ada tujuan. Saatnya mulai!",
@@ -39,8 +39,8 @@ const id = {
   profile:"Profil",terms:"Ketentuan",privacy:"Privasi",stats:"Statistik",donate:"❤️ Donasi",donateMsg:"❤️ Donasi Anda membuat dunia sedikit lebih baik",revenue:"Pendapatan",revTotal:"Total pendapatan",revEmpty:"Belum ada transaksi.",revMore:"Muat lebih banyak",
   share:"Bagikan",shareCopy:"Salin",shareCopied:"Tersalin!",shareMsg:"Lihat rencana aksi saya di untangle.lol:",
   altruismLoadingMsg:"💛 Kamu sedang melakukan sesuatu yang luar biasa untuk orang lain.",
-  altruisticSugg:["Saya ingin menjadi sukarelawan di bank makanan","Saya ingin menjadi pengasuh anggota keluarga","Saya ingin menjadi mentor bagi pemuda","Saya ingin rutin mendonorkan darah","Saya ingin memulai taman komunitas"],
-  phSugg:["Saya ingin tidur lebih baik","Saya ingin belajar gitar","Saya ingin berolahraga setiap hari","Saya ingin menulis buku","Saya ingin makan lebih sehat"],
+  altruisticSugg:["Saya ingin menjadi sukarelawan di bank makanan","Saya ingin menjadi pengasuh anggota keluarga","Saya ingin menjadi mentor bagi pemuda","Saya ingin rutin mendonorkan darah","Saya ingin memulai taman komunitas","Saya ingin mengorganisir penggalangan dana amal","Saya ingin membantu lansia di lingkungan saya","Saya ingin sukarelawan di penampungan hewan","Saya ingin meningkatkan kesadaran perubahan iklim","Saya ingin membantu orang dewasa belajar membaca"],
+  phSugg:["Saya ingin tidur lebih baik","Saya ingin belajar gitar","Saya ingin berolahraga setiap hari","Saya ingin menulis buku","Saya ingin makan lebih sehat","Saya ingin belajar bahasa baru","Saya ingin mengurangi penggunaan media sosial","Saya ingin memulai bisnis sendiri","Saya ingin menghabiskan lebih banyak waktu bersama keluarga","Saya ingin bermeditasi setiap pagi","Saya ingin melunasi utang","Saya ingin berlari maraton","Saya ingin belajar memasak","Saya ingin mencari pekerjaan baru","Saya ingin menabung lebih banyak"],
   woop:"🎯 Coba WOOP",woopOr:"atau",woopTitle:"Metode WOOP",
   woopSub:"Teknik terbukti untuk mengubah keinginan menjadi tindakan — langkah demi langkah.",
   woopLabels:["Keinginan","Hasil","Hambatan","Rencana"],

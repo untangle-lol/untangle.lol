@@ -1,6 +1,6 @@
 const tr = {
   code:"tr",label:"Türkçe",flag:"🇹🇷",
-  ph:"Örn. 'Daha iyi uyumak istiyorum' veya 'Gitar öğrenmek istiyorum' 🎸",
+  ph:"Yazmaya başlayın...",
   hero:"Ne başarmak istiyorsunuz?",
   heroS:["Sadece yazın.","Hiçbir soru garip değil.","Büyük veya küçük — her şey olabilir.","Aklınızda ne var?","Yazın, ilerlemenize yardımcı olalım."],
   go:"Başlayalım →",back:"← Geri",out:"Çıkış yap",clr:"🗑️ Tümünü temizle",nG:"➕ Yeni hedef",noG:"Henüz hedef yok. Başlama zamanı!",
@@ -39,8 +39,8 @@ const tr = {
   profile:"Profil",terms:"Koşullar",privacy:"Gizlilik",stats:"İstatistikler",donate:"❤️ Bağış yap",donateMsg:"❤️ Bağışınız dünyayı biraz daha iyi yapar",revenue:"Gelir",revTotal:"Toplam gelir",revEmpty:"Henüz işlem yok.",revMore:"Daha fazla yükle",
   share:"Paylaş",shareCopy:"Kopyala",shareCopied:"Kopyalandı!",shareMsg:"untangle.lol'daki eylem planıma göz atın:",
   altruismLoadingMsg:"💛 Başkaları için harika bir şey yapıyorsunuz.",
-  altruisticSugg:["Bir gıda bankasında gönüllü olmak istiyorum","Bir aile üyesine bakıcı olmak istiyorum","Bir gence rehberlik etmek istiyorum","Düzenli kan bağışlamak istiyorum","Bir toplum bahçesi başlatmak istiyorum"],
-  phSugg:["Daha iyi uyumak istiyorum","Gitar öğrenmek istiyorum","Her gün spor yapmak istiyorum","Kitap yazmak istiyorum","Daha sağlıklı beslenmek istiyorum"],
+  altruisticSugg:["Bir gıda bankasında gönüllü olmak istiyorum","Bir aile üyesine bakıcı olmak istiyorum","Bir gence rehberlik etmek istiyorum","Düzenli kan bağışlamak istiyorum","Bir toplum bahçesi başlatmak istiyorum","Yardım amaçlı bağış kampanyası düzenlemek istiyorum","Komşu yaşlılara yardım etmek istiyorum","Hayvan barınağında gönüllü olmak istiyorum","İklim değişikliği farkındalığı oluşturmak istiyorum","Yetişkinlerin okuma öğrenmesine yardımcı olmak istiyorum"],
+  phSugg:["Daha iyi uyumak istiyorum","Gitar öğrenmek istiyorum","Her gün spor yapmak istiyorum","Kitap yazmak istiyorum","Daha sağlıklı beslenmek istiyorum","Yeni bir dil öğrenmek istiyorum","Sosyal medyayı daha az kullanmak istiyorum","Kendi işimi kurmak istiyorum","Ailemle daha fazla zaman geçirmek istiyorum","Her sabah meditasyon yapmak istiyorum","Borçlarımı ödemek istiyorum","Bir maraton koşmak istiyorum","Yemek pişirmeyi öğrenmek istiyorum","Yeni bir iş bulmak istiyorum","Daha fazla para biriktirmek istiyorum"],
   woop:"🎯 WOOP'u dene",woopOr:"veya",woopTitle:"WOOP Yöntemi",
   woopSub:"Dilekleri eyleme dönüştürmek için kanıtlanmış bir teknik — adım adım.",
   woopLabels:["Dilek","Sonuç","Engel","Plan"],

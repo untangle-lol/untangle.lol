@@ -1,6 +1,6 @@
 const nl = {
   code:"nl",label:"Nederlands",flag:"🇳🇱",
-  ph:"Bijv. 'Ik wil beter slapen' of 'Ik wil leren gitaarspelen' 🎸",
+  ph:"Begin met typen...",
   hero:"Wat wil je bereiken?",
   heroS:["Typ het maar in.","Geen vraag is te gek.","Klein of groot — alles mag.","Wat houdt je bezig?","Schrijf het op, wij helpen verder."],
   go:"Laten we beginnen →",back:"← Terug",out:"Uitloggen",clr:"🗑️ Alles wissen",nG:"➕ Nieuw doel",noG:"Nog geen doelen. Tijd om te beginnen!",
@@ -39,8 +39,8 @@ const nl = {
   profile:"Profiel",terms:"Voorwaarden",privacy:"Privacy",stats:"Statistieken",donate:"❤️ Doneer",donateMsg:"❤️ Jouw donatie draagt bij aan een betere wereld",revenue:"Omzet",revTotal:"Totale omzet",revEmpty:"Nog geen transacties.",revMore:"Meer laden",
   share:"Delen",shareCopy:"Kopiëren",shareCopied:"Gekopieerd!",shareMsg:"Bekijk mijn stappenplan op untangle.lol:",
   altruismLoadingMsg:"💛 Je bent iets moois aan het doen voor anderen.",
-  altruisticSugg:["Ik wil vrijwilligerswerk doen bij een voedselbank","Ik wil mantelzorger worden voor een familielid","Ik wil een buurtmoestuin starten","Ik wil bloed doneren","Ik wil een mentorrol op me nemen voor een jongere"],
-  phSugg:["Ik wil beter slapen","Ik wil leren gitaarspelen","Ik wil elke dag sporten","Ik wil een boek schrijven","Ik wil gezonder eten"],
+  altruisticSugg:["Ik wil vrijwilligerswerk doen bij een voedselbank","Ik wil mantelzorger worden voor een familielid","Ik wil een buurtmoestuin starten","Ik wil bloed doneren","Ik wil een mentorrol op me nemen voor een jongere","Ik wil een inzamelingsactie organiseren voor een goed doel","Ik wil ouderen in mijn buurt helpen","Ik wil dieren helpen in een dierenopvang","Ik wil een bewustwordingscampagne starten over klimaat","Ik wil mensen helpen bij het leren lezen"],
+  phSugg:["Ik wil beter slapen","Ik wil leren gitaarspelen","Ik wil elke dag sporten","Ik wil een boek schrijven","Ik wil gezonder eten","Ik wil een nieuwe taal leren","Ik wil minder op social media zitten","Ik wil mijn eigen bedrijf starten","Ik wil meer tijd doorbrengen met mijn gezin","Ik wil elke ochtend mediteren","Ik wil mijn schulden aflossen","Ik wil een marathon lopen","Ik wil leren koken","Ik wil een nieuwe baan vinden","Ik wil meer spaargeld opbouwen"],
   woop:"🎯 Probeer WOOP",woopOr:"of",woopTitle:"WOOP-methode",
   woopSub:"Een bewezen techniek om doelen om te zetten in actie — stap voor stap.",
   woopLabels:["Wens","Uitkomst","Obstakel","Plan"],
