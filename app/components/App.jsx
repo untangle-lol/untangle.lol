@@ -4,7 +4,7 @@ import confetti from "canvas-confetti";
 import LANGS from "../lib/langs/index.js";
 import FeedbackWidget from "./FeedbackWidget.jsx";
 
-const ALTRUISM_BONUS_CREDITS = 10;
+const ALTRUISM_BONUS_CREDITS = 3;
 
 // Umami custom event helper — safe no-op if script hasn't loaded yet
 const utrack=(event,data)=>{try{window.umami?.track(event,data);}catch{}};
@@ -84,7 +84,7 @@ const TH = {
   light:{bg:"linear-gradient(135deg,#f8fafc,#e2e8f0,#f8fafc)",card:"rgba(255,255,255,0.9)",cb:"rgba(0,0,0,0.08)",ib:"#fff",ibr:"rgba(0,0,0,0.15)",tx:"#1e293b",tm:"#64748b",tf:"#94a3b8",ac:"#b45309",ag:"linear-gradient(135deg,#f59e0b,#d97706)",ab:"rgba(245,158,11,0.12)",abr:"rgba(245,158,11,0.4)",am:"rgba(245,158,11,0.15)",bt:"#fff",gr:"#16a34a",gb:"rgba(22,163,74,0.06)",gbr:"rgba(22,163,74,0.15)",gt:"#16a34a",eb:"rgba(239,68,68,0.08)",et:"#dc2626",ghb:"rgba(0,0,0,0.03)",ghr:"rgba(0,0,0,0.1)",ckb:"#fff",ckr:"rgba(0,0,0,0.2)",cm:"#fff",dt:"#4d7c56",sb:"rgba(0,0,0,0.015)",sr:"rgba(0,0,0,0.06)",dm:"#94a3b8",sh:"0 1px 3px rgba(0,0,0,0.06)",hp:"rgba(245,158,11,0.06)",hpr:"rgba(245,158,11,0.2)"},
 };
 
-const GS=`@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes heroFade{0%{opacity:0;transform:translateY(6px)}15%{opacity:1;transform:translateY(0)}85%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-6px)}}@keyframes pulse{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.4);opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}@keyframes modalIn{from{opacity:0;transform:translateY(24px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes suggFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}.sugg-list{animation:suggFadeIn 0.25s ease forwards}.sugg-fading{opacity:0;transition:opacity 0.15s ease}@keyframes diceRoll{0%{transform:rotate(0deg) scale(1)}20%{transform:rotate(-30deg) scale(1.3)}50%{transform:rotate(200deg) scale(1.5)}75%{transform:rotate(330deg) scale(1.2)}90%{transform:rotate(350deg) scale(1.05)}100%{transform:rotate(360deg) scale(1)}}.dice-roll{animation:diceRoll 0.6s cubic-bezier(0.25,0.46,0.45,0.94) forwards}@keyframes spinBorder{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}.ta-glow{display:block;position:relative;border-radius:12px;padding:1px;overflow:hidden;isolation:isolate;background:var(--ta-border-color,#d1d5db)}.ta-glow::before{content:"";position:absolute;inset:-100%;width:300%;height:300%;background:conic-gradient(from 0deg,transparent 60%,rgba(250,204,21,0.9) 75%,rgba(254,240,138,1) 80%,rgba(250,204,21,0.9) 85%,transparent 100%);animation:spinBorder 2.4s linear infinite;z-index:0;opacity:1;transition:opacity 0.4s ease}.ta-glow::after{content:"";position:absolute;inset:0;border-radius:12px;background:rgba(250,204,21,0.9);z-index:0;opacity:0;transition:opacity 0.4s ease}.ta-glow-focused::before{opacity:0}.ta-glow-focused::after{opacity:1;animation:glowPulse 2s ease-in-out infinite}@keyframes glowPulse{0%,100%{opacity:1}50%{opacity:0.55}}.ta-glow textarea{position:relative;z-index:1;border:none!important;border-radius:10px;display:block;width:100%;box-sizing:border-box;margin:0}@media(min-width:768px){.uw{max-width:640px!important}.uw h1{font-size:34px!important}.uw h2{font-size:24px!important}.uw label{font-size:17px!important;line-height:1.5!important}.uw p{font-size:16px!important}.uw input,.uw textarea{font-size:18px!important}.uw button{font-size:16px!important}.uw .ci-lbl{font-size:17px!important}.uw .ci-dsc{font-size:15px!important}.bb,.bb button,.bb a,.bb span{font-size:12px!important}.uw .eth-txt,.uw .donate-txt{font-size:15px!important}@media(min-width:768px){.nb .nb-logo{font-size:18px!important}.nb .nb-tld{font-size:10px!important}.nb .nb-ico{font-size:24px!important}}}`;
+const GS=`@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes heroFade{0%{opacity:0;transform:translateY(6px)}15%{opacity:1;transform:translateY(0)}85%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-6px)}}@keyframes pulse{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.4);opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}@keyframes modalIn{from{opacity:0;transform:translateY(24px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}.sugg-fading{opacity:0;transition:opacity 0.15s ease}.sugg-list{opacity:1;transition:opacity 0.2s ease}@keyframes diceRoll{0%{transform:rotate(0deg) scale(1)}20%{transform:rotate(-30deg) scale(1.3)}50%{transform:rotate(200deg) scale(1.5)}75%{transform:rotate(330deg) scale(1.2)}90%{transform:rotate(350deg) scale(1.05)}100%{transform:rotate(360deg) scale(1)}}.dice-roll{animation:diceRoll 0.6s cubic-bezier(0.25,0.46,0.45,0.94) forwards}@keyframes spinBorder{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}.ta-glow{display:block;position:relative;border-radius:12px;padding:1px;overflow:hidden;isolation:isolate;background:var(--ta-border-color,#d1d5db)}.ta-glow::before{content:"";position:absolute;inset:-100%;width:300%;height:300%;background:conic-gradient(from 0deg,transparent 60%,rgba(250,204,21,0.9) 75%,rgba(254,240,138,1) 80%,rgba(250,204,21,0.9) 85%,transparent 100%);animation:spinBorder 2.4s linear infinite;z-index:0;opacity:1;transition:opacity 0.4s ease}.ta-glow::after{content:"";position:absolute;inset:0;border-radius:12px;background:rgba(250,204,21,0.9);z-index:0;opacity:0;transition:opacity 0.4s ease}.ta-glow-focused::before{opacity:0}.ta-glow-focused::after{opacity:1;animation:glowPulse 2s ease-in-out infinite}@keyframes glowPulse{0%,100%{opacity:1}50%{opacity:0.55}}.ta-glow textarea{position:relative;z-index:1;border:none!important;border-radius:10px;display:block;width:100%;box-sizing:border-box;margin:0}@media(min-width:768px){.uw{max-width:640px!important}.uw h1{font-size:34px!important}.uw h2{font-size:24px!important}.uw label{font-size:17px!important;line-height:1.5!important}.uw p{font-size:16px!important}.uw input,.uw textarea{font-size:18px!important}.uw button{font-size:16px!important}.uw .ci-lbl{font-size:17px!important}.uw .ci-dsc{font-size:15px!important}.bb,.bb button,.bb a,.bb span{font-size:12px!important}.uw .eth-txt,.uw .donate-txt{font-size:15px!important}.uw .altruism-txt{font-size:16px!important}@media(min-width:768px){.nb .nb-logo{font-size:18px!important}.nb .nb-tld{font-size:10px!important}.nb .nb-ico{font-size:24px!important}}}`;
 
 function tz(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone}catch{return"UTC"}}
 function fmtDate(iso,z,lc){try{return new Date(iso).toLocaleString(lc||undefined,{timeZone:z,day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}catch{return new Date(iso).toLocaleString()}}
@@ -152,7 +152,7 @@ function CheckItem({done,label,desc,onToggle,c}){
 function Modal({c,children}){
   return(
     <div style={{position:"fixed",inset:0,zIndex:999,display:"flex",alignItems:"center",justifyContent:"center",padding:20,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(4px)"}}>
-      <div style={{background:c.card,borderRadius:20,padding:28,width:"100%",maxWidth:400,border:"1px solid "+c.cb,boxShadow:"0 24px 64px rgba(0,0,0,0.35)",animation:"modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1)"}}>
+      <div style={{background:c.card,borderRadius:20,padding:28,width:"100%",maxWidth:400,border:"1px solid "+c.cb,boxShadow:"0 24px 64px rgba(0,0,0,0.35)",animation:"modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1)",fontFamily:"'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"}}>
         {children}
       </div>
     </div>
@@ -231,6 +231,8 @@ export default function App(){
   const [suggPicks,setSuggPicks]=useState([]);
   const [diceAnim,setDiceAnim]=useState(false);
   const [suggFading,setSuggFading]=useState(false);
+  const [suggKey,setSuggKey]=useState(0);
+  const isPoppingState=useRef(false);
   const [dismissedAlts,setDismissedAlts]=useState([]);
   const [taFocused,setTaFocused]=useState(false);
   const [taClearConfirm,setTaClearConfirm]=useState(false);
@@ -296,6 +298,30 @@ export default function App(){
     document.body.style.background=color;
   },[rt]);
 
+  const VW_HASH={home:'',lang:'lang',dash:'dash',new_goal:'new',woop_input:'woop',byok:'key',no_credits:'credits',manage_auth:'settings',revenue:'revenue'};
+  const HASH_VW=Object.fromEntries(Object.entries(VW_HASH).map(([k,v])=>[v,k]));
+
+  // Sync view → URL hash (enables refresh-to-same-page and back button)
+  useEffect(()=>{
+    if(isPoppingState.current){isPoppingState.current=false;return;}
+    if(!ready||vw==='loading'||vw==='splash'||vw==='result')return;
+    const h=VW_HASH[vw];if(h===undefined)return;
+    const target=h?'#'+h:'/';
+    if(window.location.hash!==(h?'#'+h:''))window.history.pushState({vw},'',target);
+  },[vw,ready]);// eslint-disable-line react-hooks/exhaustive-deps
+
+  // Handle browser back/forward navigation
+  useEffect(()=>{
+    const handle=()=>{
+      isPoppingState.current=true;
+      const hash=window.location.hash.slice(1);
+      const tv=HASH_VW[hash]||(auth==='in'?'dash':'home');
+      setVw(tv);
+    };
+    window.addEventListener('popstate',handle);
+    return()=>window.removeEventListener('popstate',handle);
+  },[auth]);// eslint-disable-line react-hooks/exhaustive-deps
+
   // Persist current view so refresh restores the same page
   useEffect(()=>{
     if(vw&&vw!=="splash"&&vw!=="loading")ls.set(KEYS.view,vw);
@@ -330,6 +356,7 @@ export default function App(){
     const authErr=params.get("auth_error")==="1";
     const topupSuccess=params.get("topup")==="success";
     const restoreId=params.get("id");
+    const hashVw=HASH_VW[window.location.hash.slice(1)];
     if(signedIn||authErr||topupSuccess){window.history.replaceState({},"",window.location.pathname);}
     // Try Google session cookie first
     try{
@@ -348,8 +375,8 @@ export default function App(){
         if(signedIn)utrack("sign_in");
         if(topupSuccess){setTopUpMsg("pending");pollCredits(ref);}
         if(restoreId){const e=parsedHist.find(h=>String(h.id)===restoreId);if(e){setSteps(e.resultaat);setActiveId(e.id);setLocalComp(e.completed||e.resultaat.stappen.map(()=>false));setVw("result");setReady(true);return;}}
-        const AUTH_VWS=["dash","new_goal","woop_input","byok","no_credits","manage_auth","revenue","lang"];
-        const savedVw=ls.get(KEYS.view);
+        const AUTH_VWS=["dash","new_goal","woop_input","byok","no_credits","manage_auth","revenue","lang","home","result"];
+        const savedVw=hashVw||ls.get(KEYS.view);
         setVw(savedVw&&AUTH_VWS.includes(savedVw)?savedVw:"dash");setReady(true);return;
       }
     }catch{}
@@ -358,8 +385,8 @@ export default function App(){
     setHist(parsedGuestHist);
     if(topupSuccess){setTopUpMsg("pending");pollCredits(ref);}
     if(restoreId){const e=parsedGuestHist.find(h=>String(h.id)===restoreId);if(e){setSteps(e.resultaat);setActiveId(e.id);setLocalComp(e.completed||e.resultaat.stappen.map(()=>false));setVw("result");setReady(true);return;}}
-    const GUEST_VWS=["home","woop_input","byok","no_credits","lang"];
-    const savedVwG=ls.get(KEYS.view);
+    const GUEST_VWS=["home","woop_input","byok","no_credits","lang","result"];
+    const savedVwG=hashVw||ls.get(KEYS.view);
     setVw(savedVwG&&GUEST_VWS.includes(savedVwG)?savedVwG:(langSv?"home":"lang"));
     setReady(true);
   })();},[]);
@@ -639,7 +666,7 @@ export default function App(){
         else{setHist(ph=>{const nh=markClaimed(ph);ls.set(KEYS.guestHist,JSON.stringify(nh));return nh;});}
       }
     }
-    setInp("");setSteps(null);setErr(null);setActiveId(null);setLocalComp([]);setShareOpen(false);setVw(auth==="in"?"dash":"home");window.history.replaceState(null,'','/');
+    setInp("");setSteps(null);setErr(null);setActiveId(null);setLocalComp([]);setShareOpen(false);setVw(auth==="in"?"dash":"home");
   };
   const prog=(e)=>{const tt=e.resultaat?.stappen?.length||0;const dn=(e.completed||[]).filter(Boolean).length;return{dn,tt,pct:tt>0?Math.round(dn/tt*100):0};};
 
@@ -679,9 +706,9 @@ export default function App(){
       <div style={{marginTop:10,border:"1px solid "+c.cb,borderRadius:10,overflow:"hidden"}}>
         <div style={{background:c.sb,borderBottom:"1px solid "+c.cb,padding:"8px 12px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <span style={{fontSize:13,fontWeight:600,color:c.tf}}>{t.suggLabel||"💡 Pick a suggestion"}</span>
-          <button onClick={()=>{setDiceAnim(true);setTimeout(()=>setDiceAnim(false),600);setSuggFading(true);setTimeout(()=>{setSuggPicks(computeSuggPicks());setSuggFading(false);},150);}} style={{background:"none",border:"none",cursor:"pointer",fontSize:18,opacity:0.7,padding:"0 2px",lineHeight:1,color:c.tf,display:"inline-flex",alignItems:"center",justifyContent:"center"}} title="Randomize"><span className={diceAnim?"dice-roll":""}>🎲</span></button>
+          <button onClick={()=>{setDiceAnim(true);setTimeout(()=>setDiceAnim(false),600);setSuggFading(true);setTimeout(()=>{setSuggPicks(computeSuggPicks());setSuggKey(k=>k+1);setSuggFading(false);},150);}} style={{background:"none",border:"none",cursor:"pointer",fontSize:18,opacity:0.7,padding:"0 2px",lineHeight:1,color:c.tf,display:"inline-flex",alignItems:"center",justifyContent:"center"}} title="Randomize"><span className={diceAnim?"dice-roll":""}>🎲</span></button>
         </div>
-        <div className={suggFading?"sugg-fading":"sugg-list"} style={{display:"flex",flexDirection:"column",gap:0}}>
+        <div key={suggKey} className={suggFading?"sugg-fading":"sugg-list"} style={{display:"flex",flexDirection:"column",gap:0}}>
           {recents.map((r,i)=>(
             <div key={"l"+i} style={{...chipRow,borderTop:i>0?"1px solid "+c.cb:"none",background:c.ab}}>
               <button onClick={()=>pick(r)} style={{flex:1,background:"none",border:"none",padding:"9px 12px",color:c.ac,cursor:"pointer",fontSize:13,textAlign:"left",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r}</button>
@@ -1038,15 +1065,15 @@ export default function App(){
 
     {(vw==="home"||vw==="new_goal")&&auth!=="in"&&(
       <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
-        <div style={{textAlign:"center",marginTop:20,marginBottom:20}}><h1 style={{fontSize:26,fontWeight:700,color:c.tx,margin:0}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:14,marginTop:4,animation:"heroFade 3s ease forwards",minHeight:"1.4em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
+        <div style={{textAlign:"center",marginTop:48,marginBottom:20}}><h1 style={{fontSize:26,fontWeight:700,color:c.tx,margin:0}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:14,marginTop:4,animation:"heroFade 3s ease forwards",minHeight:"1.4em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
         <div style={{...sx.cd,position:"relative"}}>
           <HoneypotField/>
-          {canEarnAltruismBonus&&<div style={{marginBottom:12,padding:"8px 12px",borderRadius:10,background:c.ab,border:"1px solid "+c.abr}}><span style={{fontSize:12,color:c.ac}}>{t.altruismTeaser}</span></div>}
           <label style={{display:"block",fontSize:13,fontWeight:400,color:c.tm,marginBottom:8,textAlign:"center"}}>{t.heroLabel||t.hero}</label>
           <div className={"ta-glow"+(taFocused?" ta-glow-focused":"")} style={{"--ta-tc":rt==="dark"?"rgba(255,255,255,0.12)":"rgba(180,120,0,0.25)","--ta-border-color":rt==="dark"?"#2d4a6e":"#d1d5db","position":"relative"}}>            <textarea value={inp} onChange={e=>setInp(e.target.value)} onFocus={()=>setTaFocused(true)} onBlur={()=>{setTaFocused(false);setTaClearConfirm(false);}} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} autoFocus style={{...sx.ip,resize:"none",lineHeight:1.6,background:rt==="dark"?"#162032":"#ffffff",border:"none",paddingRight:inp.trim()?"36px":undefined}}/>
             {inp.trim()&&<button onMouseDown={e=>{e.preventDefault();handleTaClear();}} title={t.rmTip} style={{position:"absolute",top:"50%",right:8,transform:"translateY(-50%)",zIndex:2,background:taClearConfirm?"rgba(239,68,68,0.12)":"transparent",border:"1px solid "+(taClearConfirm?"rgba(239,68,68,0.35)":"transparent"),borderRadius:6,color:taClearConfirm?"#ef4444":c.tf,fontSize:taClearConfirm?11:16,fontWeight:600,width:24,height:24,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"all 0.18s",lineHeight:1,opacity:taFocused||taClearConfirm?1:0.4}}>{taClearConfirm?(t.taClrConfirm||"clear?"):"×"}</button>}
           </div>
-          <SuggChips/>
+          {SuggChips()}
+          {canEarnAltruismBonus&&<div style={{marginTop:10,padding:"10px 14px",borderRadius:10,background:c.ab,border:"1px solid "+c.abr}}><span className="altruism-txt" style={{fontSize:14,color:c.ac}}>{t.altruismTeaser}</span></div>}
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button>
           <div style={{display:"flex",alignItems:"center",gap:8,marginTop:10,marginBottom:10}}>
             <div style={{flex:1,height:1,background:c.cb}}/>
@@ -1113,12 +1140,13 @@ export default function App(){
 
     {vw==="new_goal"&&auth==="in"&&(
       <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
-        <div style={{textAlign:"center",marginTop:20,marginBottom:20}}><h1 style={{fontSize:22,fontWeight:700,color:c.tx,margin:0}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:13,marginTop:2,animation:"heroFade 3s ease forwards",minHeight:"1.3em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
+        <div style={{textAlign:"center",marginTop:48,marginBottom:20}}><h1 style={{fontSize:22,fontWeight:700,color:c.tx,margin:0}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:13,marginTop:2,animation:"heroFade 3s ease forwards",minHeight:"1.3em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
         <div style={{...sx.cd,position:"relative"}}>
           <HoneypotField/>
           <label style={{display:"block",fontSize:13,fontWeight:400,color:c.tm,marginBottom:8,textAlign:"center"}}>{t.heroLabel||t.hero}</label>
           <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
-          <SuggChips/>
+          {SuggChips()}
+          {canEarnAltruismBonus&&<div style={{marginTop:10,padding:"10px 14px",borderRadius:10,background:c.ab,border:"1px solid "+c.abr}}><span className="altruism-txt" style={{fontSize:14,color:c.ac}}>{t.altruismTeaser}</span></div>}
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button>
           <div style={{display:"flex",alignItems:"center",gap:8,marginTop:10,marginBottom:10}}>
             <div style={{flex:1,height:1,background:c.cb}}/>

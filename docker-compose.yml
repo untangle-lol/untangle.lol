@@ -11,6 +11,10 @@ services:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-}
       - SESSION_SECRET=${SESSION_SECRET:-}
+      - GMAIL_USER=${GMAIL_USER:-}
+      - GMAIL_APP_PASSWORD=${GMAIL_APP_PASSWORD:-}
+      - DIGEST_SECRET=${DIGEST_SECRET:-}
+      - FEEDBACK_EMAIL=${FEEDBACK_EMAIL:-}
     volumes:
       - suggestions_data:/data
     networks:
