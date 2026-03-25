@@ -1,7 +1,7 @@
 const sw = {
   code:"sw",label:"Kiswahili",flag:"🇰🇪",
   ph:"Anza kuandika...",
-  hero:"Unataka kufikia nini?",
+  hero:"Unataka kufikia nini?",heroLabel:"Andika hapa kinachokusumbua",
   heroS:["Andika tu.","Hakuna swali la ajabu.","Kubwa au dogo — chochote kinafaa.","Unafikiri nini?","Andika, tutakusaidia kusonga mbele."],
   go:"Tuanze →",back:"← Rudi",out:"Toka",clr:"🗑️ Futa yote",nG:"➕ Lengo jipya",noG:"Bado hakuna malengo. Ni wakati wa kuanza!",
   prog:"maendeleo",allD:"🎉 Yote yamekamilika!",sOf:"kati ya",

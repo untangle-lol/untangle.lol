@@ -1,7 +1,7 @@
 const nl = {
   code:"nl",label:"Nederlands",flag:"🇳🇱",
   ph:"Begin met typen...",
-  hero:"Wat wil je bereiken?",
+  hero:"Wat wil je bereiken?",heroLabel:"Stel hier de vraag die je bezig houdt",
   heroS:["Typ het maar in.","Geen vraag is te gek.","Klein of groot — alles mag.","Wat houdt je bezig?","Schrijf het op, wij helpen verder."],
   go:"Laten we beginnen →",back:"← Terug",out:"Uitloggen",clr:"🗑️ Alles wissen",nG:"➕ Nieuw doel",noG:"Nog geen doelen. Tijd om te beginnen!",
   prog:"voortgang",allD:"🎉 Alles afgerond!",sOf:"van",

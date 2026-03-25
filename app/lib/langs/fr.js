@@ -1,7 +1,7 @@
 const fr = {
   code:"fr",label:"Français",flag:"🇫🇷",
   ph:"Commencez à taper...",
-  hero:"Que veux-tu accomplir ?",
+  hero:"Que veux-tu accomplir ?",heroLabel:"Écris ici ce qui t'occupe l'esprit",
   heroS:["Tape-le.","Aucune question n'est trop bizarre.","Grand ou petit — tout est permis.","Qu'est-ce qui t'occupe l'esprit ?","Écris-le, on t'aide à avancer."],
   go:"Commençons →",back:"← Retour",out:"Déco",clr:"🗑️ Effacer",nG:"➕ Nouveau",noG:"Pas d'objectifs. On commence !",
   prog:"progrès",allD:"🎉 Fini !",sOf:"de",

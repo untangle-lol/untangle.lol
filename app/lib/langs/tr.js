@@ -1,7 +1,7 @@
 const tr = {
   code:"tr",label:"Türkçe",flag:"🇹🇷",
   ph:"Yazmaya başlayın...",
-  hero:"Ne başarmak istiyorsunuz?",
+  hero:"Ne başarmak istiyorsunuz?",heroLabel:"Aklındakileri buraya yaz",
   heroS:["Sadece yazın.","Hiçbir soru garip değil.","Büyük veya küçük — her şey olabilir.","Aklınızda ne var?","Yazın, ilerlemenize yardımcı olalım."],
   go:"Başlayalım →",back:"← Geri",out:"Çıkış yap",clr:"🗑️ Tümünü temizle",nG:"➕ Yeni hedef",noG:"Henüz hedef yok. Başlama zamanı!",
   prog:"ilerleme",allD:"🎉 Tümü tamamlandı!",sOf:"/",

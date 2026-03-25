@@ -1,7 +1,7 @@
 const de = {
   code:"de",label:"Deutsch",flag:"🇩🇪",
   ph:"Beginne zu tippen...",
-  hero:"Was willst du erreichen?",
+  hero:"Was willst du erreichen?",heroLabel:"Schreib hier, was dich beschäftigt",
   heroS:["Einfach tippen.","Keine Frage ist zu seltsam.","Groß oder klein — alles ist erlaubt.","Was beschäftigt dich?","Schreib es auf, wir helfen dir weiter."],
   go:"Los geht's →",back:"← Zurück",out:"Abmelden",clr:"🗑️ Löschen",nG:"➕ Neues Ziel",noG:"Keine Ziele. Zeit anzufangen!",
   prog:"Fortschritt",allD:"🎉 Geschafft!",sOf:"von",

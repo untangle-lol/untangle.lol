@@ -1,7 +1,7 @@
 const pt = {
   code:"pt",label:"Português",flag:"🇧🇷",
   ph:"Comece a digitar...",
-  hero:"O que você quer alcançar?",
+  hero:"O que você quer alcançar?",heroLabel:"Escreva aqui o que está em sua mente",
   heroS:["É só digitar.","Nenhuma pergunta é estranha demais.","Grande ou pequeno — tudo vale.","O que está na sua cabeça?","Escreva, nós ajudamos você a avançar."],
   go:"Vamos começar →",back:"← Voltar",out:"Sair",clr:"🗑️ Limpar tudo",nG:"➕ Nova meta",noG:"Nenhuma meta ainda. Hora de começar!",
   prog:"progresso",allD:"🎉 Tudo concluído!",sOf:"de",

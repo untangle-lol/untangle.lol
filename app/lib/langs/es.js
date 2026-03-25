@@ -1,7 +1,7 @@
 const es = {
   code:"es",label:"Español",flag:"🇪🇸",
   ph:"Empieza a escribir...",
-  hero:"¿Qué quieres lograr?",
+  hero:"¿Qué quieres lograr?",heroLabel:"Escribe aquí lo que tienes en mente",
   heroS:["Solo escríbelo.","Ninguna pregunta es demasiado rara.","Grande o pequeño — todo vale.","¿Qué tienes en mente?","Escríbelo, te ayudamos a seguir adelante."],
   go:"Comencemos →",back:"← Volver",out:"Salir",clr:"🗑️ Borrar",nG:"➕ Nueva meta",noG:"Sin metas. ¡Hora de comenzar!",
   prog:"progreso",allD:"🎉 ¡Listo!",sOf:"de",

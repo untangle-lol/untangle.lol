@@ -1,7 +1,7 @@
 const id = {
   code:"id",label:"Bahasa Indonesia",flag:"🇮🇩",
   ph:"Mulai mengetik...",
-  hero:"Apa yang ingin Anda capai?",
+  hero:"Apa yang ingin Anda capai?",heroLabel:"Tuliskan apa yang ada di pikiranmu",
   heroS:["Cukup ketik saja.","Tidak ada pertanyaan yang aneh.","Besar atau kecil — semua boleh.","Apa yang ada di pikiranmu?","Tulis saja, kami bantu kamu melangkah maju."],
   go:"Ayo mulai →",back:"← Kembali",out:"Keluar",clr:"🗑️ Hapus semua",nG:"➕ Tujuan baru",noG:"Belum ada tujuan. Saatnya mulai!",
   prog:"kemajuan",allD:"🎉 Semua selesai!",sOf:"dari",

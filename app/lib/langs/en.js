@@ -1,7 +1,7 @@
 const en = {
   code:"en",label:"English",flag:"🇬🇧",
   ph:"Start typing...",
-  hero:"What do you want to achieve?",
+  hero:"What do you want to achieve?",heroLabel:"Type what's on your mind",
   heroS:["Just type it in.","No question is too weird.","Big or small — anything goes.","What's on your mind?","Write it down, we'll help you figure it out."],
   go:"Let's begin →",back:"← Back",out:"Log out",clr:"🗑️ Clear all",nG:"➕ New goal",noG:"No goals yet. Time to begin!",
   prog:"progress",allD:"🎉 All done!",sOf:"of",
