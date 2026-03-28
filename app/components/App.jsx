@@ -1073,7 +1073,17 @@ export default function App(){
     {(vw==="home"||vw==="new_goal")&&auth!=="in"&&(
       <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
         <div style={{textAlign:"center",marginTop:48,marginBottom:16}}><h1 style={{fontSize:26,fontWeight:700,color:c.tx,margin:0}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:14,marginTop:4,animation:"heroFade 3s ease forwards",minHeight:"1.4em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
-        <div style={{textAlign:"center",marginBottom:10}}><span className="eth-txt" style={{fontSize:12,color:c.gt,fontWeight:500}}>{t.eth}</span></div>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginBottom:10}}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{display:"block",flexShrink:0,color:c.gt}}>
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5"/>
+            <path d="M8 3.5C8 3.5 9.5 6 9.5 9C9.5 12 8 14 6 14.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+            <path d="M16 3.5C16 3.5 14.5 6 14.5 9C14.5 12 16 14 18 14.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+            <path d="M2.5 9.5H21.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+            <path d="M3 15H21" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+            <path d="M7 20.5C8.5 18 10 17 12 17C14 17 15.5 18 17 20.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+          </svg>
+          <span className="eth-txt" style={{fontSize:12,color:c.gt,fontWeight:500}}>{t.eth}</span>
+        </div>
         <div style={{...sx.cd,position:"relative"}}>
           <HoneypotField/>
           <label style={{display:"block",fontSize:13,fontWeight:400,color:c.tm,marginBottom:8,textAlign:"center"}}>{t.heroLabel||t.hero}</label>
@@ -1148,7 +1158,17 @@ export default function App(){
     {vw==="new_goal"&&auth==="in"&&(
       <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
         <div style={{textAlign:"center",marginTop:48,marginBottom:16}}><h1 style={{fontSize:22,fontWeight:700,color:c.tx,margin:0}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:13,marginTop:2,animation:"heroFade 3s ease forwards",minHeight:"1.3em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
-        <div style={{textAlign:"center",marginBottom:10}}><span className="eth-txt" style={{fontSize:12,color:c.gt,fontWeight:500}}>{t.eth}</span></div>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginBottom:10}}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{display:"block",flexShrink:0,color:c.gt}}>
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5"/>
+            <path d="M8 3.5C8 3.5 9.5 6 9.5 9C9.5 12 8 14 6 14.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+            <path d="M16 3.5C16 3.5 14.5 6 14.5 9C14.5 12 16 14 18 14.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+            <path d="M2.5 9.5H21.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+            <path d="M3 15H21" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+            <path d="M7 20.5C8.5 18 10 17 12 17C14 17 15.5 18 17 20.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+          </svg>
+          <span className="eth-txt" style={{fontSize:12,color:c.gt,fontWeight:500}}>{t.eth}</span>
+        </div>
         <div style={{...sx.cd,position:"relative"}}>
           <HoneypotField/>
           <label style={{display:"block",fontSize:13,fontWeight:400,color:c.tm,marginBottom:8,textAlign:"center"}}>{t.heroLabel||t.hero}</label>

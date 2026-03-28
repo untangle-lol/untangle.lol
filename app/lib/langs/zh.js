@@ -5,7 +5,7 @@ const zh = {
   heroS:["直接输入吧。","没有问题太奇怪。","大目标还是小目标——都可以。","你在想什么？","写下来，我们帮你理清。"],
   go:"开始 →",back:"← 返回",out:"退出登录",clr:"🗑️ 清除全部",nG:"➕ 新目标",noG:"还没有目标。是时候开始了！",
   prog:"进度",allD:"🎉 全部完成！",sOf:"共",
-  eth:"🌍 尊重人、地球与健康的建议",
+  eth:"尊重人、地球与健康的建议",
   err:"出错了，请重试！",resB:"← 返回概览",dW:"欢迎回来",dS:"这是你的目标。",
   byok:"输入 API 密钥",byokH1:"使用你自己的 API 密钥",chAuth:"更改验证方式",rmKey:"删除密钥",lSel:"语言",
   byokL:"API 密钥（Anthropic 或 OpenRouter）",byokPh:"sk-ant-... 或 sk-or-...",byokSave:"保存并继续",

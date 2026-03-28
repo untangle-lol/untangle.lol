@@ -5,7 +5,7 @@ const en = {
   heroS:["Just type it in.","No question is too weird.","Big or small — anything goes.","What's on your mind?","Write it down, we'll help you figure it out."],
   go:"Let's begin →",back:"← Back",out:"Log out",clr:"🗑️ Clear all",nG:"➕ New goal",noG:"No goals yet. Time to begin!",
   prog:"progress",allD:"🎉 All done!",sOf:"of",
-  eth:"🌍 Advice with respect for people, planet & wellbeing",
+  eth:"Advice with respect for people, planet & wellbeing",
   err:"Oops, try again!",resB:"← Back to overview",dW:"Welcome back",dS:"Here are your goals.",
   byok:"Enter your API key",byokH1:"Bring your own API key",chAuth:"Change auth",rmKey:"Remove key",lSel:"Language",
   byokL:"API Key (Anthropic or OpenRouter)",byokPh:"sk-ant-... or sk-or-...",byokSave:"Save & continue",

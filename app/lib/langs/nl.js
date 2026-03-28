@@ -5,7 +5,7 @@ const nl = {
   heroS:["Typ het maar in.","Geen vraag is te gek.","Klein of groot — alles mag.","Wat houdt je bezig?","Schrijf het op, wij helpen verder."],
   go:"Laten we beginnen →",back:"← Terug",out:"Uitloggen",clr:"🗑️ Alles wissen",nG:"➕ Nieuw doel",noG:"Nog geen doelen. Tijd om te beginnen!",
   prog:"voortgang",allD:"🎉 Alles afgerond!",sOf:"van",
-  eth:"🌍 Advies met respect voor mens, planeet en welzijn",
+  eth:"Advies met respect voor mens, planeet en welzijn",
   err:"Oeps, probeer het nog eens!",resB:"← Terug naar overzicht",dW:"Welkom terug",dS:"Hier zijn je doelen.",
   byok:"Voer je API-sleutel in",byokH1:"Breng je eigen API-sleutel mee",chAuth:"Authenticatie wijzigen",rmKey:"Sleutel verwijderen",lSel:"Taal",
   byokL:"API-sleutel (Anthropic of OpenRouter)",byokPh:"sk-ant-... of sk-or-...",byokSave:"Opslaan & beginnen",

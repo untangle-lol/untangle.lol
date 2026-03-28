@@ -5,7 +5,7 @@ const fr = {
   heroS:["Tape-le.","Aucune question n'est trop bizarre.","Grand ou petit — tout est permis.","Qu'est-ce qui t'occupe l'esprit ?","Écris-le, on t'aide à avancer."],
   go:"Commençons →",back:"← Retour",out:"Déco",clr:"🗑️ Effacer",nG:"➕ Nouveau",noG:"Pas d'objectifs. On commence !",
   prog:"progrès",allD:"🎉 Fini !",sOf:"de",
-  eth:"🌍 Conseils respectueux",
+  eth:"Conseils respectueux",
   err:"Oups !",resB:"← Retour",dW:"Re-bonjour",dS:"Tes objectifs.",
   byok:"Entrer la clé API",byokH1:"Utilise ta propre clé API",chAuth:"Changer auth",rmKey:"Supprimer clé",lSel:"Langue",
   byokL:"Clé API (Anthropic ou OpenRouter)",byokPh:"sk-ant-... ou sk-or-...",byokSave:"Enregistrer",

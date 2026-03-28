@@ -5,7 +5,7 @@ const id = {
   heroS:["Cukup ketik saja.","Tidak ada pertanyaan yang aneh.","Besar atau kecil — semua boleh.","Apa yang ada di pikiranmu?","Tulis saja, kami bantu kamu melangkah maju."],
   go:"Ayo mulai →",back:"← Kembali",out:"Keluar",clr:"🗑️ Hapus semua",nG:"➕ Tujuan baru",noG:"Belum ada tujuan. Saatnya mulai!",
   prog:"kemajuan",allD:"🎉 Semua selesai!",sOf:"dari",
-  eth:"🌍 Saran dengan hormat untuk manusia, planet, dan kesejahteraan",
+  eth:"Saran dengan hormat untuk manusia, planet, dan kesejahteraan",
   err:"Ups, coba lagi!",resB:"← Kembali ke ringkasan",dW:"Selamat datang kembali",dS:"Ini tujuan-tujuanmu.",
   byok:"Masukkan kunci API",byokH1:"Gunakan kunci API sendiri",chAuth:"Ganti autentikasi",rmKey:"Hapus kunci",lSel:"Bahasa",
   byokL:"Kunci API (Anthropic atau OpenRouter)",byokPh:"sk-ant-... atau sk-or-...",byokSave:"Simpan & lanjutkan",

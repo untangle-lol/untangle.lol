@@ -5,7 +5,7 @@ const pt = {
   heroS:["É só digitar.","Nenhuma pergunta é estranha demais.","Grande ou pequeno — tudo vale.","O que está na sua cabeça?","Escreva, nós ajudamos você a avançar."],
   go:"Vamos começar →",back:"← Voltar",out:"Sair",clr:"🗑️ Limpar tudo",nG:"➕ Nova meta",noG:"Nenhuma meta ainda. Hora de começar!",
   prog:"progresso",allD:"🎉 Tudo concluído!",sOf:"de",
-  eth:"🌍 Conselhos com respeito pelas pessoas, planeta e bem-estar",
+  eth:"Conselhos com respeito pelas pessoas, planeta e bem-estar",
   err:"Ops, tente novamente!",resB:"← Voltar à visão geral",dW:"Bem-vindo de volta",dS:"Aqui estão suas metas.",
   byok:"Inserir chave de API",byokH1:"Use sua própria chave de API",chAuth:"Alterar autenticação",rmKey:"Remover chave",lSel:"Idioma",
   byokL:"Chave de API (Anthropic ou OpenRouter)",byokPh:"sk-ant-... ou sk-or-...",byokSave:"Salvar e continuar",

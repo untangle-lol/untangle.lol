@@ -5,7 +5,7 @@ const tr = {
   heroS:["Sadece yazın.","Hiçbir soru garip değil.","Büyük veya küçük — her şey olabilir.","Aklınızda ne var?","Yazın, ilerlemenize yardımcı olalım."],
   go:"Başlayalım →",back:"← Geri",out:"Çıkış yap",clr:"🗑️ Tümünü temizle",nG:"➕ Yeni hedef",noG:"Henüz hedef yok. Başlama zamanı!",
   prog:"ilerleme",allD:"🎉 Tümü tamamlandı!",sOf:"/",
-  eth:"🌍 İnsana, gezegene ve esenliğe saygıyla tavsiyeler",
+  eth:"İnsana, gezegene ve esenliğe saygıyla tavsiyeler",
   err:"Ups, tekrar dene!",resB:"← Özete geri dön",dW:"Tekrar hoş geldiniz",dS:"İşte hedefleriniz.",
   byok:"API anahtarı girin",byokH1:"Kendi API anahtarınızı kullanın",chAuth:"Kimlik doğrulamayı değiştir",rmKey:"Anahtarı kaldır",lSel:"Dil",
   byokL:"API Anahtarı (Anthropic veya OpenRouter)",byokPh:"sk-ant-... veya sk-or-...",byokSave:"Kaydet ve devam et",

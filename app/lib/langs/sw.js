@@ -5,7 +5,7 @@ const sw = {
   heroS:["Andika tu.","Hakuna swali la ajabu.","Kubwa au dogo — chochote kinafaa.","Unafikiri nini?","Andika, tutakusaidia kusonga mbele."],
   go:"Tuanze →",back:"← Rudi",out:"Toka",clr:"🗑️ Futa yote",nG:"➕ Lengo jipya",noG:"Bado hakuna malengo. Ni wakati wa kuanza!",
   prog:"maendeleo",allD:"🎉 Yote yamekamilika!",sOf:"kati ya",
-  eth:"🌍 Ushauri kwa heshima kwa watu, sayari na ustawi",
+  eth:"Ushauri kwa heshima kwa watu, sayari na ustawi",
   err:"Samahani, jaribu tena!",resB:"← Rudi kwenye muhtasari",dW:"Karibu tena",dS:"Haya ndio malengo yako.",
   byok:"Ingiza ufunguo wa API",byokH1:"Tumia ufunguo wako wa API",chAuth:"Badilisha uthibitishaji",rmKey:"Ondoa ufunguo",lSel:"Lugha",
   byokL:"Ufunguo wa API (Anthropic au OpenRouter)",byokPh:"sk-ant-... au sk-or-...",byokSave:"Hifadhi & endelea",

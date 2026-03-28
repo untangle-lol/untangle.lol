@@ -5,7 +5,7 @@ const de = {
   heroS:["Einfach tippen.","Keine Frage ist zu seltsam.","Groß oder klein — alles ist erlaubt.","Was beschäftigt dich?","Schreib es auf, wir helfen dir weiter."],
   go:"Los geht's →",back:"← Zurück",out:"Abmelden",clr:"🗑️ Löschen",nG:"➕ Neues Ziel",noG:"Keine Ziele. Zeit anzufangen!",
   prog:"Fortschritt",allD:"🎉 Geschafft!",sOf:"von",
-  eth:"🌍 Respekt für Mensch & Planet",
+  eth:"Respekt für Mensch & Planet",
   err:"Ups!",resB:"← Zurück",dW:"Willkommen zurück",dS:"Deine Ziele.",
   byok:"API-Schlüssel eingeben",byokH1:"Eigenen API-Schlüssel nutzen",chAuth:"Auth ändern",rmKey:"Schlüssel entfernen",lSel:"Sprache",
   byokL:"API-Schlüssel (Anthropic oder OpenRouter)",byokPh:"sk-ant-... oder sk-or-...",byokSave:"Speichern & loslegen",

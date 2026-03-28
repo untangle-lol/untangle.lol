@@ -5,7 +5,7 @@ const es = {
   heroS:["Solo escríbelo.","Ninguna pregunta es demasiado rara.","Grande o pequeño — todo vale.","¿Qué tienes en mente?","Escríbelo, te ayudamos a seguir adelante."],
   go:"Comencemos →",back:"← Volver",out:"Salir",clr:"🗑️ Borrar",nG:"➕ Nueva meta",noG:"Sin metas. ¡Hora de comenzar!",
   prog:"progreso",allD:"🎉 ¡Listo!",sOf:"de",
-  eth:"🌍 Consejos con respeto",
+  eth:"Consejos con respeto",
   err:"¡Ups!",resB:"← Volver",dW:"Hola de nuevo",dS:"Tus metas.",
   byok:"Ingresar clave API",byokH1:"Usa tu propia clave API",chAuth:"Cambiar auth",rmKey:"Eliminar clave",lSel:"Idioma",
   byokL:"Clave API (Anthropic u OpenRouter)",byokPh:"sk-ant-... o sk-or-...",byokSave:"Guardar",
