@@ -104,8 +104,12 @@ function PBar({done,total,c}){
   return(<div style={{width:"100%",height:6,borderRadius:3,background:c.ghr}}><div style={{height:"100%",borderRadius:3,background:p>=100?c.gr:c.ac,width:p+"%",transition:"width 0.5s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.4s",boxShadow:p>=100?"0 0 8px rgba(34,197,94,0.5)":"0 0 5px rgba(250,204,21,0.3)"}}/></div>);
 }
 function TTog({mode,set,c}){
-  const ic={light:"☀️",dark:"🌙",system:"💻"};const nx={light:"dark",dark:"system",system:"light"};
-  return(<button onClick={()=>set(nx[mode])} title={mode} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:8,padding:"4px 8px",cursor:"pointer",fontSize:16,lineHeight:1,display:"flex",alignItems:"center",justifyContent:"center"}}>{ic[mode]}</button>);
+  const nx={light:"dark",dark:"system",system:"light"};
+  const SunIc=()=>(<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{display:"block"}}><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>);
+  const MoonIc=()=>(<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{display:"block"}}><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>);
+  const MonIc=()=>(<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>);
+  const ic={light:<SunIc/>,dark:<MoonIc/>,system:<MonIc/>};
+  return(<button onClick={()=>set(nx[mode])} title={mode} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:8,padding:"5px 8px",cursor:"pointer",lineHeight:1,display:"flex",alignItems:"center",justifyContent:"center",color:c.tm,transition:"background 0.15s,color 0.15s,border-color 0.15s"}}>{ic[mode]}</button>);
 }
 function DyTog({on,set,c,label}){
   return(
@@ -129,14 +133,14 @@ function BrTog({on,set,c,label}){
     <button
       onClick={()=>set(!on)}
       title={label||"Braille font"}
-      style={{background:on?c.ab:c.ghb,border:"1px solid "+(on?c.abr:c.ghr),borderRadius:8,padding:"4px 8px",cursor:"pointer",fontSize:15,lineHeight:1,display:"flex",alignItems:"center",justifyContent:"center",transition:"background 0.15s,border-color 0.15s"}}
-    >😆</button>
+      style={{background:on?c.ab:c.ghb,border:"1px solid "+(on?c.abr:c.ghr),borderRadius:8,padding:"5px 8px",cursor:"pointer",lineHeight:1,display:"flex",alignItems:"center",justifyContent:"center",color:on?c.ac:c.tm,transition:"background 0.15s,border-color 0.15s,color 0.15s"}}
+    ><svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor" style={{display:"block"}}><circle cx="3.5" cy="3" r="2"/><circle cx="10.5" cy="3" r="2"/><circle cx="3.5" cy="8" r="2"/><circle cx="10.5" cy="8" r="2"/><circle cx="3.5" cy="13" r="2"/><circle cx="10.5" cy="13" r="2"/></svg></button>
   );
 }
 function BrandMark({c,size}){
   const s=size==="large";
   return(<div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:s?6:2,marginBottom:s?8:4}}>
-    <div style={{fontSize:s?44:32,filter:"drop-shadow(0 0 12px "+c.am+")"}}>🪢</div>
+    <div style={{filter:"drop-shadow(0 0 12px "+c.am+")",display:"flex",alignItems:"center",justifyContent:"center",color:c.am}}><svg width={s?52:38} height={s?32:23} viewBox="0 0 52 32" fill="none" stroke="currentColor" strokeWidth={s?3:2.5} strokeLinecap="round" style={{display:"block"}}><path d="M26 16C24 10 19.5 7 14 7C7.5 7 4 11.5 4 16C4 20.5 7.5 25 14 25C19.5 25 24 22 26 16C28 10 32.5 7 38 7C44.5 7 48 11.5 48 16C48 20.5 44.5 25 38 25C32.5 25 28 22 26 16Z"/></svg></div>
     <div style={{fontSize:s?28:20,fontWeight:800,letterSpacing:"-0.03em",color:c.tx,lineHeight:1}}>untangle</div>
     <div style={{fontSize:s?11:9,fontWeight:500,letterSpacing:"0.15em",color:c.tf,textTransform:"uppercase"}}>.lol</div>
   </div>);
@@ -794,17 +798,17 @@ export default function App(){
   const Bar=()=>(
     <div className="nb" dir={dir} style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 16px",paddingTop:"calc(8px + env(safe-area-inset-top))",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+c.cb}}>
       <button onClick={goHome} style={{background:"none",border:"none",padding:0,cursor:"pointer",display:"flex",alignItems:"center",gap:5,flexShrink:0}}>
-        <span className="nb-ico" style={{fontSize:20,filter:"drop-shadow(0 0 8px "+c.am+")",lineHeight:1}}>🪢</span>
+        <span className="nb-ico" style={{filter:"drop-shadow(0 0 8px "+c.am+")",lineHeight:1,display:"flex",alignItems:"center",color:c.am}}><svg width="26" height="16" viewBox="0 0 52 32" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" style={{display:"block"}}><path d="M26 16C24 10 19.5 7 14 7C7.5 7 4 11.5 4 16C4 20.5 7.5 25 14 25C19.5 25 24 22 26 16C28 10 32.5 7 38 7C44.5 7 48 11.5 48 16C48 20.5 44.5 25 38 25C32.5 25 28 22 26 16Z"/></svg></span>
         <span className="nb-logo" style={{fontSize:14,fontWeight:800,letterSpacing:"-0.03em",color:c.tx,lineHeight:1}}>untangle</span>
         <span className="nb-tld" style={{fontSize:9,fontWeight:500,letterSpacing:"0.15em",color:c.tf,textTransform:"uppercase",lineHeight:1}}>.lol</span>
       </button>
       <div style={{display:"flex",alignItems:"center",gap:8}}>
-        <button onClick={()=>setVw("lang")} title={t.lSel} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:8,padding:"4px 8px",cursor:"pointer",fontSize:16,lineHeight:1,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{t.flag||"🌍"}</button>
+        <button onClick={()=>setVw("lang")} title={t.lSel} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:8,padding:"5px 8px",cursor:"pointer",lineHeight:1,display:"flex",alignItems:"center",gap:4,flexShrink:0,color:c.tm,transition:"background 0.15s,border-color 0.15s,color 0.15s"}}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span style={{fontSize:11,fontWeight:600,letterSpacing:"0.03em"}}>{(lang||"en").toUpperCase()}</span></button>
         {user&&(
           <button onClick={()=>setVw("manage_auth")} style={{background:"none",border:"none",padding:0,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>
             {user.picture
               ?<img src={user.picture} alt={user.name||""} referrerPolicy="no-referrer" style={{width:26,height:26,borderRadius:"50%",border:"1px solid "+c.cb,flexShrink:0}}/>
-              :<div style={{width:26,height:26,borderRadius:"50%",background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13}}>👤</div>
+              :<div style={{width:26,height:26,borderRadius:"50%",background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"center",justifyContent:"center",color:c.ac}}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
             }
           </button>
         )}
@@ -825,7 +829,10 @@ export default function App(){
         {/* <AuthBadge c={c} onManage={()=>setVw("manage_auth")} t={t}/> */}
         {showCredits&&(
           <button onClick={()=>setVw("manage_auth")} style={{display:"flex",alignItems:"center",gap:5,background:low?"rgba(239,68,68,0.1)":c.ab,border:"1px solid "+(low?"rgba(239,68,68,0.35)":c.abr),borderRadius:20,padding:"4px 12px",cursor:"pointer",fontSize:12,color:low?"#ef4444":c.ac,fontWeight:600,whiteSpace:"nowrap",letterSpacing:"-0.01em",transition:"background 0.15s,border-color 0.15s"}}>
-            <span style={{fontSize:11}}>{low?"⚠️":"🪙"}</span><span style={{fontWeight:700}}>{credits}</span><span style={{opacity:0.65,fontWeight:400}}>{" "}{t.cred}</span>
+            {low
+              ?<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              :<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            }<span style={{fontWeight:700}}>{credits}</span><span style={{opacity:0.65,fontWeight:400}}>{" "}{t.cred}</span>
           </button>
         )}
         {topUpMsg==="pending"&&<span style={{fontSize:11,color:c.tm,animation:"pulse 1s infinite"}}>{t.topUpPending}</span>}
@@ -967,7 +974,7 @@ export default function App(){
     {vw==="no_credits"&&(
       <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
         <div style={{...sx.cd,textAlign:"center",padding:"32px 24px"}}>
-          <div style={{fontSize:48,marginBottom:12}}>🪙</div>
+          <div style={{marginBottom:12,display:"flex",justifyContent:"center",color:c.ac}}><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
           <h2 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"0 0 8px"}}>{t.credOut}</h2>
           <p style={{fontSize:14,color:c.tm,lineHeight:1.6,margin:"0 0 20px"}}>{t.credOutMsg}</p>
           <button onClick={startTopUp} disabled={topUpBusy} style={sx.stripe}>
@@ -1011,7 +1018,7 @@ export default function App(){
             {!key&&<div style={{padding:"16px",background:c.hp,border:"1px solid "+c.hpr,borderRadius:12,marginBottom:12}}>
               <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
                 <div>
-                  <div style={{fontSize:12,color:c.tm,fontWeight:500,marginBottom:4}}>🪙 {t.credFree}</div>
+                  <div style={{fontSize:12,color:c.tm,fontWeight:500,marginBottom:4,display:"flex",alignItems:"center",gap:4}}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>{t.credFree}</div>
                   <div style={{fontSize:28,fontWeight:800,color:credits<=3?"#ef4444":c.tx,lineHeight:1}}>{credits}</div>
                   <div style={{fontSize:11,color:c.tf,marginTop:2}}>{t.cred}</div>
                 </div>
@@ -1115,9 +1122,9 @@ export default function App(){
 
     {vw==="dash"&&(
       <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
-        <div style={{textAlign:"center",marginTop:20,marginBottom:20}}><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:0}}>{t.dW} 👋</h1><p style={{color:c.tm,fontSize:13,marginTop:2}}>{t.dS}</p></div>
+        <div style={{textAlign:"center",marginTop:20,marginBottom:20}}><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:0}}>{t.dW}</h1><p style={{color:c.tm,fontSize:13,marginTop:2}}>{t.dS}</p></div>
         <button onClick={()=>setVw("new_goal")} style={{...sx.bo,marginTop:0,marginBottom:16}}>{t.nG}</button>
-        {hist.length===0?(<div style={{...sx.cd,textAlign:"center",padding:40}}><div style={{fontSize:40,marginBottom:10}}>🪢</div><p style={{color:c.tf,margin:0}}>{t.noG}</p></div>):(
+        {hist.length===0?(<div style={{...sx.cd,textAlign:"center",padding:40}}><div style={{marginBottom:10,display:"flex",justifyContent:"center",color:c.am,filter:"drop-shadow(0 0 8px "+c.am+")"}}><svg width="40" height="24" viewBox="0 0 52 32" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M26 16C24 10 19.5 7 14 7C7.5 7 4 11.5 4 16C4 20.5 7.5 25 14 25C19.5 25 24 22 26 16C28 10 32.5 7 38 7C44.5 7 48 11.5 48 16C48 20.5 44.5 25 38 25C32.5 25 28 22 26 16Z"/></svg></div><p style={{color:c.tf,margin:0}}>{t.noG}</p></div>):(
           <div style={{display:"flex",flexDirection:"column",gap:10}}>{hist.map((h,i)=>{const p=prog(h);return(
             <div key={h.id} onClick={()=>openEntry(h)} style={{...sx.cd,padding:"14px 18px",cursor:"pointer",animation:"slideUp 0.3s ease "+Math.min(i*0.05,0.5)+"s both",borderColor:p.pct>=100?c.gbr:c.cb}}
               onMouseEnter={e=>e.currentTarget.style.borderColor=p.pct>=100?c.gr:c.abr}
