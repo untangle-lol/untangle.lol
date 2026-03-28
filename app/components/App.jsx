@@ -140,7 +140,7 @@ function BrTog({on,set,c,label}){
 function BrandMark({c,size}){
   const s=size==="large";
   return(<div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:s?6:2,marginBottom:s?8:4}}>
-    <div style={{filter:"drop-shadow(0 0 12px "+c.am+")",display:"flex",alignItems:"center",justifyContent:"center",color:c.am}}><svg width={s?52:38} height={s?32:23} viewBox="0 0 52 32" fill="none" stroke="currentColor" strokeWidth={s?3:2.5} strokeLinecap="round" style={{display:"block"}}><path d="M26 16C24 10 19.5 7 14 7C7.5 7 4 11.5 4 16C4 20.5 7.5 25 14 25C19.5 25 24 22 26 16C28 10 32.5 7 38 7C44.5 7 48 11.5 48 16C48 20.5 44.5 25 38 25C32.5 25 28 22 26 16Z"/></svg></div>
+    <div style={{filter:"drop-shadow(0 0 12px "+c.ac+")",display:"flex",alignItems:"center",justifyContent:"center",color:c.ac}}><svg width={s?52:38} height={s?32:23} viewBox="0 0 52 32" fill="none" stroke="currentColor" strokeWidth={s?3:2.5} strokeLinecap="round" style={{display:"block"}}><path d="M26 16C24 10 19.5 7 14 7C7.5 7 4 11.5 4 16C4 20.5 7.5 25 14 25C19.5 25 24 22 26 16C28 10 32.5 7 38 7C44.5 7 48 11.5 48 16C48 20.5 44.5 25 38 25C32.5 25 28 22 26 16Z"/></svg></div>
     <div style={{fontSize:s?28:20,fontWeight:800,letterSpacing:"-0.03em",color:c.tx,lineHeight:1}}>untangle</div>
     <div style={{fontSize:s?11:9,fontWeight:500,letterSpacing:"0.15em",color:c.tf,textTransform:"uppercase"}}>.lol</div>
   </div>);
@@ -798,7 +798,7 @@ export default function App(){
   const Bar=()=>(
     <div className="nb" dir={dir} style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 16px",paddingTop:"calc(8px + env(safe-area-inset-top))",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+c.cb}}>
       <button onClick={goHome} style={{background:"none",border:"none",padding:0,cursor:"pointer",display:"flex",alignItems:"center",gap:5,flexShrink:0}}>
-        <span className="nb-ico" style={{filter:"drop-shadow(0 0 8px "+c.am+")",lineHeight:1,display:"flex",alignItems:"center",color:c.am}}><svg width="26" height="16" viewBox="0 0 52 32" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" style={{display:"block"}}><path d="M26 16C24 10 19.5 7 14 7C7.5 7 4 11.5 4 16C4 20.5 7.5 25 14 25C19.5 25 24 22 26 16C28 10 32.5 7 38 7C44.5 7 48 11.5 48 16C48 20.5 44.5 25 38 25C32.5 25 28 22 26 16Z"/></svg></span>
+        <span className="nb-ico" style={{filter:"drop-shadow(0 0 8px "+c.ac+")",lineHeight:1,display:"flex",alignItems:"center",color:c.ac}}><svg width="26" height="16" viewBox="0 0 52 32" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" style={{display:"block"}}><path d="M26 16C24 10 19.5 7 14 7C7.5 7 4 11.5 4 16C4 20.5 7.5 25 14 25C19.5 25 24 22 26 16C28 10 32.5 7 38 7C44.5 7 48 11.5 48 16C48 20.5 44.5 25 38 25C32.5 25 28 22 26 16Z"/></svg></span>
         <span className="nb-logo" style={{fontSize:14,fontWeight:800,letterSpacing:"-0.03em",color:c.tx,lineHeight:1}}>untangle</span>
         <span className="nb-tld" style={{fontSize:9,fontWeight:500,letterSpacing:"0.15em",color:c.tf,textTransform:"uppercase",lineHeight:1}}>.lol</span>
       </button>
@@ -1124,7 +1124,7 @@ export default function App(){
       <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
         <div style={{textAlign:"center",marginTop:20,marginBottom:20}}><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:0}}>{t.dW}</h1><p style={{color:c.tm,fontSize:13,marginTop:2}}>{t.dS}</p></div>
         <button onClick={()=>setVw("new_goal")} style={{...sx.bo,marginTop:0,marginBottom:16}}>{t.nG}</button>
-        {hist.length===0?(<div style={{...sx.cd,textAlign:"center",padding:40}}><div style={{marginBottom:10,display:"flex",justifyContent:"center",color:c.am,filter:"drop-shadow(0 0 8px "+c.am+")"}}><svg width="40" height="24" viewBox="0 0 52 32" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M26 16C24 10 19.5 7 14 7C7.5 7 4 11.5 4 16C4 20.5 7.5 25 14 25C19.5 25 24 22 26 16C28 10 32.5 7 38 7C44.5 7 48 11.5 48 16C48 20.5 44.5 25 38 25C32.5 25 28 22 26 16Z"/></svg></div><p style={{color:c.tf,margin:0}}>{t.noG}</p></div>):(
+        {hist.length===0?(<div style={{...sx.cd,textAlign:"center",padding:40}}><div style={{marginBottom:10,display:"flex",justifyContent:"center",color:c.ac,filter:"drop-shadow(0 0 8px "+c.ac+")"}}><svg width="40" height="24" viewBox="0 0 52 32" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M26 16C24 10 19.5 7 14 7C7.5 7 4 11.5 4 16C4 20.5 7.5 25 14 25C19.5 25 24 22 26 16C28 10 32.5 7 38 7C44.5 7 48 11.5 48 16C48 20.5 44.5 25 38 25C32.5 25 28 22 26 16Z"/></svg></div><p style={{color:c.tf,margin:0}}>{t.noG}</p></div>):(
           <div style={{display:"flex",flexDirection:"column",gap:10}}>{hist.map((h,i)=>{const p=prog(h);return(
             <div key={h.id} onClick={()=>openEntry(h)} style={{...sx.cd,padding:"14px 18px",cursor:"pointer",animation:"slideUp 0.3s ease "+Math.min(i*0.05,0.5)+"s both",borderColor:p.pct>=100?c.gbr:c.cb}}
               onMouseEnter={e=>e.currentTarget.style.borderColor=p.pct>=100?c.gr:c.abr}
