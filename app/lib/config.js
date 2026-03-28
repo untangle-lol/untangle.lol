@@ -1,6 +1,6 @@
 // ─── Config & Helpers ─────────────────────────────────────────────────────────
 
-export const ALTRUISM_BONUS_CREDITS = 3;
+export const ALTRUISM_BONUS_CREDITS = 2;
 export const FREE_CREDITS = 3;
 
 // Umami custom event helper — safe no-op if script hasn't loaded yet
