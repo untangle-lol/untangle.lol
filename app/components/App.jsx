@@ -90,13 +90,20 @@ function tz(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone}catch{
 function fmtDate(iso,z,lc){try{return new Date(iso).toLocaleString(lc||undefined,{timeZone:z,day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}catch{return new Date(iso).toLocaleString()}}
 function tAgo(iso,lc){const d=Date.now()-new Date(iso).getTime(),m=Math.floor(d/60000),h=Math.floor(d/3600000),dy=Math.floor(d/86400000);if(lc==="nl"){if(m<60)return m+" min geleden";if(h<24)return h+" uur geleden";return dy===1?"gisteren":dy+" dagen geleden";}if(lc==="ar"){if(m<60)return "منذ "+m+" دقيقة";if(h<24)return "منذ "+h+" ساعة";return dy===1?"أمس":"منذ "+dy+" أيام";}if(m<60)return m+"m ago";if(h<24)return h+"h ago";return dy===1?"yesterday":dy+"d ago";}
 
-const LP=[["🧠","Thinking..."],["☕","Brewing ideas..."],["🔮","Crystal ball warming up..."],["🧙","Casting spells..."],["🤔","Deep thought..."],["🎯","Locking in..."]];
+const LP_ICONS=[
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.44-3.14A2.5 2.5 0 0 1 9.5 2"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.44-3.14A2.5 2.5 0 0 0 14.5 2"/></svg>,
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>,
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/><path d="M8 8l1.5 1.5M14.5 14.5 16 16M16 8l-1.5 1.5M9.5 14.5 8 16"/></svg>,
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/><path d="M17.8 11.8 19 13"/><path d="M15 9h.01"/><path d="M17.8 6.2 19 5"/><path d="m3 21 9-9"/><path d="M12.2 6.2 11 5"/></svg>,
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>,
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
+];
 
 function Loader({c,lp}){
-  const phrases=lp||LP.map(p=>p.join(" "));
+  const phrases=lp||["Thinking...","Brewing ideas...","Crystal ball warming up...","Casting spells...","Deep thought...","Locking in..."];
   const [i,setI]=useState(0);const [d,setD]=useState("");const [b,setB]=useState(false);
   useEffect(()=>{let x=0;const a=setInterval(()=>{x=(x+1)%phrases.length;setI(x);setB(true);setTimeout(()=>setB(false),400);},2400);const dd=setInterval(()=>setD(p=>p.length>=3?"":p+"."),500);return()=>{clearInterval(a);clearInterval(dd);};},[]);
-  return(<div style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"48px 24px"}}><div style={{fontSize:56,transition:"transform 0.4s cubic-bezier(0.34,1.56,0.64,1)",transform:b?"scale(1.3) rotate(10deg)":"scale(1)",marginBottom:20}}>{(phrases[i]||"").split(" ")[0]}</div><div style={{fontSize:16,color:c.tx,fontWeight:500}}>{(phrases[i]||"").split(" ").slice(1).join(" ")}{d}</div><div style={{marginTop:24,display:"flex",gap:8}}>{[0,1,2].map(j=>(<div key={j} style={{width:10,height:10,borderRadius:"50%",background:c.ac,animation:`pulse 1.2s ease-in-out ${j*0.2}s infinite`}}/>))}</div></div>);
+  return(<div style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"48px 24px"}}><div style={{color:c.ac,transition:"transform 0.4s cubic-bezier(0.34,1.56,0.64,1)",transform:b?"scale(1.25) rotate(8deg)":"scale(1)",marginBottom:20}}>{LP_ICONS[i%LP_ICONS.length]}</div><div style={{fontSize:16,color:c.tx,fontWeight:500}}>{phrases[i]||""}{d}</div><div style={{marginTop:24,display:"flex",gap:8}}>{[0,1,2].map(j=>(<div key={j} style={{width:10,height:10,borderRadius:"50%",background:c.ac,animation:`pulse 1.2s ease-in-out ${j*0.2}s infinite`}}/>))}</div></div>);
 }
 
 function PBar({done,total,c}){
@@ -168,7 +175,8 @@ function AuthBadge({c,onManage,t}){
   const unset=t?.apiKeyUnset||"set";
   return(
     <button onClick={onManage} style={{display:"flex",alignItems:"center",gap:6,background:c.ab,border:"1px solid "+c.abr,borderRadius:20,padding:"4px 10px",cursor:"pointer",fontSize:12,color:c.ac,whiteSpace:"nowrap"}}>
-      <span>{t?.apiKeyBadge||"🔑 API Key"}</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+      <span>{t?.apiKeyBadge||"API Key"}</span>
       <span style={{opacity:0.5}}>·</span>
       <span style={{color:c.tf}}>{key?key.slice(0,10)+"…":unset}</span>
     </button>
@@ -709,8 +717,8 @@ export default function App(){
     return(
       <div style={{marginTop:10,border:"1px solid "+c.cb,borderRadius:10,overflow:"hidden"}}>
         <div style={{background:c.sb,borderBottom:"1px solid "+c.cb,padding:"8px 12px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-          <span style={{fontSize:13,fontWeight:600,color:c.tf}}>{t.suggLabel||"💡 Pick a suggestion"}</span>
-          <button onClick={()=>{setDiceAnim(true);setTimeout(()=>setDiceAnim(false),600);setSuggFading(true);setTimeout(()=>{setSuggPicks(computeSuggPicks());setSuggKey(k=>k+1);setSuggFading(false);},150);}} style={{background:"none",border:"none",cursor:"pointer",fontSize:18,opacity:0.7,padding:"0 2px",lineHeight:1,color:c.tf,display:"inline-flex",alignItems:"center",justifyContent:"center"}} title="Randomize"><span className={diceAnim?"dice-roll":""}>🎲</span></button>
+          <span style={{fontSize:13,fontWeight:600,color:c.tf,display:"inline-flex",alignItems:"center",gap:5}}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>{t.suggLabel||"Pick a suggestion"}</span>
+          <button onClick={()=>{setDiceAnim(true);setTimeout(()=>setDiceAnim(false),600);setSuggFading(true);setTimeout(()=>{setSuggPicks(computeSuggPicks());setSuggKey(k=>k+1);setSuggFading(false);},150);}} style={{background:"none",border:"none",cursor:"pointer",opacity:0.7,padding:"0 2px",lineHeight:1,color:c.tf,display:"inline-flex",alignItems:"center",justifyContent:"center"}} title="Randomize"><span className={diceAnim?"dice-roll":""}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="15.5" cy="15.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="8.5" cy="15.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></span></button>
         </div>
         <div key={suggKey} className={suggFading?"sugg-fading":"sugg-list"} style={{display:"flex",flexDirection:"column",gap:0}}>
           {recents.map((r,i)=>(
@@ -721,7 +729,13 @@ export default function App(){
           ))}
           {suggPicks.map((s,i)=>(
             <div key={"m"+i} style={{...chipRow,borderTop:(recents.length>0||i>0)?"1px solid "+c.cb:"none",background:s.kind==="alt"?"rgba(251,191,36,0.06)":"transparent"}}>
-              <button onClick={()=>pick(s.text)} style={{flex:1,background:"none",border:"none",padding:"9px 12px",color:s.kind==="alt"?c.ac:c.tm,cursor:"pointer",fontSize:13,textAlign:"left",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{s.kind==="alt"?"💛 ":"💡 "}{s.text}</button>
+              <button onClick={()=>pick(s.text)} style={{flex:1,background:"none",border:"none",padding:"9px 12px",color:s.kind==="alt"?c.ac:c.tm,cursor:"pointer",fontSize:13,textAlign:"left",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:6}}>
+                {s.kind==="alt"
+                  ?<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style={{flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                  :<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+                }
+                <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{s.text}</span>
+              </button>
               {delBtn(()=>setDismissedAlts(d=>[...d,s.text]))}
             </div>
           ))}
@@ -841,7 +855,7 @@ export default function App(){
         <a href={"/terms?lang="+(lang||"en")} target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none",transition:"opacity 0.15s",opacity:0.7}}>{t.terms||"Terms"}</a>
         <a href={"/privacy?lang="+(lang||"en")} target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none",transition:"opacity 0.15s",opacity:0.7}}>{t.privacy||"Privacy"}</a>
         <a href="https://stats.fabrikage.nl/share/AE078t90MeCuVl4I" target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none",transition:"opacity 0.15s",opacity:0.7}}>{t.stats||"Stats"}</a>
-        <a href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{fontSize:10,color:c.ac,textDecoration:"none",fontWeight:600,transition:"opacity 0.15s"}}>{t.donate||"❤️ Donate"}</a>
+        <a href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{fontSize:10,color:c.ac,textDecoration:"none",fontWeight:600,transition:"opacity 0.15s",display:"inline-flex",alignItems:"center",gap:3}}><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style={{display:"block",flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>{t.donate||"Donate"}</a>
         <button onClick={()=>{setVw("revenue");if(revenueTxns.length===0)loadRevenue();}} style={{fontSize:10,color:c.tf,background:"none",border:"none",cursor:"pointer",padding:0,fontFamily:"inherit",opacity:0.7,transition:"opacity 0.15s"}}>{t.revenue||"Revenue"}</button>
       </div>
       <div style={{paddingBottom:8}}><a href="https://bachsoftware.nl" target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none",opacity:0.38,letterSpacing:"0.01em"}}>Mogelijk gemaakt door Bach Software</a></div>
@@ -864,7 +878,7 @@ export default function App(){
     {altruismPopup&&(
       <Modal c={c}>
         <div style={{textAlign:"center"}}>
-          <div style={{fontSize:52,marginBottom:12}}>💛</div>
+          <div style={{display:"flex",justifyContent:"center",marginBottom:12,color:"#f59e0b"}}><svg width="52" height="52" viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
           <h2 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"0 0 10px"}}>{t.altruismPopupTitle}</h2>
           <p style={{fontSize:14,color:c.tm,lineHeight:1.6,margin:"0 0 20px"}}>{canEarnAltruismBonus?t.altruismPopupMsg:t.altruismPopupMsgRepeat}</p>
           <button onClick={()=>setAltruismPopup(false)} style={{...sx.bo,marginTop:0,background:"linear-gradient(135deg,#f59e0b,#d97706)"}}>{t.altruismPopupBtn}</button>
@@ -876,7 +890,7 @@ export default function App(){
     {altruismBonusPopup&&(
       <Modal c={c}>
         <div style={{textAlign:"center"}}>
-          <div style={{fontSize:52,marginBottom:12,animation:"pop 0.5s ease"}}>🎁</div>
+          <div style={{display:"flex",justifyContent:"center",marginBottom:12,animation:"pop 0.5s ease",color:c.gr}}><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
           <h2 style={{fontSize:20,fontWeight:700,color:c.gr,margin:"0 0 10px"}}>{t.altruismBonusTitle}</h2>
           <p style={{fontSize:14,color:c.tm,lineHeight:1.6,margin:"0 0 20px"}}>{t.altruismBonusMsg}</p>
           <div style={{fontSize:32,fontWeight:800,color:c.gr,margin:"0 0 16px"}}>+{ALTRUISM_BONUS_CREDITS}</div>
@@ -889,7 +903,7 @@ export default function App(){
     {topUpPopup&&(
       <Modal c={c}>
         <div style={{textAlign:"center"}}>
-          <div style={{fontSize:52,marginBottom:12,animation:"pop 0.5s ease"}}>✅</div>
+          <div style={{display:"flex",justifyContent:"center",marginBottom:12,animation:"pop 0.5s ease",color:c.gr}}><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg></div>
           <h2 style={{fontSize:20,fontWeight:700,color:c.gr,margin:"0 0 10px"}}>{t.topUpPopupTitle}</h2>
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,margin:"0 0 16px"}}>
             <span style={{fontSize:36,fontWeight:800,color:c.gr}}>+{topUpPopup.credits}</span>
@@ -905,7 +919,7 @@ export default function App(){
     {celebOpen&&(
       <Modal c={c}>
         <div style={{textAlign:"center"}}>
-          <div style={{fontSize:64,marginBottom:12,animation:"pop 0.5s ease",lineHeight:1}}>🏆</div>
+          <div style={{display:"flex",justifyContent:"center",marginBottom:12,animation:"pop 0.5s ease",color:c.ac}}><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
           <h2 style={{fontSize:22,fontWeight:800,color:c.gr,margin:"0 0 10px"}}>{t.celebTitle}</h2>
           <p style={{fontSize:15,color:c.tm,lineHeight:1.6,margin:"0 0 24px"}}>{t.celebMsg}</p>
           <button onClick={()=>setCelebOpen(false)} style={{...sx.bo,marginTop:0,background:c.ag}}>{t.celebBtn}</button>
@@ -921,7 +935,7 @@ export default function App(){
             <button key={l.code} onClick={()=>pickLang(l.code)} style={{...sx.cd,padding:"16px 14px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,textAlign:"left"}}
               onMouseEnter={e=>{e.currentTarget.style.borderColor=c.abr;e.currentTarget.style.transform="scale(1.02)";}}
               onMouseLeave={e=>{e.currentTarget.style.borderColor=c.cb;e.currentTarget.style.transform="scale(1)";}}>
-              <span style={{fontSize:28}}>{l.flag}</span><span style={{color:c.tx,fontSize:15,fontWeight:500}}>{l.label}</span>
+              <span style={{width:36,height:36,borderRadius:8,background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:11,fontWeight:700,color:c.ac,letterSpacing:"0.03em"}}>{l.code.toUpperCase()}</span><span style={{color:c.tx,fontSize:15,fontWeight:500}}>{l.label}</span>
             </button>))}
         </div>
         {auth!=="in"&&(
@@ -978,11 +992,11 @@ export default function App(){
           <h2 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"0 0 8px"}}>{t.credOut}</h2>
           <p style={{fontSize:14,color:c.tm,lineHeight:1.6,margin:"0 0 20px"}}>{t.credOutMsg}</p>
           <button onClick={startTopUp} disabled={topUpBusy} style={sx.stripe}>
-            💳 {topUpBusy?"...":t.topUpBtn} <span style={{opacity:0.7,fontSize:12}}>({t.topUpDesc})</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>{topUpBusy?"...":t.topUpBtn} <span style={{opacity:0.7,fontSize:12}}>({t.topUpDesc})</span>
           </button>
           {/* <button onClick={()=>setVw("byok")} style={sx.bo}>{t.credByok}</button> */}
           <button onClick={()=>setVw(auth==="in"?"dash":"home")} style={sx.bg}>{t.back}</button>
-          <a href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{display:"block",textAlign:"center",marginTop:16,fontSize:13,color:c.ac,textDecoration:"none",fontWeight:600}}>{t.donate||"❤️ Donate"}</a>
+          <a href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{display:"flex",alignItems:"center",justifyContent:"center",gap:4,textAlign:"center",marginTop:16,fontSize:13,color:c.ac,textDecoration:"none",fontWeight:600}}><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style={{display:"block",flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>{t.donate||"Donate"}</a>
         </div>
       <BottomBar/><style>{GS}</style></div></div>
     )}
@@ -1025,7 +1039,7 @@ export default function App(){
                 <div style={{textAlign:"right"}}>
                   <div style={{fontSize:11,color:c.tm,marginBottom:8}}>{t.topUpDesc}</div>
                   <button onClick={startTopUp} disabled={topUpBusy} style={{...sx.stripe,width:"auto",marginTop:0,padding:"9px 14px",fontSize:13}}>
-                    💳 {topUpBusy?"...":t.topUpBtn}
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>{topUpBusy?"...":t.topUpBtn}
                   </button>
                 </div>
               </div>
@@ -1068,7 +1082,7 @@ export default function App(){
       );
     })()}
 
-    {vw==="loading"&&(<div dir={dir} style={sx.pg}><div className="uw" style={sx.w}><div style={sx.cd}><Loader c={c} lp={t.lp}/>{loadingAltruistic&&<div style={{marginTop:16,padding:"10px 16px",borderRadius:12,background:c.am,border:`1px solid ${c.abr}`,color:c.ac,fontSize:14,fontWeight:600,textAlign:"center",animation:"fadeIn 0.5s ease forwards"}}>{t.altruismLoadingMsg}</div>}</div><BottomBar/><style>{GS}</style></div></div>)}
+    {vw==="loading"&&(<div dir={dir} style={sx.pg}><div className="uw" style={sx.w}><div style={sx.cd}><Loader c={c} lp={t.lp}/>{loadingAltruistic&&<div style={{marginTop:16,padding:"10px 16px",borderRadius:12,background:c.am,border:`1px solid ${c.abr}`,color:c.ac,fontSize:14,fontWeight:600,textAlign:"center",animation:"fadeIn 0.5s ease forwards",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{display:"block",flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>{t.altruismLoadingMsg}</div>}</div><BottomBar/><style>{GS}</style></div></div>)}
 
     {(vw==="home"||vw==="new_goal")&&auth!=="in"&&(
       <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
@@ -1091,17 +1105,17 @@ export default function App(){
             {inp.trim()&&<button onMouseDown={e=>{e.preventDefault();handleTaClear();}} title={t.rmTip} style={{position:"absolute",top:"50%",right:8,transform:"translateY(-50%)",zIndex:2,background:taClearConfirm?"rgba(239,68,68,0.12)":"transparent",border:"1px solid "+(taClearConfirm?"rgba(239,68,68,0.35)":"transparent"),borderRadius:6,color:taClearConfirm?"#ef4444":c.tf,fontSize:taClearConfirm?11:16,fontWeight:600,width:24,height:24,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"all 0.18s",lineHeight:1,opacity:taFocused||taClearConfirm?1:0.4}}>{taClearConfirm?(t.taClrConfirm||"clear?"):"×"}</button>}
           </div>
           {SuggChips()}
-          {canEarnAltruismBonus&&<div style={{marginTop:10,padding:"10px 14px",borderRadius:10,background:c.ab,border:"1px solid "+c.abr}}><span className="altruism-txt" style={{fontSize:14,color:c.ac}}>{t.altruismTeaser}</span></div>}
+          {canEarnAltruismBonus&&<div style={{marginTop:10,padding:"10px 14px",borderRadius:10,background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"flex-start",gap:8}}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c.ac} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0,marginTop:2}}><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg><span className="altruism-txt" style={{fontSize:14,color:c.ac}}>{t.altruismTeaser}</span></div>}
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button>
           <div style={{display:"flex",alignItems:"center",gap:8,marginTop:10,marginBottom:10}}>
             <div style={{flex:1,height:1,background:c.cb}}/>
             <span style={{fontSize:12,color:c.tf,fontWeight:500}}>{t.woopOr||"or"}</span>
             <div style={{flex:1,height:1,background:c.cb}}/>
           </div>
-          <button onClick={()=>{setErr(null);setWoopData({wish:"",outcome:"",obstacle:"",plan:""});setWoopStep(0);setVw("woop_input");}} style={{...sx.bg,marginTop:0,display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>{t.woop||"🎯 Try WOOP"}</button>
+          <button onClick={()=>{setErr(null);setWoopData({wish:"",outcome:"",obstacle:"",plan:""});setWoopStep(0);setVw("woop_input");}} style={{...sx.bg,marginTop:0,display:"flex",alignItems:"center",justifyContent:"center",gap:6}}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>{t.woop||"Try WOOP"}</button>
           <Err/>
         </div>
-        <div style={{textAlign:"center",marginTop:10}}><a className="donate-txt" href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{fontSize:13,color:"#c9a227",textDecoration:"none",fontWeight:500}}>{t.donateMsg||"❤️ Your donation makes the world a little better"}</a></div>
+        <div style={{textAlign:"center",marginTop:10}}><a className="donate-txt" href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{fontSize:13,color:"#c9a227",textDecoration:"none",fontWeight:500,display:"inline-flex",alignItems:"center",gap:4}}><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style={{display:"block",flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>{t.donateMsg||"Your donation makes the world a little better"}</a></div>
         {auth!=="in"&&(
           <div style={{marginTop:20,textAlign:"center"}}>
             <p style={{fontSize:12,color:c.tf,marginBottom:12}}>{t.signInSub}</p>
@@ -1118,8 +1132,8 @@ export default function App(){
               onMouseLeave={e=>e.currentTarget.style.borderColor=p.pct>=100?c.gbr:c.cb}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12,marginBottom:10}}>
                 <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontSize:14,fontWeight:600,color:p.pct>=100?c.gr:c.tx,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginBottom:2}}>{p.pct>=100?"✅ ":""}{h.resultaat?.titel||h.behoefte}</div>
-                  <div style={{fontSize:12,color:c.tf}}>{tAgo(h.timestamp,lang)} · {p.dn} {t.sOf} {p.tt}{h.isAltruistic&&" 💛"}</div>
+                  <div style={{fontSize:14,fontWeight:600,color:p.pct>=100?c.gr:c.tx,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginBottom:2,display:"flex",alignItems:"center",gap:4}}>{p.pct>=100&&<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>}<span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{h.resultaat?.titel||h.behoefte}</span></div>
+                  <div style={{fontSize:12,color:c.tf,display:"flex",alignItems:"center",gap:3}}>{tAgo(h.timestamp,lang)} · {p.dn} {t.sOf} {p.tt}{h.isAltruistic&&<svg width="10" height="10" viewBox="0 0 24 24" fill="#f59e0b" style={{display:"block",marginLeft:2}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>}</div>
                 </div>
                 <button onClick={e=>{e.stopPropagation();del(h.id);}} style={{background:"none",border:"none",color:c.dm,cursor:"pointer",fontSize:18,padding:"2px 6px",lineHeight:1}} onMouseEnter={e=>e.target.style.color="#ef4444"} onMouseLeave={e=>e.target.style.color=c.dm}>×</button>
               </div>
@@ -1141,8 +1155,8 @@ export default function App(){
               onMouseLeave={e=>e.currentTarget.style.borderColor=p.pct>=100?c.gbr:c.cb}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12,marginBottom:10}}>
                 <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontSize:14,fontWeight:600,color:p.pct>=100?c.gr:c.tx,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginBottom:2}}>{p.pct>=100?"✅ ":""}{h.resultaat?.titel||h.behoefte}</div>
-                  <div style={{fontSize:12,color:c.tf}}>{tAgo(h.timestamp,lang)} · {p.dn} {t.sOf} {p.tt}{h.isAltruistic&&" 💛"}</div>
+                  <div style={{fontSize:14,fontWeight:600,color:p.pct>=100?c.gr:c.tx,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginBottom:2,display:"flex",alignItems:"center",gap:4}}>{p.pct>=100&&<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>}<span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{h.resultaat?.titel||h.behoefte}</span></div>
+                  <div style={{fontSize:12,color:c.tf,display:"flex",alignItems:"center",gap:3}}>{tAgo(h.timestamp,lang)} · {p.dn} {t.sOf} {p.tt}{h.isAltruistic&&<svg width="10" height="10" viewBox="0 0 24 24" fill="#f59e0b" style={{display:"block",marginLeft:2}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>}</div>
                 </div>
                 <button onClick={e=>{e.stopPropagation();del(h.id);}} style={{background:"none",border:"none",color:c.dm,cursor:"pointer",fontSize:18,padding:"2px 6px",lineHeight:1}} onMouseEnter={e=>e.target.style.color="#ef4444"} onMouseLeave={e=>e.target.style.color=c.dm}>×</button>
               </div>
@@ -1151,7 +1165,7 @@ export default function App(){
             {hist.length>3&&<button onClick={clrAll} style={{...sx.bg,marginTop:4,color:"#ef4444",borderColor:"rgba(239,68,68,0.2)"}}>{t.clr}</button>}
           </div>
         )}
-        <div style={{textAlign:"center",marginTop:14}}><a href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{fontSize:12,color:c.ac,textDecoration:"none",fontWeight:500}}>{t.donate||"❤️ Donate"}</a></div>
+        <div style={{textAlign:"center",marginTop:14}}><a href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{fontSize:12,color:c.ac,textDecoration:"none",fontWeight:500,display:"inline-flex",alignItems:"center",gap:3}}><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style={{display:"block",flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>{t.donate||"Donate"}</a></div>
         <BottomBar/><style>{GS}</style></div></div>
     )}
 
@@ -1174,14 +1188,14 @@ export default function App(){
           <label style={{display:"block",fontSize:13,fontWeight:400,color:c.tm,marginBottom:8,textAlign:"center"}}>{t.heroLabel||t.hero}</label>
           <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
           {SuggChips()}
-          {canEarnAltruismBonus&&<div style={{marginTop:10,padding:"10px 14px",borderRadius:10,background:c.ab,border:"1px solid "+c.abr}}><span className="altruism-txt" style={{fontSize:14,color:c.ac}}>{t.altruismTeaser}</span></div>}
+          {canEarnAltruismBonus&&<div style={{marginTop:10,padding:"10px 14px",borderRadius:10,background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"flex-start",gap:8}}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c.ac} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0,marginTop:2}}><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg><span className="altruism-txt" style={{fontSize:14,color:c.ac}}>{t.altruismTeaser}</span></div>}
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button>
           <div style={{display:"flex",alignItems:"center",gap:8,marginTop:10,marginBottom:10}}>
             <div style={{flex:1,height:1,background:c.cb}}/>
             <span style={{fontSize:12,color:c.tf,fontWeight:500}}>{t.woopOr||"or"}</span>
             <div style={{flex:1,height:1,background:c.cb}}/>
           </div>
-          <button onClick={()=>{setErr(null);setWoopData({wish:"",outcome:"",obstacle:"",plan:""});setWoopStep(0);setVw("woop_input");}} style={{...sx.bg,marginTop:0,display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>{t.woop||"🎯 Try WOOP"}</button>
+          <button onClick={()=>{setErr(null);setWoopData({wish:"",outcome:"",obstacle:"",plan:""});setWoopStep(0);setVw("woop_input");}} style={{...sx.bg,marginTop:0,display:"flex",alignItems:"center",justifyContent:"center",gap:6}}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>{t.woop||"Try WOOP"}</button>
           <Err/>
         </div>
         <button onClick={()=>setVw("dash")} style={sx.bg}>{t.back}</button>
@@ -1206,34 +1220,39 @@ export default function App(){
             {/* Altruistic goal progress indicator */}
             {ae?.isAltruistic&&!ae?.altruismBonusClaimed&&(
               <div style={{marginBottom:10,padding:"10px 14px",borderRadius:10,background:"rgba(251,191,36,0.1)",border:"1px solid rgba(251,191,36,0.3)",display:"flex",alignItems:"center",gap:8}}>
-                <span style={{fontSize:16}}>💛</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#f59e0b" style={{display:"block",flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                 <span style={{fontSize:12,color:c.ac,fontWeight:500}}>{t.altruismPopupMsg}</span>
               </div>
             )}
             {ae?.isAltruistic&&ae?.altruismBonusClaimed&&(
               <div style={{marginBottom:10,padding:"10px 14px",borderRadius:10,background:c.gb,border:"1px solid "+c.gbr,display:"flex",alignItems:"center",gap:8}}>
-                <span style={{fontSize:16}}>🎁</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c.gr} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
                 <span style={{fontSize:12,color:c.gr,fontWeight:600}}>{t.altruismBonusTitle}</span>
               </div>
             )}
             <div style={sx.cd}>
-              <h2 style={{fontSize:17,fontWeight:600,color:all?c.gr:c.ac,margin:"0 0 6px"}}>{all?"✅ ":""}{steps.titel}</h2>
+              <h2 style={{fontSize:17,fontWeight:600,color:all?c.gr:c.ac,margin:"0 0 6px",display:"flex",alignItems:"center",gap:6}}>{all&&<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>}{steps.titel}</h2>
               {ae?.timestamp&&<div style={{fontSize:12,color:c.tf,marginBottom:10}}>{fmtDate(ae.timestamp,ae.timezone||zone,ae.lang||lang)}</div>}
               {all&&<div style={{textAlign:"center",padding:"10px 0 16px",fontSize:14,color:c.gr,fontWeight:600,animation:"pop 0.4s ease"}}>{t.allD}</div>}
               {/* WOOP summary card — collapsible, shown when entry was created via WOOP */}
               {ae?.woop&&(()=>{
                 const wLabels=t.woopLabels||["Wish","Outcome","Obstacle","Plan"];
                 const wKeys=["wish","outcome","obstacle","plan"];
-                const wIcons=["🌟","✨","🧱","⚡"];
+                const wIcons=[
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{display:"block"}}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/><path d="M20 3v4"/><path d="M22 5h-4"/></svg>,
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>,
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+                ];
                 return(
                   <details style={{marginBottom:14,borderRadius:10,border:"1px solid "+c.abr,overflow:"hidden"}}>
                     <summary style={{padding:"10px 14px",cursor:"pointer",background:c.ab,color:c.ac,fontSize:13,fontWeight:600,listStyle:"none",display:"flex",alignItems:"center",gap:6,userSelect:"none"}}>
-                      🎯 {t.woopSummaryTitle||"Your WOOP"}
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>{t.woopSummaryTitle||"Your WOOP"}
                     </summary>
                     <div style={{padding:"10px 14px",display:"flex",flexDirection:"column",gap:8,background:c.sb}}>
                       {wKeys.map((k,i)=>ae.woop[k]&&(
                         <div key={k} style={{display:"flex",gap:8,alignItems:"flex-start"}}>
-                          <span style={{fontSize:14,flexShrink:0,marginTop:1}}>{wIcons[i]}</span>
+                          <span style={{flexShrink:0,marginTop:2,color:c.ac,display:"flex"}}>{wIcons[i]}</span>
                           <div>
                             <div style={{fontSize:11,fontWeight:700,color:c.tm,marginBottom:1,textTransform:"uppercase",letterSpacing:"0.05em"}}>{wLabels[i]}</div>
                             <div style={{fontSize:13,color:c.tx,lineHeight:1.5}}>{ae.woop[k]}</div>
@@ -1284,12 +1303,12 @@ export default function App(){
                         onClick={()=>utrack('share_platform',{platform:p.id})}
                         style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4,textDecoration:'none',minWidth:48}}>
                         <div style={{width:42,height:42,borderRadius:10,background:p.bg,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:18}}>
-                          {p.id==='whatsapp'&&'💬'}
-                          {p.id==='telegram'&&'✈️'}
-                          {p.id==='x'&&'𝕏'}
-                          {p.id==='facebook'&&'f'}
-                          {p.id==='viber'&&'📳'}
-                          {p.id==='signal'&&'🔒'}
+                          {p.id==='whatsapp'&&<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>}
+                          {p.id==='telegram'&&<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>}
+                          {p.id==='x'&&<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.259 5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>}
+                          {p.id==='facebook'&&<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>}
+                          {p.id==='viber'&&<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.62 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.83a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>}
+                          {p.id==='signal'&&<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>}
                         </div>
                         <span style={{fontSize:9,color:c.tm,textAlign:'center'}}>{p.label}</span>
                       </a>
@@ -1298,7 +1317,7 @@ export default function App(){
                       <button onClick={()=>copyShareText(_text)}
                         style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4,background:'none',border:'none',cursor:'pointer',minWidth:48,padding:0}}>
                         <div style={{width:42,height:42,borderRadius:10,background:shareCopied?c.gr:c.ghb,border:'1px solid '+(shareCopied?c.gr:c.ghr),display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,transition:'background 0.2s'}}>
-                          {shareCopied?'✓':'📋'}
+                          {shareCopied?<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>}
                         </div>
                         <span style={{fontSize:9,color:shareCopied?c.gr:c.tm,textAlign:'center'}}>{shareCopied?(t.shareCopied||'Copied!'):(t.shareCopy||'Copy')}</span>
                       </button>
@@ -1321,7 +1340,12 @@ export default function App(){
       const curVal=woopData[curKey]||"";
       const isLast=woopStep===3;
       const allFilled=woopData.wish.trim()&&woopData.outcome.trim()&&woopData.obstacle.trim()&&woopData.plan.trim();
-      const WOOP_ICONS=["🌟","✨","🧱","⚡"];
+      const WOOP_ICONS=[
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{display:"block"}}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/><path d="M20 3v4"/><path d="M22 5h-4"/></svg>,
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>,
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+      ];
       return(
         <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
           <div style={{textAlign:"center",marginBottom:20}}>
@@ -1339,7 +1363,7 @@ export default function App(){
           </div>
           <div style={{...sx.cd,animation:"fadeIn 0.3s ease"}}>
             <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
-              <div style={{width:36,height:36,borderRadius:10,background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>{WOOP_ICONS[woopStep]}</div>
+              <div style={{width:36,height:36,borderRadius:10,background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"center",justifyContent:"center",color:c.ac,flexShrink:0}}>{WOOP_ICONS[woopStep]}</div>
               <div>
                 <div style={{fontSize:16,fontWeight:700,color:c.tx}}>{labels[woopStep]}</div>
                 <div style={{fontSize:12,color:c.tm,lineHeight:1.4}}>{woopStep===3?(hints[3]||"").replace(/\[obstacle\]|\[obstakel\]|\[Hindernis\]|\[obstacle\]|\[obstáculo\]|\[障碍\]|\[बाधा\]|\[obstáculo\]|\[العقبة\]|\[engel\]|\[障害\]|\[hambatan\]|\[engel\]|\[engel\]/gi,woopData.obstacle||"...").replace(/\[action\]|\[actie\]|\[Aktion\]|\[action\]|\[acción\]|\[行动\]|\[कार्य\]|\[ação\]|\[الإجراء\]|\[eylem\]|\[行動\]|\[tindakan\]|\[действие\]|\[কর্ম\]|\[hatua\]/gi,woopData.plan||"..."):hints[woopStep]}</div>
@@ -1399,7 +1423,14 @@ export default function App(){
         const sym=cur==="eur"?"€":cur==="usd"?"$":cur.toUpperCase()+" ";
         return (cents<0?"-":"")+sym+abs.toFixed(2);
       };
-      const TYPE_ICON={charge:"💳",payment:"💳",payout:"🏦",refund:"↩️",adjustment:"⚙️",stripe_fee:"📋"};
+      const CARD_IC=<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>;
+      const TYPE_ICON={
+        charge:CARD_IC,payment:CARD_IC,
+        payout:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
+        refund:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.67"/></svg>,
+        adjustment:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 1.66 13.6M4.93 19.07A10 10 0 0 1 3.27 5.47"/><path d="m17.66 17.66-1.41-1.41M7.76 7.76 6.34 6.34M14.83 9.17l1.41-1.41M9.17 14.83l-1.41 1.41"/></svg>,
+        stripe_fee:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>,
+      };
       const totalNet=revenueTxns.filter(t=>t.type==="charge"||t.type==="payment").reduce((s,t)=>s+t.net,0);
       const cur=revenueTxns[0]?.currency||"eur";
       return(
@@ -1418,7 +1449,7 @@ export default function App(){
             {revenueTxns.map((tx,i)=>(
               <div key={tx.id} style={{...sx.cd,padding:"12px 16px",animation:"slideUp 0.25s ease "+Math.min(i*0.03,0.4)+"s both"}}>
                 <div style={{display:"flex",alignItems:"center",gap:12}}>
-                  <div style={{fontSize:22,flexShrink:0}}>{TYPE_ICON[tx.type]||"📋"}</div>
+                  <div style={{flexShrink:0,color:c.tm}}>{TYPE_ICON[tx.type]||<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>}</div>
                   <div style={{flex:1,minWidth:0}}>
                     <div style={{fontSize:13,fontWeight:600,color:c.tx,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{tx.description||tx.type}</div>
                     <div style={{fontSize:11,color:c.tf,marginTop:2}}>{new Date(tx.created*1000).toLocaleDateString(lang||undefined,{day:"numeric",month:"short",year:"numeric"})}</div>
