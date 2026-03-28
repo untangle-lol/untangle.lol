@@ -19,5 +19,11 @@ export default function sitemap() {
       changeFrequency: "monthly",
       priority: 0.3,
     },
+    {
+      url: "https://untangle.lol/donate",
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
   ];
 }
