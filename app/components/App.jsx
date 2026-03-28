@@ -1072,7 +1072,8 @@ export default function App(){
 
     {(vw==="home"||vw==="new_goal")&&auth!=="in"&&(
       <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
-        <div style={{textAlign:"center",marginTop:48,marginBottom:20}}><h1 style={{fontSize:26,fontWeight:700,color:c.tx,margin:0}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:14,marginTop:4,animation:"heroFade 3s ease forwards",minHeight:"1.4em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
+        <div style={{textAlign:"center",marginTop:48,marginBottom:16}}><h1 style={{fontSize:26,fontWeight:700,color:c.tx,margin:0}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:14,marginTop:4,animation:"heroFade 3s ease forwards",minHeight:"1.4em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
+        <div style={{textAlign:"center",marginBottom:10}}><span className="eth-txt" style={{fontSize:12,color:c.gt,fontWeight:500}}>{t.eth}</span></div>
         <div style={{...sx.cd,position:"relative"}}>
           <HoneypotField/>
           <label style={{display:"block",fontSize:13,fontWeight:400,color:c.tm,marginBottom:8,textAlign:"center"}}>{t.heroLabel||t.hero}</label>
@@ -1090,7 +1091,6 @@ export default function App(){
           <button onClick={()=>{setErr(null);setWoopData({wish:"",outcome:"",obstacle:"",plan:""});setWoopStep(0);setVw("woop_input");}} style={{...sx.bg,marginTop:0,display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>{t.woop||"🎯 Try WOOP"}</button>
           <Err/>
         </div>
-        <div style={{textAlign:"center",marginTop:14,padding:"10px 16px",borderRadius:10,background:c.gb,border:"1px solid "+c.gbr}}><span className="eth-txt" style={{fontSize:13,color:c.gt}}>{t.eth}</span></div>
         <div style={{textAlign:"center",marginTop:10}}><a className="donate-txt" href="https://bunq.me/BachSoftware" target="_blank" rel="noreferrer" style={{fontSize:13,color:"#c9a227",textDecoration:"none",fontWeight:500}}>{t.donateMsg||"❤️ Your donation makes the world a little better"}</a></div>
         {auth!=="in"&&(
           <div style={{marginTop:20,textAlign:"center"}}>
@@ -1147,7 +1147,8 @@ export default function App(){
 
     {vw==="new_goal"&&auth==="in"&&(
       <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
-        <div style={{textAlign:"center",marginTop:48,marginBottom:20}}><h1 style={{fontSize:22,fontWeight:700,color:c.tx,margin:0}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:13,marginTop:2,animation:"heroFade 3s ease forwards",minHeight:"1.3em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
+        <div style={{textAlign:"center",marginTop:48,marginBottom:16}}><h1 style={{fontSize:22,fontWeight:700,color:c.tx,margin:0}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:13,marginTop:2,animation:"heroFade 3s ease forwards",minHeight:"1.3em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
+        <div style={{textAlign:"center",marginBottom:10}}><span className="eth-txt" style={{fontSize:12,color:c.gt,fontWeight:500}}>{t.eth}</span></div>
         <div style={{...sx.cd,position:"relative"}}>
           <HoneypotField/>
           <label style={{display:"block",fontSize:13,fontWeight:400,color:c.tm,marginBottom:8,textAlign:"center"}}>{t.heroLabel||t.hero}</label>
