@@ -48,6 +48,7 @@ const FREE_CREDITS = 3;
 
 
 function eKey(email) { return "untangle_hist_" + email.toLowerCase().replace(/[^a-z0-9]/g,"_"); }
+function acctCreditsKey(email){ return "untangle_credits_acct_"+email.toLowerCase().replace(/[^a-z0-9]/g,"_"); }
 
 function keyProvider(key){ return key?.startsWith("sk-or-")?"openrouter":"anthropic"; }
 function getCredential() {
@@ -349,6 +350,10 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
         const savedLang=ls.get("untangle_lang");
         if(savedLang)setLang(savedLang);
         setAuth("in");
+        // Load account-specific credits (separate from guest credits, no daily reset)
+        const acv=ls.get(acctCreditsKey(email));
+        if(acv===null){ls.set(acctCreditsKey(email),String(FREE_CREDITS));setCredits(FREE_CREDITS);}
+        else{setCredits(Math.max(0,parseInt(acv,10)||0));}
         let parsedHist=[];
         const hv=ls.get(eKey(email));if(hv){try{parsedHist=JSON.parse(hv);}catch{}}
         setHist(parsedHist);
@@ -396,8 +401,12 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     setTimeout(()=>pollCredits(ref,attempts+1),3000);
   };
 
+  // Returns the correct localStorage key for credits based on whether a user is logged in
+  const activeCreditsKey=()=>userRef.current?acctCreditsKey(userRef.current):KEYS.credits;
+
   const addCredits=(n)=>{
-    setCredits(prev=>{const next=prev+n;ls.set(KEYS.credits,String(next));return next;});
+    const key=activeCreditsKey();
+    setCredits(prev=>{const next=prev+n;ls.set(key,String(next));return next;});
   };
 
   const saveApiKey=async()=>{
@@ -430,6 +439,12 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     try{await fetch("/api/auth/logout",{method:"POST"});}catch{}
     utrack("sign_out");
     setAuth("out");setUser(null);userRef.current=null;setHist([]);setSteps(null);setInp("");setVw("home");setActiveId(null);setLocalComp([]);
+    // Reload guest credits (separate from account credits, with daily reset)
+    const gcv=ls.get(KEYS.credits);const gnow=Date.now();const TOPUP_MS=24*60*60*1000;
+    if(gcv===null){ls.set(KEYS.credits,String(FREE_CREDITS));ls.set(KEYS.creditsTs,String(gnow));setCredits(FREE_CREDITS);}
+    else{const gn=parseInt(gcv,10);const gts=parseInt(ls.get(KEYS.creditsTs)||"0",10);
+      if((isNaN(gn)||gn<=0)&&(gnow-gts)>=TOPUP_MS){ls.set(KEYS.credits,String(FREE_CREDITS));ls.set(KEYS.creditsTs,String(gnow));setCredits(FREE_CREDITS);}
+      else{setCredits(isNaN(gn)?FREE_CREDITS:Math.max(0,gn));}}
   };
   const pickLang=(code)=>{setLang(code);ls.set("untangle_lang",code);utrack("language_selected",{lang:code});setVw(auth==="in"?"dash":"home");};
 
@@ -469,7 +484,8 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
   const promptWoop=(w)=>`You are a friendly, humorous coach. You are the AI behind Untangle.lol.\nRespond ENTIRELY in ${t.label}.\nThe user has completed a WOOP exercise:\n- Wish: "${w.wish}"\n- Outcome: "${w.outcome}"\n- Obstacle: "${w.obstacle}"\n- Plan (if-then): "${w.plan}"\nPRINCIPLES: Wellbeing, honesty, sustainability.\nSTYLE: doable today/this week, casual, emoji in title, specific, 3-5 action steps. The last step MUST be the user's if-then plan turned into a concrete action.\nAlso set "altruistic":true if the wish is primarily about helping or benefiting OTHER people — otherwise false.\nJSON only, no markdown:\n{"titel":"Summary emoji","altruistic":false,"stappen":[{"nummer":1,"actie":"Emoji + title","toelichting":"1-2 sentences"}]}`;
 
   const deductCredit=()=>{
-    setCredits(prev=>{const next=Math.max(0,prev-1);ls.set(KEYS.credits,String(next));return next;});
+    const key=activeCreditsKey();
+    setCredits(prev=>{const next=Math.max(0,prev-1);ls.set(key,String(next));return next;});
   };
 
   const submit=async()=>{
