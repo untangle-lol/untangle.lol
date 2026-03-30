@@ -1,0 +1,168 @@
+export const HOWTO = {
+  nl: {
+    title: "Hoe werkt untangle.lol?",
+    subtitle: "Van gedachte naar actieplan in drie stappen.",
+    steps: [
+      { title: "Typ je doel", desc: "Schrijf op wat je wil bereiken. Groot of klein, persoonlijk of professioneel — alles mag." },
+      { title: "Ontvang een plan", desc: "AI maakt een concreet stappenplan op maat, met heldere acties die je direct kunt uitvoeren." },
+      { title: "Werk het af", desc: "Vink stappen af terwijl je vordert. Je voortgang wordt bewaard, ook als je de app sluit." },
+    ],
+    woop: { title: "WOOP-methode", desc: "Wil je dieper nadenken? Kies WOOP voor een bewezen techniek om obstakels te overwinnen." },
+    cta: "Begin nu →",
+  },
+  en: {
+    title: "How does untangle.lol work?",
+    subtitle: "From thought to action plan in three steps.",
+    steps: [
+      { title: "Type your goal", desc: "Write down what you want to achieve. Big or small, personal or professional — anything goes." },
+      { title: "Get a plan", desc: "AI creates a concrete, personalised action plan with clear steps you can take straight away." },
+      { title: "Complete it", desc: "Tick off steps as you go. Your progress is saved, even if you close the app." },
+    ],
+    woop: { title: "WOOP method", desc: "Want to think deeper? Choose WOOP for a proven technique to overcome inner obstacles." },
+    cta: "Start now →",
+  },
+  de: {
+    title: "Wie funktioniert untangle.lol?",
+    subtitle: "Von der Idee zum Aktionsplan in drei Schritten.",
+    steps: [
+      { title: "Ziel eingeben", desc: "Schreib auf, was du erreichen möchtest. Groß oder klein, persönlich oder beruflich — alles ist erlaubt." },
+      { title: "Plan erhalten", desc: "KI erstellt einen konkreten, personalisierten Aktionsplan mit klaren Schritten." },
+      { title: "Umsetzen", desc: "Hake Schritte ab, während du vorankommst. Dein Fortschritt wird automatisch gespeichert." },
+    ],
+    woop: { title: "WOOP-Methode", desc: "Möchtest du tiefer nachdenken? Wähle WOOP für eine bewährte Technik zur Überwindung innerer Hindernisse." },
+    cta: "Jetzt beginnen →",
+  },
+  fr: {
+    title: "Comment fonctionne untangle.lol ?",
+    subtitle: "De l'idée au plan d'action en trois étapes.",
+    steps: [
+      { title: "Tapez votre objectif", desc: "Écrivez ce que vous voulez accomplir. Grand ou petit, personnel ou professionnel — tout est permis." },
+      { title: "Recevez un plan", desc: "L'IA crée un plan d'action concret et personnalisé avec des étapes claires." },
+      { title: "Réalisez-le", desc: "Cochez les étapes au fur et à mesure. Votre progression est sauvegardée automatiquement." },
+    ],
+    woop: { title: "Méthode WOOP", desc: "Vous voulez réfléchir plus profondément ? Choisissez WOOP pour surmonter les obstacles intérieurs." },
+    cta: "Commencer →",
+  },
+  es: {
+    title: "¿Cómo funciona untangle.lol?",
+    subtitle: "De la idea al plan de acción en tres pasos.",
+    steps: [
+      { title: "Escribe tu objetivo", desc: "Anota lo que quieres lograr. Grande o pequeño, personal o profesional — todo vale." },
+      { title: "Recibe un plan", desc: "La IA crea un plan de acción concreto y personalizado con pasos claros." },
+      { title: "Complétalo", desc: "Marca los pasos conforme avanzas. Tu progreso se guarda automáticamente." },
+    ],
+    woop: { title: "Método WOOP", desc: "¿Quieres reflexionar más profundamente? Elige WOOP para superar obstáculos internos." },
+    cta: "Empezar ahora →",
+  },
+  pt: {
+    title: "Como funciona o untangle.lol?",
+    subtitle: "Da ideia ao plano de ação em três etapas.",
+    steps: [
+      { title: "Escreva seu objetivo", desc: "Anote o que quer alcançar. Grande ou pequeno, pessoal ou profissional — tudo vale." },
+      { title: "Receba um plano", desc: "A IA cria um plano de ação concreto e personalizado com passos claros." },
+      { title: "Complete-o", desc: "Marque os passos conforme avança. Seu progresso é salvo automaticamente." },
+    ],
+    woop: { title: "Método WOOP", desc: "Quer refletir mais profundamente? Escolha WOOP para superar obstáculos internos." },
+    cta: "Começar agora →",
+  },
+  ar: {
+    dir: "rtl",
+    title: "كيف يعمل untangle.lol؟",
+    subtitle: "من الفكرة إلى خطة العمل في ثلاث خطوات.",
+    steps: [
+      { title: "اكتب هدفك", desc: "اكتب ما تريد تحقيقه. كبيرًا أو صغيرًا، شخصيًا أو مهنيًا — كل شيء مسموح به." },
+      { title: "احصل على خطة", desc: "يضع الذكاء الاصطناعي خطة عمل ملموسة ومخصصة بخطوات واضحة." },
+      { title: "نفّذها", desc: "ضع علامة على الخطوات أثناء تقدمك. يتم حفظ تقدمك تلقائيًا." },
+    ],
+    woop: { title: "طريقة WOOP", desc: "هل تريد التفكير بعمق أكبر؟ اختر WOOP للتغلب على العقبات الداخلية." },
+    cta: "ابدأ الآن →",
+  },
+  bn: {
+    title: "untangle.lol কীভাবে কাজ করে?",
+    subtitle: "তিনটি ধাপে ধারণা থেকে কর্মপরিকল্পনায়।",
+    steps: [
+      { title: "আপনার লক্ষ্য টাইপ করুন", desc: "আপনি কী অর্জন করতে চান তা লিখুন। বড় বা ছোট — সব কিছুই চলে।" },
+      { title: "একটি পরিকল্পনা পান", desc: "AI স্পষ্ট পদক্ষেপ সহ একটি কংক্রিট, ব্যক্তিগত কর্মপরিকল্পনা তৈরি করে।" },
+      { title: "সম্পন্ন করুন", desc: "এগিয়ে যাওয়ার সাথে সাথে পদক্ষেপগুলি চেক করুন। আপনার অগ্রগতি স্বয়ংক্রিয়ভাবে সংরক্ষিত হয়।" },
+    ],
+    woop: { title: "WOOP পদ্ধতি", desc: "আরও গভীরভাবে ভাবতে চান? অভ্যন্তরীণ বাধা অতিক্রম করতে WOOP বেছে নিন।" },
+    cta: "এখনই শুরু করুন →",
+  },
+  hi: {
+    title: "untangle.lol कैसे काम करता है?",
+    subtitle: "तीन चरणों में विचार से कार्य योजना तक।",
+    steps: [
+      { title: "अपना लक्ष्य टाइप करें", desc: "लिखें कि आप क्या हासिल करना चाहते हैं। बड़ा या छोटा — सब कुछ चलता है।" },
+      { title: "एक योजना प्राप्त करें", desc: "AI स्पष्ट चरणों के साथ एक ठोस, व्यक्तिगत कार्य योजना बनाता है।" },
+      { title: "इसे पूरा करें", desc: "जैसे-जैसे आगे बढ़ें, चरणों को चेक करें। आपकी प्रगति स्वतः सहेजी जाती है।" },
+    ],
+    woop: { title: "WOOP विधि", desc: "और गहराई से सोचना चाहते हैं? आंतरिक बाधाओं को दूर करने के लिए WOOP चुनें।" },
+    cta: "अभी शुरू करें →",
+  },
+  id: {
+    title: "Bagaimana untangle.lol bekerja?",
+    subtitle: "Dari ide ke rencana aksi dalam tiga langkah.",
+    steps: [
+      { title: "Ketik tujuanmu", desc: "Tuliskan apa yang ingin kamu capai. Besar atau kecil, pribadi atau profesional — semua boleh." },
+      { title: "Dapatkan rencana", desc: "AI membuat rencana aksi konkret dan personal dengan langkah-langkah yang jelas." },
+      { title: "Selesaikan", desc: "Centang langkah-langkah saat kamu maju. Progresmu tersimpan otomatis." },
+    ],
+    woop: { title: "Metode WOOP", desc: "Ingin berpikir lebih dalam? Pilih WOOP untuk mengatasi hambatan dari dalam diri." },
+    cta: "Mulai sekarang →",
+  },
+  ja: {
+    title: "untangle.lolはどうやって使うの？",
+    subtitle: "3ステップで思いをアクションプランに。",
+    steps: [
+      { title: "目標を入力する", desc: "達成したいことを書いてください。大きくても小さくても、個人的でも仕事でも何でもOK。" },
+      { title: "プランを受け取る", desc: "AIが明確なステップで具体的な個人向けアクションプランを作成します。" },
+      { title: "完了させる", desc: "進めながらステップをチェック。進捗は自動的に保存されます。" },
+    ],
+    woop: { title: "WOOP法", desc: "もっと深く考えたいですか？内なる障壁を乗り越えるためにWOOPを選びましょう。" },
+    cta: "今すぐ始める →",
+  },
+  ru: {
+    title: "Как работает untangle.lol?",
+    subtitle: "От мысли до плана действий за три шага.",
+    steps: [
+      { title: "Введите свою цель", desc: "Напишите, чего вы хотите достичь. Большое или маленькое, личное или профессиональное — всё подходит." },
+      { title: "Получите план", desc: "ИИ создаёт конкретный персонализированный план действий с чёткими шагами." },
+      { title: "Выполните его", desc: "Отмечайте шаги по мере продвижения. Ваш прогресс сохраняется автоматически." },
+    ],
+    woop: { title: "Метод WOOP", desc: "Хотите подумать глубже? Выберите WOOP для преодоления внутренних препятствий." },
+    cta: "Начать сейчас →",
+  },
+  sw: {
+    title: "untangle.lol inafanya kazi vipi?",
+    subtitle: "Kutoka wazo hadi mpango wa hatua katika hatua tatu.",
+    steps: [
+      { title: "Andika lengo lako", desc: "Andika unachotaka kufanikisha. Kubwa au ndogo, la kibinafsi au la kitaaluma — yote yako sawa." },
+      { title: "Pata mpango", desc: "AI inaunda mpango wa hatua mahususi na wa kibinafsi wenye hatua wazi." },
+      { title: "Ikamilishe", desc: "Tia alama hatua unapoendelea. Maendeleo yako yanahifadhiwa kiotomatiki." },
+    ],
+    woop: { title: "Mbinu ya WOOP", desc: "Unataka kufikiri kwa kina zaidi? Chagua WOOP kushinda vizuizi vya ndani." },
+    cta: "Anza sasa →",
+  },
+  tr: {
+    title: "untangle.lol nasıl çalışır?",
+    subtitle: "Düşünceden üç adımda eylem planına.",
+    steps: [
+      { title: "Hedefini yaz", desc: "Ne başarmak istediğini yaz. Büyük veya küçük, kişisel veya mesleki — her şey olur." },
+      { title: "Plan al", desc: "AI, net adımlarla somut, kişiselleştirilmiş bir eylem planı oluşturur." },
+      { title: "Tamamla", desc: "İlerledikçe adımları işaretle. İlerlemen otomatik olarak kaydedilir." },
+    ],
+    woop: { title: "WOOP Yöntemi", desc: "Daha derin düşünmek ister misin? İç engelleri aşmak için WOOP'u seç." },
+    cta: "Şimdi başla →",
+  },
+  zh: {
+    title: "untangle.lol 怎么用？",
+    subtitle: "三步从想法到行动计划。",
+    steps: [
+      { title: "输入你的目标", desc: "写下你想实现的事情。大小不限，个人或职业都行——什么都可以。" },
+      { title: "获取计划", desc: "AI 为你生成具体、个性化的行动计划，附带清晰的步骤。" },
+      { title: "完成它", desc: "边进展边勾选步骤。你的进度会自动保存。" },
+    ],
+    woop: { title: "WOOP 方法", desc: "想深入思考？选择 WOOP 来克服内心障碍。" },
+    cta: "立即开始 →",
+  },
+};

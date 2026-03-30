@@ -3,6 +3,10 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import confetti from "canvas-confetti";
 import LANGS from "../lib/langs/index.js";
 import FeedbackWidget from "./FeedbackWidget.jsx";
+import FeedbackPage from "./FeedbackPage.jsx";
+import LegalView from "./LegalView.jsx";
+import DonateView from "./DonateView.jsx";
+import HowItWorksView from "./HowItWorksView.jsx";
 
 const ALTRUISM_BONUS_CREDITS = 2;
 
@@ -27,7 +31,6 @@ const ls = {
 const KEYS = {
   theme:    "untangle_theme",
   dyslexia: "untangle_dyslexia",
-  braille:  "untangle_braille",
   session:  "untangle_session",
   apiKey:   "untangle_apikey",
   recents:  "untangle_recents", // legacy key (not used for new lang-scoped reads)
@@ -43,10 +46,6 @@ const recentsKey=(lang)=>"untangle_recents_"+(lang||"nl");
 
 const FREE_CREDITS = 3;
 
-// ─── Braille Unicode conversion (Grade 1 English Braille) ────────────────────
-const BRAILLE={a:'⠁',b:'⠃',c:'⠉',d:'⠙',e:'⠑',f:'⠋',g:'⠛',h:'⠓',i:'⠊',j:'⠚',k:'⠅',l:'⠇',m:'⠍',n:'⠝',o:'⠕',p:'⠏',q:'⠟',r:'⠗',s:'⠎',t:'⠞',u:'⠥',v:'⠧',w:'⠺',x:'⠭',y:'⠽',z:'⠵','0':'⠚','1':'⠁','2':'⠃','3':'⠉','4':'⠙','5':'⠑','6':'⠋','7':'⠛','8':'⠓','9':'⠊'};
-const toBraille=s=>s.replace(/[a-z0-9]/gi,c=>BRAILLE[c.toLowerCase()]||c);
-const isBrailleText=s=>/[\u2800-\u28FF]/.test(s);
 
 function eKey(email) { return "untangle_hist_" + email.toLowerCase().replace(/[^a-z0-9]/g,"_"); }
 
@@ -84,11 +83,13 @@ const TH = {
   light:{bg:"linear-gradient(135deg,#f8fafc,#e2e8f0,#f8fafc)",card:"#ffffff",cb:"rgba(0,0,0,0.08)",ib:"#fff",ibr:"rgba(0,0,0,0.15)",tx:"#1e293b",tm:"#64748b",tf:"#94a3b8",ac:"#b45309",ag:"linear-gradient(135deg,#f59e0b,#d97706)",ab:"rgba(245,158,11,0.12)",abr:"rgba(245,158,11,0.4)",am:"rgba(245,158,11,0.15)",bt:"#fff",gr:"#16a34a",gb:"rgba(22,163,74,0.06)",gbr:"rgba(22,163,74,0.15)",gt:"#16a34a",eb:"rgba(239,68,68,0.08)",et:"#dc2626",ghb:"rgba(0,0,0,0.03)",ghr:"rgba(0,0,0,0.1)",ckb:"#fff",ckr:"rgba(0,0,0,0.2)",cm:"#fff",dt:"#4d7c56",sb:"rgba(0,0,0,0.015)",sr:"rgba(0,0,0,0.06)",dm:"#94a3b8",sh:"0 2px 8px rgba(0,0,0,0.07),0 1px 2px rgba(0,0,0,0.04)",hp:"rgba(245,158,11,0.06)",hpr:"rgba(245,158,11,0.2)"},
 };
 
-const GS=`@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes heroFade{0%{opacity:0;transform:translateY(6px)}15%{opacity:1;transform:translateY(0)}85%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-6px)}}@keyframes pulse{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.4);opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}@keyframes modalIn{from{opacity:0;transform:translateY(24px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}.sugg-fading{opacity:0;transition:opacity 0.15s ease}.sugg-list{opacity:1;transition:opacity 0.2s ease}@keyframes diceRoll{0%{transform:rotate(0deg) scale(1)}20%{transform:rotate(-30deg) scale(1.3)}50%{transform:rotate(200deg) scale(1.5)}75%{transform:rotate(330deg) scale(1.2)}90%{transform:rotate(350deg) scale(1.05)}100%{transform:rotate(360deg) scale(1)}}.dice-roll{animation:diceRoll 0.6s cubic-bezier(0.25,0.46,0.45,0.94) forwards}@keyframes spinBorder{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}.ta-glow{display:block;position:relative;border-radius:12px;padding:1px;overflow:hidden;isolation:isolate;background:var(--ta-border-color,#d1d5db)}.ta-glow::before{content:"";position:absolute;inset:-100%;width:300%;height:300%;background:conic-gradient(from 0deg,transparent 60%,rgba(250,204,21,0.9) 75%,rgba(254,240,138,1) 80%,rgba(250,204,21,0.9) 85%,transparent 100%);animation:spinBorder 2.4s linear infinite;z-index:0;opacity:1;transition:opacity 0.4s ease}.ta-glow::after{content:"";position:absolute;inset:0;border-radius:12px;background:rgba(250,204,21,0.9);z-index:0;opacity:0;transition:opacity 0.4s ease}.ta-glow-focused::before{opacity:0}.ta-glow-focused::after{opacity:1;animation:glowPulse 2s ease-in-out infinite}@keyframes glowPulse{0%,100%{opacity:1}50%{opacity:0.55}}.ta-glow textarea{position:relative;z-index:1;border:none!important;border-radius:10px;display:block;width:100%;box-sizing:border-box;margin:0}@media(min-width:768px){.uw{max-width:640px!important}.uw h1{font-size:34px!important}.uw h2{font-size:24px!important}.uw label{font-size:17px!important;line-height:1.5!important}.uw p{font-size:16px!important}.uw input,.uw textarea{font-size:18px!important}.uw button{font-size:16px!important}.uw .ci-lbl{font-size:17px!important}.uw .ci-dsc{font-size:15px!important}.bb,.bb button,.bb a,.bb span{font-size:12px!important}.uw .eth-txt,.uw .donate-txt{font-size:15px!important}.uw .altruism-txt{font-size:16px!important}@media(min-width:768px){.nb .nb-logo{font-size:18px!important}.nb .nb-tld{font-size:10px!important}.nb .nb-ico{font-size:24px!important}}}*{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}button:not(:disabled):active{transform:scale(0.97)!important;opacity:0.88!important}`;
+const GS=`@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes heroFade{0%{opacity:0;transform:translateY(6px)}15%{opacity:1;transform:translateY(0)}85%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-6px)}}@keyframes pulse{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.4);opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}@keyframes modalIn{from{opacity:0;transform:translateY(24px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}.sugg-fading{opacity:0;transition:opacity 0.15s ease}.sugg-list{opacity:1;transition:opacity 0.2s ease}@keyframes diceRoll{0%{transform:rotate(0deg) scale(1)}20%{transform:rotate(-30deg) scale(1.3)}50%{transform:rotate(200deg) scale(1.5)}75%{transform:rotate(330deg) scale(1.2)}90%{transform:rotate(350deg) scale(1.05)}100%{transform:rotate(360deg) scale(1)}}.dice-roll{animation:diceRoll 0.6s cubic-bezier(0.25,0.46,0.45,0.94) forwards}@keyframes spinBorder{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}.ta-glow{display:block;position:relative;border-radius:12px;padding:1px;overflow:hidden;isolation:isolate;background:var(--ta-border-color,#d1d5db)}.ta-glow::before{content:"";position:absolute;inset:-100%;width:300%;height:300%;background:conic-gradient(from 0deg,transparent 60%,rgba(250,204,21,0.9) 75%,rgba(254,240,138,1) 80%,rgba(250,204,21,0.9) 85%,transparent 100%);animation:spinBorder 2.4s linear infinite;z-index:0;opacity:1;transition:opacity 0.4s ease}.ta-glow::after{content:"";position:absolute;inset:0;border-radius:12px;background:rgba(250,204,21,0.9);z-index:0;opacity:0;transition:opacity 0.4s ease}.ta-glow-focused::before{opacity:0}.ta-glow-focused::after{opacity:1;animation:glowPulse 2s ease-in-out infinite}@keyframes glowPulse{0%,100%{opacity:1}50%{opacity:0.55}}.ta-glow textarea{position:relative;z-index:1;border:none!important;border-radius:10px;display:block;width:100%;box-sizing:border-box;margin:0}@media(min-width:768px){.uw{max-width:640px!important}.uw h1{font-size:34px!important}.uw h2{font-size:24px!important}.uw label{font-size:17px!important;line-height:1.5!important}.uw p{font-size:16px!important}.uw input,.uw textarea{font-size:18px!important}.uw button{font-size:16px!important}.uw .ci-lbl{font-size:17px!important}.uw .ci-dsc{font-size:15px!important}.bb,.bb button,.bb a,.bb span{font-size:12px!important}.uw .eth-txt,.uw .donate-txt{font-size:15px!important}.uw .altruism-txt{font-size:16px!important}@media(min-width:768px){.nb .nb-logo{font-size:18px!important}.nb .nb-tld{font-size:10px!important}.nb .nb-ico{font-size:24px!important}}}*{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}button:not(:disabled):active{transform:scale(0.97)!important;opacity:0.88!important}@media(max-width:479px){.nb-dy{display:none!important}.nb-login-full{display:none!important}.nb-login-short{display:inline!important}}`;
 
 function tz(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone}catch{return"UTC"}}
 function fmtDate(iso,z,lc){try{return new Date(iso).toLocaleString(lc||undefined,{timeZone:z,day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}catch{return new Date(iso).toLocaleString()}}
 function tAgo(iso,lc){const d=Date.now()-new Date(iso).getTime(),m=Math.floor(d/60000),h=Math.floor(d/3600000),dy=Math.floor(d/86400000);if(lc==="nl"){if(m<60)return m+" min geleden";if(h<24)return h+" uur geleden";return dy===1?"gisteren":dy+" dagen geleden";}if(lc==="ar"){if(m<60)return "منذ "+m+" دقيقة";if(h<24)return "منذ "+h+" ساعة";return dy===1?"أمس":"منذ "+dy+" أيام";}if(m<60)return m+"m ago";if(h<24)return h+"h ago";return dy===1?"yesterday":dy+"d ago";}
+
+const BACK_SVG=<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>;
 
 const LP_ICONS=[
   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.44-3.14A2.5 2.5 0 0 1 9.5 2"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.44-3.14A2.5 2.5 0 0 0 14.5 2"/></svg>,
@@ -123,7 +124,7 @@ function DyTog({on,set,c,label}){
     <button
       onClick={()=>set(!on)}
       title={label||"Dyslexia-friendly font"}
-      style={{background:on?c.ab:c.ghb,border:"1px solid "+(on?c.abr:c.ghr),borderRadius:8,padding:"4px 8px",cursor:"pointer",display:"flex",alignItems:"center",gap:3,color:on?c.ac:c.tm,transition:"background 0.15s,color 0.15s,border-color 0.15s"}}
+      style={{background:on?c.ab:c.ghb,border:"1px solid "+(on?c.abr:c.ghr),borderRadius:8,padding:"5px 8px",cursor:"pointer",display:"flex",alignItems:"center",gap:3,color:on?c.ac:c.tm,transition:"background 0.15s,color 0.15s,border-color 0.15s"}}
     >
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style={{display:"block",flexShrink:0}}>
         <circle cx="8" cy="7" r="5" stroke="currentColor" strokeWidth="1.4"/>
@@ -135,14 +136,14 @@ function DyTog({on,set,c,label}){
     </button>
   );
 }
-function BrTog({on,set,c,label}){
-  return(
-    <button
-      onClick={()=>set(!on)}
-      title={label||"Braille font"}
-      style={{background:on?c.ab:c.ghb,border:"1px solid "+(on?c.abr:c.ghr),borderRadius:8,padding:"5px 8px",cursor:"pointer",lineHeight:1,display:"flex",alignItems:"center",justifyContent:"center",color:on?c.ac:c.tm,transition:"background 0.15s,border-color 0.15s,color 0.15s"}}
-    ><svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor" style={{display:"block"}}><circle cx="3.5" cy="3" r="2"/><circle cx="10.5" cy="3" r="2"/><circle cx="3.5" cy="8" r="2"/><circle cx="10.5" cy="8" r="2"/><circle cx="3.5" cy="13" r="2"/><circle cx="10.5" cy="13" r="2"/></svg></button>
-  );
+function HeroSubtitle({phrases,paused,style}){
+  const [idx,setIdx]=useState(0);
+  useEffect(()=>{
+    if(paused||!phrases||phrases.length<=1)return;
+    const id=setInterval(()=>setIdx(i=>(i+1)%phrases.length),3000);
+    return()=>clearInterval(id);
+  },[phrases,paused]);
+  return<p key={idx} style={style}>{(phrases||[])[idx%((phrases||[]).length||1)]||""}</p>;
 }
 function BrandMark({c,size}){
   const s=size==="large";
@@ -189,8 +190,7 @@ export default function App(){
 
   const [tm,setTm]=useState("system");
   const [dy,setDy]=useState(false);
-  const [br,setBr]=useState(false);
-  const [lang,setLang]=useState(null);
+const [lang,setLang]=useState(null);
   const [auth,setAuth]=useState("out");
   const [user,setUser]=useState(null);
   const [inp,setInp]=useState("");
@@ -218,11 +218,13 @@ export default function App(){
   const [loadingAltruistic,setLoadingAltruistic]=useState(false); // show amber pill on loading screen
   // true when the user hasn't received an altruism bonus in the last 24 hours
   const canEarnAltruismBonus=(()=>{const ts=parseInt(ls.get(KEYS.altruismBonusTs)||"0",10);return(Date.now()-ts)>=24*60*60*1000;})();
-  // Hero subtitle cycling
-  const [heroSIdx,setHeroSIdx]=useState(0);
+  // Hero subtitle cycling handled by HeroSubtitle component
   // Stripe
   const [topUpBusy,setTopUpBusy]=useState(false);
+  const [mollieBusy,setMollieBusy]=useState(false);
+  const [customQty,setCustomQty]=useState(75);
   const [topUpMsg,setTopUpMsg]=useState(null);
+  const [avatarMenu,setAvatarMenu]=useState(false);
   const [topUpPopup,setTopUpPopup]=useState(null); // { credits: N }
   const [clientRef,setClientRef]=useState(null);
   // Revenue
@@ -255,9 +257,6 @@ export default function App(){
     else{clearTimeout(taClearTimer.current);setTaClearConfirm(false);setInp("");}
   };
   const userRef=useRef(null);
-  const brModeRef=useRef(false);
-  const brObsRef=useRef(null);
-  const brOriginalsRef=useRef(new WeakMap());
   const zone=useMemo(()=>tz(),[]);
 
   const t=lang?LANGS.find(l=>l.code===lang)||LANGS[1]:LANGS[1];
@@ -267,39 +266,8 @@ export default function App(){
 
   const chTm=(m)=>{setTm(m);ls.set(KEYS.theme,m);};
   const chDy=(v)=>{setDy(v);ls.set(KEYS.dyslexia,v?"1":"");};
-  const chBr=(v)=>{setBr(v);ls.set(KEYS.braille,v?"1":"");};
 
   useEffect(()=>{document.documentElement.classList.toggle("od",dy);},[dy]);
-  useEffect(()=>{
-    brModeRef.current=br;
-    if(br){
-      const originals=new WeakMap();brOriginalsRef.current=originals;
-      function convertNode(node){
-        if(node.nodeType===Node.TEXT_NODE){
-          const tag=node.parentElement?.tagName;
-          if(tag==='SCRIPT'||tag==='STYLE'||tag==='INPUT'||tag==='TEXTAREA')return;
-          if(!isBrailleText(node.nodeValue)){originals.set(node,node.nodeValue);const b=toBraille(node.nodeValue);if(b!==node.nodeValue)node.nodeValue=b;}
-        }else{node.childNodes.forEach(convertNode);}
-      }
-      convertNode(document.body);
-      const obs=new MutationObserver(mutations=>{
-        if(!brModeRef.current)return;
-        mutations.forEach(m=>{
-          if(m.type==='characterData'){const node=m.target;const val=node.nodeValue;if(!isBrailleText(val)){originals.set(node,val);const b=toBraille(val);if(b!==val)node.nodeValue=b;}}
-          else if(m.type==='childList'){m.addedNodes.forEach(convertNode);}
-        });
-      });
-      obs.observe(document.body,{childList:true,subtree:true,characterData:true});
-      brObsRef.current=obs;
-    }else{
-      brObsRef.current?.disconnect();brObsRef.current=null;
-      const originals=brOriginalsRef.current;
-      function restoreNode(node){if(node.nodeType===Node.TEXT_NODE){if(originals.has(node))node.nodeValue=originals.get(node);}else{node.childNodes.forEach(restoreNode);}}
-      restoreNode(document.body);
-      brOriginalsRef.current=new WeakMap();
-    }
-    document.documentElement.classList.toggle("ob",br);
-  },[br]);
 
   useEffect(()=>{
     const color=rt==="dark"?"#0f172a":"#f8fafc";
@@ -310,7 +278,7 @@ export default function App(){
     document.body.style.background=color;
   },[rt]);
 
-  const VW_HASH={home:'',lang:'lang',dash:'dash',new_goal:'new',woop_input:'woop',byok:'key',no_credits:'credits',manage_auth:'settings',revenue:'revenue'};
+  const VW_HASH={home:'',lang:'lang',dash:'dashboard',new_goal:'new',woop_input:'woop',byok:'key',no_credits:'payment',manage_auth:'settings',feedback:'feedback',terms:'terms',privacy:'privacy',donate:'donate'};
   const HASH_VW=Object.fromEntries(Object.entries(VW_HASH).map(([k,v])=>[v,k]));
 
   // Sync view → URL hash (enables refresh-to-same-page and back button)
@@ -318,16 +286,16 @@ export default function App(){
     if(isPoppingState.current){isPoppingState.current=false;return;}
     if(!ready||vw==='loading'||vw==='splash'||vw==='result')return;
     const h=VW_HASH[vw];if(h===undefined)return;
-    const target=h?'#'+h:'/';
-    if(window.location.hash!==(h?'#'+h:''))window.history.pushState({vw},'',target);
+    const target=h?'/'+h:'/';
+    if(window.location.pathname!==(h?'/'+h:'/'))window.history.pushState({vw},'',target);
   },[vw,ready]);// eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle browser back/forward navigation
   useEffect(()=>{
     const handle=()=>{
       isPoppingState.current=true;
-      const hash=window.location.hash.slice(1);
-      const tv=HASH_VW[hash]||(auth==='in'?'dash':'home');
+      const p=window.location.pathname;
+      const tv=(p==='/'?null:HASH_VW[p.slice(1)])||(auth==='in'?'dash':'home');
       setVw(tv);
     };
     window.addEventListener('popstate',handle);
@@ -344,8 +312,7 @@ export default function App(){
   useEffect(()=>{(async()=>{
     const sv=ls.get(KEYS.theme);if(sv)setTm(sv);
     const dv=ls.get(KEYS.dyslexia);if(dv==="1")setDy(true);
-    const bv=ls.get(KEYS.braille);if(bv==="1")setBr(true);
-    const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
+const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     // recents are loaded per-lang in a separate useEffect below
     const uv=ls.get(KEYS.usage);if(uv){try{setUsage(JSON.parse(uv));}catch{}}
     const cv=ls.get(KEYS.credits);
@@ -368,7 +335,8 @@ export default function App(){
     const authErr=params.get("auth_error")==="1";
     const topupSuccess=params.get("topup")==="success";
     const restoreId=params.get("id");
-    const hashVw=HASH_VW[window.location.hash.slice(1)];
+    const pn=window.location.pathname;
+    const hashVw=pn==='/'?null:HASH_VW[pn.slice(1)];
     if(signedIn||authErr||topupSuccess){window.history.replaceState({},"",window.location.pathname);}
     // Try Google session cookie first
     try{
@@ -387,7 +355,7 @@ export default function App(){
         if(signedIn)utrack("sign_in");
         if(topupSuccess){setTopUpMsg("pending");pollCredits(ref);}
         if(restoreId){const e=parsedHist.find(h=>String(h.id)===restoreId);if(e){setSteps(e.resultaat);setActiveId(e.id);setLocalComp(e.completed||e.resultaat.stappen.map(()=>false));setVw("result");setReady(true);return;}}
-        const AUTH_VWS=["dash","new_goal","woop_input","byok","no_credits","manage_auth","revenue","lang","home","result"];
+        const AUTH_VWS=["dash","new_goal","woop_input","byok","no_credits","manage_auth","lang","result","feedback","terms","privacy","donate"];
         const savedVw=hashVw||ls.get(KEYS.view);
         setVw(savedVw&&AUTH_VWS.includes(savedVw)?savedVw:"dash");setReady(true);return;
       }
@@ -397,7 +365,7 @@ export default function App(){
     setHist(parsedGuestHist);
     if(topupSuccess){setTopUpMsg("pending");pollCredits(ref);}
     if(restoreId){const e=parsedGuestHist.find(h=>String(h.id)===restoreId);if(e){setSteps(e.resultaat);setActiveId(e.id);setLocalComp(e.completed||e.resultaat.stappen.map(()=>false));setVw("result");setReady(true);return;}}
-    const GUEST_VWS=["home","woop_input","byok","no_credits","lang","result"];
+    const GUEST_VWS=["home","woop_input","byok","no_credits","lang","result","feedback","terms","privacy","donate"];
     const savedVwG=hashVw||ls.get(KEYS.view);
     setVw(savedVwG&&GUEST_VWS.includes(savedVwG)?savedVwG:(langSv?"home":"lang"));
     setReady(true);
@@ -463,7 +431,7 @@ export default function App(){
     utrack("sign_out");
     setAuth("out");setUser(null);userRef.current=null;setHist([]);setSteps(null);setInp("");setVw("home");setActiveId(null);setLocalComp([]);
   };
-  const pickLang=(code)=>{setLang(code);ls.set("untangle_lang",code);utrack("language_selected",{lang:code});setVw("home");};
+  const pickLang=(code)=>{setLang(code);ls.set("untangle_lang",code);utrack("language_selected",{lang:code});setVw(auth==="in"?"dash":"home");};
 
   useEffect(()=>{
     if(!lang)return;
@@ -473,14 +441,6 @@ export default function App(){
       .catch(()=>{});
   },[lang]);
 
-  // Cycle heroS phrases when textarea is empty
-  useEffect(()=>{
-    if(inp)return;
-    const phrases=t.heroS;
-    if(!phrases||phrases.length<=1)return;
-    const id=setInterval(()=>setHeroSIdx(i=>(i+1)%phrases.length),3000);
-    return()=>clearInterval(id);
-  },[inp,t]);
 
   // Reset share state when switching entries
   useEffect(()=>{setShareId(null);setShareOpen(false);setShareCopied(false);},[activeId]);
@@ -643,17 +603,31 @@ export default function App(){
   };
 
   // Stripe top-up
-  const startTopUp=async()=>{
-    setTopUpBusy(true);
-    utrack("topup_started");
+  const startTopUp=async(tier='popular',customCredits)=>{
+    setTopUpBusy(tier);
+    utrack("topup_started",{tier});
     try{
       const ref=clientRef||ls.get(KEYS.clientRef);
-      const r=await fetch("/api/stripe/checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientRef:ref})});
+      const r=await fetch("/api/stripe/checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientRef:ref,tier,...(tier==="custom"?{customCredits}:{})})});
       const d=await r.json();
       if(d.url){window.location.href=d.url;}
       else{setTopUpMsg("error");}
     }catch{setTopUpMsg("error");}
     setTopUpBusy(false);
+  };
+
+  // Mollie top-up
+  const startMollieTopUp=async(tier='popular',customCredits)=>{
+    setMollieBusy(tier);
+    utrack("topup_started_mollie",{tier});
+    try{
+      const ref=clientRef||ls.get(KEYS.clientRef);
+      const r=await fetch("/api/mollie/checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientRef:ref,tier,...(tier==="custom"?{customCredits}:{})})});
+      const d=await r.json();
+      if(d.url){window.location.href=d.url;}
+      else{setTopUpMsg("error");}
+    }catch{setTopUpMsg("error");}
+    setMollieBusy(false);
   };
 
   const openEntry=(entry)=>{setSteps(entry.resultaat);setActiveId(entry.id);setLocalComp(entry.completed||entry.resultaat.stappen.map(()=>false));setShareOpen(false);setVw("result");window.history.replaceState(null,'','/?id='+entry.id);};
@@ -807,9 +781,14 @@ export default function App(){
     note:{fontSize:12,color:c.tf,marginTop:8,textAlign:"center"},
     err:{marginTop:10,padding:"10px 14px",background:c.eb,borderRadius:8,color:c.et,fontSize:13},
     stripe:{width:"100%",marginTop:10,padding:"13px 20px",background:"linear-gradient(135deg,#6772e5,#4f46e5)",color:"#fff",border:"none",borderRadius:10,fontSize:15,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8},
+    mollie:{width:"100%",marginTop:8,padding:"13px 20px",background:"linear-gradient(135deg,#ff6640,#e84c20)",color:"#fff",border:"none",borderRadius:10,fontSize:15,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8},
   };
 
-  const Bar=()=>(
+  const Bar=()=>{
+    const {key:_bk}=getCredential();
+    const showCred=!_bk&&credits!==undefined;
+    const lowCred=showCred&&credits<=3;
+    return(
     <div className="nb" dir={dir} style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 16px",paddingTop:"calc(8px + env(safe-area-inset-top))",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+c.cb}}>
       <button onClick={goHome} style={{background:"none",border:"none",padding:0,cursor:"pointer",display:"flex",alignItems:"center",gap:5,flexShrink:0}}>
         <span className="nb-ico" style={{filter:"drop-shadow(0 0 8px "+c.ac+")",lineHeight:1,display:"flex",alignItems:"center",color:c.ac}}><svg width="26" height="16" viewBox="0 0 52 32" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" style={{display:"block"}}><path d="M26 16C24 10 19.5 7 14 7C7.5 7 4 11.5 4 16C4 20.5 7.5 25 14 25C19.5 25 24 22 26 16C28 10 32.5 7 38 7C44.5 7 48 11.5 48 16C48 20.5 44.5 25 38 25C32.5 25 28 22 26 16Z"/></svg></span>
@@ -817,46 +796,61 @@ export default function App(){
         <span className="nb-tld" style={{fontSize:9,fontWeight:500,letterSpacing:"0.15em",color:c.tf,textTransform:"uppercase",lineHeight:1}}>.lol</span>
       </button>
       <div style={{display:"flex",alignItems:"center",gap:8}}>
-        <button onClick={()=>setVw("lang")} title={t.lSel} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:8,padding:"5px 8px",cursor:"pointer",lineHeight:1,display:"flex",alignItems:"center",gap:4,flexShrink:0,color:c.tm,transition:"background 0.15s,border-color 0.15s,color 0.15s"}}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span style={{fontSize:11,fontWeight:600,letterSpacing:"0.03em"}}>{(lang||"en").toUpperCase()}</span></button>
-        {user&&(
-          <button onClick={()=>setVw("manage_auth")} style={{background:"none",border:"none",padding:0,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>
-            {user.picture
-              ?<img src={user.picture} alt={user.name||""} referrerPolicy="no-referrer" style={{width:26,height:26,borderRadius:"50%",border:"1px solid "+c.cb,flexShrink:0}}/>
-              :<div style={{width:26,height:26,borderRadius:"50%",background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"center",justifyContent:"center",color:c.ac}}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-            }
+        {showCred&&(
+          <button onClick={()=>setVw("no_credits")} style={{display:"flex",alignItems:"center",gap:4,background:lowCred?"rgba(239,68,68,0.1)":c.ab,border:"1px solid "+(lowCred?"rgba(239,68,68,0.35)":c.abr),borderRadius:20,padding:"3px 10px 3px 7px",cursor:"pointer",color:lowCred?"#ef4444":c.ac,transition:"background 0.15s,border-color 0.15s",flexShrink:0}}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span style={{fontSize:12,fontWeight:700,lineHeight:1}}>{credits}</span>
           </button>
         )}
+        <button onClick={()=>setVw("lang")} title={t.lSel} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:8,padding:"5px 8px",cursor:"pointer",lineHeight:1,display:"flex",alignItems:"center",gap:4,flexShrink:0,color:c.tm,transition:"background 0.15s,border-color 0.15s,color 0.15s"}}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span style={{fontSize:11,fontWeight:600,letterSpacing:"0.03em"}}>{(lang||"en").toUpperCase()}</span></button>
         <TTog mode={tm} set={chTm} c={c}/>
-        <DyTog on={dy} set={chDy} c={c} label={t.dyslexia||"Dyslexia-friendly font"}/>
-        <BrTog on={br} set={chBr} c={c} label={t.braille||"Braille font"}/>
+        <span className="nb-dy"><DyTog on={dy} set={chDy} c={c} label={t.dyslexia||"Dyslexia-friendly font"}/></span>
+        {!user&&auth!=="in"&&(
+          <button onClick={()=>setVw("manage_auth")} style={{background:c.ab,border:"1px solid "+c.abr,borderRadius:8,padding:"5px 12px",cursor:"pointer",color:c.ac,fontSize:12,fontWeight:700,letterSpacing:"0.01em",fontFamily:"inherit",flexShrink:0,transition:"background 0.15s",whiteSpace:"nowrap"}}><span className="nb-login-full">{t.signIn||"Log in"}</span><span className="nb-login-short" style={{display:"none"}}>Log in</span></button>
+        )}
+        {user&&(
+          <div style={{position:"relative"}}>
+            <button onClick={()=>setAvatarMenu(v=>!v)} style={{background:"none",border:"none",padding:0,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>
+              {user.picture
+                ?<img src={user.picture} alt={user.name||""} referrerPolicy="no-referrer" style={{width:26,height:26,borderRadius:"50%",border:"1px solid "+c.cb,flexShrink:0}}/>
+                :<div style={{width:26,height:26,borderRadius:"50%",background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"center",justifyContent:"center",color:c.ac}}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+              }
+            </button>
+            {avatarMenu&&(
+              <>
+                <div onClick={()=>setAvatarMenu(false)} style={{position:"fixed",inset:0,zIndex:149}}/>
+                <div style={{position:"absolute",top:"calc(100% + 8px)",right:0,zIndex:150,background:rt==="dark"?"rgba(15,23,42,0.98)":"rgba(255,255,255,0.98)",border:"1px solid "+c.cb,borderRadius:10,boxShadow:"0 8px 24px rgba(0,0,0,0.18)",backdropFilter:"blur(12px)",minWidth:160,overflow:"hidden",animation:"fadeIn 0.15s ease"}}>
+                  <button onClick={()=>{setAvatarMenu(false);setVw("no_credits");}} style={{display:"flex",alignItems:"center",gap:8,width:"100%",padding:"10px 14px",background:"none",border:"none",borderBottom:"1px solid "+c.cb,cursor:"pointer",color:c.tx,fontSize:13,fontWeight:500,textAlign:"left",fontFamily:"inherit"}}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0,color:c.ac}}><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    {t.topUp||"Buy questions"}
+                  </button>
+                  <button onClick={()=>{setAvatarMenu(false);setVw("uitleg");}} style={{display:"flex",alignItems:"center",gap:8,width:"100%",padding:"10px 14px",background:"none",border:"none",borderBottom:"1px solid "+c.cb,cursor:"pointer",color:c.tx,fontSize:13,fontWeight:500,textAlign:"left",fontFamily:"inherit"}}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0,color:c.tm}}><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                    {t.howToUse||"How it works"}
+                  </button>
+                  <button onClick={()=>{setAvatarMenu(false);logout();}} style={{display:"flex",alignItems:"center",gap:8,width:"100%",padding:"10px 14px",background:"none",border:"none",cursor:"pointer",color:"#ef4444",fontSize:13,fontWeight:500,textAlign:"left",fontFamily:"inherit"}}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    {t.signOut||t.out||"Log out"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
-  );
+  );};
 
   const BottomBar=()=>{
-    const {key}=getCredential();
-    const showCredits=!key&&credits!==undefined;
-    const low=showCredits&&credits<=3;
     return(
     <div className="bb" dir={dir} style={{position:"fixed",bottom:0,left:0,right:0,paddingBottom:"env(safe-area-inset-bottom)",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderTop:"1px solid "+c.cb,display:"flex",flexDirection:"column",alignItems:"center",zIndex:100}}>
-      <div style={{display:"flex",justifyContent:"center",gap:8,alignItems:"center",padding:"8px 20px",width:"100%",boxSizing:"border-box",flexWrap:"wrap"}}>
-        {/* <AuthBadge c={c} onManage={()=>setVw("manage_auth")} t={t}/> */}
-        {showCredits&&(
-          <button onClick={()=>setVw("manage_auth")} style={{display:"flex",alignItems:"center",gap:5,background:low?"rgba(239,68,68,0.1)":c.ab,border:"1px solid "+(low?"rgba(239,68,68,0.35)":c.abr),borderRadius:20,padding:"4px 12px",cursor:"pointer",fontSize:12,color:low?"#ef4444":c.ac,fontWeight:600,whiteSpace:"nowrap",letterSpacing:"-0.01em",transition:"background 0.15s,border-color 0.15s"}}>
-            {low
-              ?<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              :<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            }<span style={{fontWeight:700}}>{credits}</span><span style={{opacity:0.65,fontWeight:400}}>{" "}{t.cred}</span>
-          </button>
-        )}
-        {topUpMsg==="pending"&&<span style={{fontSize:11,color:c.tm,animation:"pulse 1s infinite"}}>{t.topUpPending}</span>}
-      </div>
-      <div style={{display:"flex",gap:14,justifyContent:"center",paddingBottom:5,alignItems:"center"}}>
-        <a href={"/terms?lang="+(lang||"en")} target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none",transition:"opacity 0.15s",opacity:0.7}}>{t.terms||"Terms"}</a>
-        <a href={"/privacy?lang="+(lang||"en")} target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none",transition:"opacity 0.15s",opacity:0.7}}>{t.privacy||"Privacy"}</a>
+      {topUpMsg==="pending"&&<div style={{padding:"6px 20px 0"}}><span style={{fontSize:11,color:c.tm,animation:"pulse 1s infinite"}}>{t.topUpPending}</span></div>}
+      <div style={{display:"flex",gap:14,justifyContent:"center",paddingTop:8,paddingBottom:5,alignItems:"center"}}>
+        <button onClick={()=>setVw("terms")} style={{fontSize:10,color:c.tf,textDecoration:"none",transition:"opacity 0.15s",opacity:0.7,background:"none",border:"none",cursor:"pointer",padding:0,fontFamily:"inherit"}}>{t.terms||"Terms"}</button>
+        <button onClick={()=>setVw("privacy")} style={{fontSize:10,color:c.tf,textDecoration:"none",transition:"opacity 0.15s",opacity:0.7,background:"none",border:"none",cursor:"pointer",padding:0,fontFamily:"inherit"}}>{t.privacy||"Privacy"}</button>
+        <button onClick={()=>setVw("donate")} style={{fontSize:10,color:c.ac,textDecoration:"none",fontWeight:600,transition:"opacity 0.15s",display:"inline-flex",alignItems:"center",gap:3,background:"none",border:"none",cursor:"pointer",padding:0,fontFamily:"inherit"}}><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style={{display:"block",flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>{t.donate||"Donate"}</button>
         <a href="https://stats.fabrikage.nl/share/AE078t90MeCuVl4I" target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none",transition:"opacity 0.15s",opacity:0.7}}>{t.stats||"Stats"}</a>
-        <a href={"/donate?lang="+(lang||"nl")} style={{fontSize:10,color:c.ac,textDecoration:"none",fontWeight:600,transition:"opacity 0.15s",display:"inline-flex",alignItems:"center",gap:3}}><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style={{display:"block",flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>{t.donate||"Donate"}</a>
-        <button onClick={()=>{setVw("revenue");if(revenueTxns.length===0)loadRevenue();}} style={{fontSize:10,color:c.tf,background:"none",border:"none",cursor:"pointer",padding:0,fontFamily:"inherit",opacity:0.7,transition:"opacity 0.15s"}}>{t.revenue||"Revenue"}</button>
+        <button onClick={()=>setVw("feedback")} style={{fontSize:10,color:c.tf,textDecoration:"none",background:"none",border:"none",padding:0,cursor:"pointer",opacity:0.7,transition:"opacity 0.15s",fontFamily:"inherit"}}>{t.fbTitle||"Feedback"}</button>
       </div>
       <div style={{paddingBottom:8}}><a href="https://bachsoftware.nl" target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none",opacity:0.38,letterSpacing:"0.01em"}}>Mogelijk gemaakt door Bach Software</a></div>
     </div>
@@ -864,7 +858,6 @@ export default function App(){
 
   const Err=()=>err?(<div style={sx.err}>{err}</div>):null;
 
-  const cyclePh=(()=>{const ps_=t.phSugg||[];const as_=t.altruisticSugg||[];const pool=[];for(let i=0;i<Math.max(ps_.length,as_.length);i++){if(i<ps_.length)pool.push(ps_[i]);if(i<as_.length)pool.push(as_[i]);}return pool.length>0?pool[heroSIdx%pool.length]:t.ph;})();
 
   if(!ready)return (<div style={{minHeight:"100dvh",background:c.bg}}><style>{GS}</style></div>);
 
@@ -949,7 +942,7 @@ export default function App(){
         )}
         <p style={{fontSize:11,color:c.tf,textAlign:"center",marginTop:24,lineHeight:1.5}}>
           {t.analyticsNote}{" "}
-          <a href={"/privacy?lang="+(lang||"en")} target="_blank" rel="noreferrer" style={{color:c.tf,textDecoration:"underline"}}>{t.privacy}</a>
+          <button onClick={()=>setVw("privacy")} style={{color:c.tf,textDecoration:"underline",background:"none",border:"none",cursor:"pointer",padding:0,fontFamily:"inherit",fontSize:"inherit"}}>{t.privacy}</button>
         </p>
       <BottomBar/><style>{GS}</style></div></div>
     )}
@@ -985,29 +978,109 @@ export default function App(){
       <BottomBar/><style>{GS}</style></div></div>
     )}
 
-    {vw==="no_credits"&&(
-      <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
-        <div style={{...sx.cd,textAlign:"center",padding:"32px 24px"}}>
-          <div style={{marginBottom:12,display:"flex",justifyContent:"center",color:c.ac}}><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-          <h2 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"0 0 8px"}}>{t.credOut}</h2>
-          <p style={{fontSize:14,color:c.tm,lineHeight:1.6,margin:"0 0 20px"}}>{t.credOutMsg}</p>
-          <button onClick={startTopUp} disabled={topUpBusy} style={sx.stripe}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>{topUpBusy?"...":t.topUpBtn} <span style={{opacity:0.7,fontSize:12}}>({t.topUpDesc})</span>
-          </button>
-          {/* <button onClick={()=>setVw("byok")} style={sx.bo}>{t.credByok}</button> */}
-          <button onClick={()=>setVw(auth==="in"?"dash":"home")} style={sx.bg}>{t.back}</button>
-          <a href={"/donate?lang="+(lang||"nl")} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:4,textAlign:"center",marginTop:16,fontSize:13,color:c.ac,textDecoration:"none",fontWeight:600}}><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style={{display:"block",flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>{t.donate||"Donate"}</a>
-        </div>
-      <BottomBar/><style>{GS}</style></div></div>
-    )}
+    {vw==="no_credits"&&(()=>{
+      const TIERS=[
+        {id:"starter",credits:10,price:"€2.50", perQ:"€0.25",label:t.tierStarter||"Starter",popular:false},
+        {id:"popular",credits:25,price:"€6.25", perQ:"€0.25",label:t.tierPopular||"Popular",popular:true},
+        {id:"power",  credits:50,price:"€12.50",perQ:"€0.25",label:t.tierPower||"Power",popular:false},
+      ];
+      const safeQty=Math.max(50,Math.floor(customQty)||50);
+      const customPrice="€"+(safeQty*0.25).toFixed(2);
+      const busy=topUpBusy||mollieBusy;
+      // Login wall
+      if(auth!=="in") return (
+        <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
+          <div style={{...sx.cd,textAlign:"center",padding:"40px 24px",display:"flex",flexDirection:"column",alignItems:"center",gap:16}}>
+            <div style={{width:56,height:56,borderRadius:16,background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"center",justifyContent:"center",color:c.ac}}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div>
+              <h2 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"0 0 6px"}}>{t.payLoginRequired||"Sign in to buy questions"}</h2>
+              <p style={{fontSize:14,color:c.tm,lineHeight:1.6,margin:0}}>{t.payLoginDesc||"Create a free account to purchase questions and keep them across devices."}</p>
+            </div>
+            <a href="/api/auth/google" style={{display:"inline-flex",alignItems:"center",gap:10,padding:"12px 24px",background:c.card,border:"1px solid "+c.cb,borderRadius:10,fontSize:14,fontWeight:600,color:c.tx,textDecoration:"none",marginTop:4}}>
+              <svg width="16" height="16" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+              {t.signIn}
+            </a>
+            <button onClick={()=>setVw("home")} style={{...sx.bg,marginTop:0}}>{t.back}</button>
+          </div>
+        <BottomBar/><style>{GS}</style></div></div>
+      );
+      return (
+        <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
+          <div style={{paddingBottom:24}}>
+            {/* Header */}
+            <div style={{textAlign:"center",padding:"28px 16px 20px"}}>
+              <h1 style={{fontSize:22,fontWeight:800,color:c.tx,margin:"0 0 6px",letterSpacing:"-0.03em"}}>{t.payTitle||"Get more questions"}</h1>
+              <p style={{fontSize:13,color:c.tm,margin:0}}>{t.paySubtitle||"Each question generates a complete AI action plan"}</p>
+            </div>
+            {/* Tier cards */}
+            <div style={{display:"flex",flexDirection:"column",gap:10,padding:"0 0 4px"}}>
+              {TIERS.map(tier=>(
+                <div key={tier.id} style={{position:"relative",borderRadius:14,border:"2px solid "+(tier.popular?c.abr:c.cb),background:tier.popular?c.ab:c.card,padding:"18px 20px",overflow:"hidden",transition:"border-color 0.15s"}}>
+                  {tier.popular&&<div style={{position:"absolute",top:0,right:0,background:c.ac,color:rt==="dark"?"#0f172a":"#fff",fontSize:10,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",padding:"4px 10px",borderRadius:"0 12px 0 8px"}}>{t.tierBadge||"Most popular"}</div>}
+                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
+                    <div>
+                      <div style={{fontSize:11,fontWeight:600,letterSpacing:"0.08em",textTransform:"uppercase",color:tier.popular?c.ac:c.tf,marginBottom:3}}>{tier.label}</div>
+                      <div style={{display:"flex",alignItems:"baseline",gap:6}}>
+                        <span style={{fontSize:32,fontWeight:800,color:c.tx,letterSpacing:"-0.04em",lineHeight:1}}>{tier.credits}</span>
+                        <span style={{fontSize:13,color:c.tm,fontWeight:500}}>{t.cred||"questions"}</span>
+                      </div>
+                    </div>
+                    <div style={{textAlign:"right"}}>
+                      <div style={{fontSize:26,fontWeight:800,color:tier.popular?c.ac:c.tx,letterSpacing:"-0.03em",lineHeight:1}}>{tier.price}</div>
+                      <div style={{fontSize:11,color:c.tf,marginTop:3}}>{tier.perQ} {t.perQ||"/ question"}</div>
+                    </div>
+                  </div>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                    <button onClick={()=>startTopUp(tier.id)} disabled={!!busy} style={{padding:"10px 8px",background:topUpBusy===tier.id?"rgba(103,114,229,0.8)":"linear-gradient(135deg,#6772e5,#4f46e5)",color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:600,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,opacity:busy&&topUpBusy!==tier.id?0.5:1,transition:"opacity 0.15s"}}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                      {topUpBusy===tier.id?"...":"Card"}
+                    </button>
+                    <button onClick={()=>startMollieTopUp(tier.id)} disabled={!!busy} style={{padding:"10px 8px",background:mollieBusy===tier.id?"rgba(232,76,32,0.8)":"linear-gradient(135deg,#ff6640,#e84c20)",color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:600,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,opacity:busy&&mollieBusy!==tier.id?0.5:1,transition:"opacity 0.15s"}}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                      {mollieBusy===tier.id?"...":"iDEAL"}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Custom tier */}
+            <div style={{borderRadius:14,border:"2px solid "+c.cb,background:c.card,padding:"18px 20px"}}>
+              <div style={{fontSize:11,fontWeight:600,letterSpacing:"0.08em",textTransform:"uppercase",color:c.tf,marginBottom:10}}>{t.tierCustom||"Custom"}</div>
+              <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
+                <div style={{flex:1}}>
+                  <label style={{fontSize:12,color:c.tm,display:"block",marginBottom:4}}>{t.tierCustomLabel||"Number of questions (min. 50)"}</label>
+                  <input type="number" min="50" step="5" value={customQty} onChange={e=>setCustomQty(Math.max(50,parseInt(e.target.value)||50))} style={{width:"100%",boxSizing:"border-box",background:c.sb,border:"1px solid "+c.cb,borderRadius:8,padding:"9px 12px",fontSize:16,fontWeight:700,color:c.tx,outline:"none"}}/>
+                </div>
+                <div style={{textAlign:"right",flexShrink:0}}>
+                  <div style={{fontSize:26,fontWeight:800,color:c.tx,letterSpacing:"-0.03em",lineHeight:1}}>{customPrice}</div>
+                  <div style={{fontSize:11,color:c.tf,marginTop:3}}>€0.25 {t.perQ||"/ question"}</div>
+                </div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                <button onClick={()=>startTopUp("custom",safeQty)} disabled={!!busy} style={{padding:"10px 8px",background:topUpBusy==="custom"?"rgba(103,114,229,0.8)":"linear-gradient(135deg,#6772e5,#4f46e5)",color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:600,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,opacity:busy&&topUpBusy!=="custom"?0.5:1,transition:"opacity 0.15s"}}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                  {topUpBusy==="custom"?"...":"Card"}
+                </button>
+                <button onClick={()=>startMollieTopUp("custom",safeQty)} disabled={!!busy} style={{padding:"10px 8px",background:mollieBusy==="custom"?"rgba(232,76,32,0.8)":"linear-gradient(135deg,#ff6640,#e84c20)",color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:600,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,opacity:busy&&mollieBusy!=="custom"?0.5:1,transition:"opacity 0.15s"}}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                  {mollieBusy==="custom"?"...":"iDEAL"}
+                </button>
+              </div>
+            </div>
+            <p style={{textAlign:"center",fontSize:11,color:c.tf,margin:"12px 0 0"}}>🔒 {t.paySecure||"Secure payment via Stripe & Mollie"}</p>
+            <button onClick={()=>setVw(auth==="in"?"dash":"home")} style={{...sx.bg,marginTop:12}}>{t.back}</button>
+          </div>
+        <BottomBar/><style>{GS}</style></div></div>
+      );
+    })()}
 
     {vw==="manage_auth"&&(()=>{
-      const {key,provider}=getCredential();
-      const providerLabel=provider==="openrouter"?"OpenRouter":"Anthropic";
-      const resetUsage=()=>{const z={calls:0,inputTokens:0,outputTokens:0,costUsd:0};setUsage(z);ls.del(KEYS.usage);};
+      const {key}=getCredential();
       return(
         <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
-          <div style={{textAlign:"center",marginBottom:24}}><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:0}}>{t.chAuth}</h1></div>
+          <div style={{textAlign:"center",marginBottom:24}}><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:0}}>{t.settingsTitle||"Account & questions"}</h1></div>
           <div style={sx.cd}>
             {/* Google profile card or sign-in */}
             {auth==="in"&&user?(
@@ -1029,50 +1102,21 @@ export default function App(){
               </div>
             )}
             {/* Credits balance */}
-            {!key&&<div style={{padding:"16px",background:c.hp,border:"1px solid "+c.hpr,borderRadius:12,marginBottom:12}}>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
-                <div>
-                  <div style={{fontSize:12,color:c.tm,fontWeight:500,marginBottom:4,display:"flex",alignItems:"center",gap:4}}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>{t.credFree}</div>
-                  <div style={{fontSize:28,fontWeight:800,color:credits<=3?"#ef4444":c.tx,lineHeight:1}}>{credits}</div>
-                  <div style={{fontSize:11,color:c.tf,marginTop:2}}>{t.cred}</div>
-                </div>
-                <div style={{textAlign:"right"}}>
-                  <div style={{fontSize:11,color:c.tm,marginBottom:8}}>{t.topUpDesc}</div>
-                  <button onClick={startTopUp} disabled={topUpBusy} style={{...sx.stripe,width:"auto",marginTop:0,padding:"9px 14px",fontSize:13}}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>{topUpBusy?"...":t.topUpBtn}
-                  </button>
-                </div>
+            {!key&&<div style={{padding:"16px",background:c.hp,border:"1px solid "+c.hpr,borderRadius:12,marginBottom:12,display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+              <div>
+                <div style={{fontSize:13,color:c.tm,fontWeight:500,marginBottom:4}}>{t.cred||"questions"}</div>
+                <div style={{display:"flex",alignItems:"baseline",gap:6}}><span style={{fontSize:36,fontWeight:800,color:credits<=3?"#ef4444":c.ac,lineHeight:1}}>{credits}</span><span style={{fontSize:13,color:credits<=3?"#ef4444":c.tm,fontWeight:500}}>{t.remaining||"remaining"}</span></div>
               </div>
+              <button onClick={()=>setVw("no_credits")} style={{...sx.stripe,width:"auto",marginTop:0,padding:"10px 16px",fontSize:13,flexShrink:0}}>
+                {t.topUp||"Buy questions"} →
+              </button>
             </div>}
             {/* API key card hidden — BYOK temporarily disabled
             {key&&<div style={{padding:"14px 16px",background:c.ab,borderRadius:10,marginBottom:12}}>
               <div style={{fontSize:13,color:c.tm,marginBottom:4}}>{t.apiKeyBadge} · <span style={{fontWeight:600,color:c.ac}}>{providerLabel}</span></div>
               <div style={{fontSize:14,fontWeight:500,color:c.ac,fontFamily:"monospace"}}>{key.slice(0,14)}…</div>
             </div>} */}
-            {/* Usage stats */}
-            <div style={{padding:"14px 16px",background:c.sb,border:"1px solid "+c.sr,borderRadius:10,marginBottom:12}}>
-              <div style={{fontSize:13,fontWeight:600,color:c.tm,marginBottom:10}}>{t.usageStat}</div>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-                <div style={{background:c.card,borderRadius:8,padding:"10px 12px",border:"1px solid "+c.cb}}>
-                  <div style={{fontSize:11,color:c.tf,marginBottom:2}}>{t.apiCalls}</div>
-                  <div style={{fontSize:20,fontWeight:700,color:c.tx}}>{usage.calls}</div>
-                </div>
-                <div style={{background:c.card,borderRadius:8,padding:"10px 12px",border:"1px solid "+c.cb}}>
-                  <div style={{fontSize:11,color:c.tf,marginBottom:2}}>{t.estCost}</div>
-                  <div style={{fontSize:20,fontWeight:700,color:c.ac}}>{fmtCost(usage.costUsd)}</div>
-                </div>
-                <div style={{background:c.card,borderRadius:8,padding:"10px 12px",border:"1px solid "+c.cb}}>
-                  <div style={{fontSize:11,color:c.tf,marginBottom:2}}>{t.inputTok}</div>
-                  <div style={{fontSize:16,fontWeight:600,color:c.tx}}>{usage.inputTokens.toLocaleString()}</div>
-                </div>
-                <div style={{background:c.card,borderRadius:8,padding:"10px 12px",border:"1px solid "+c.cb}}>
-                  <div style={{fontSize:11,color:c.tf,marginBottom:2}}>{t.outputTok}</div>
-                  <div style={{fontSize:16,fontWeight:600,color:c.tx}}>{usage.outputTokens.toLocaleString()}</div>
-                </div>
-              </div>
-              <button onClick={resetUsage} style={{...sx.bg,marginTop:10,fontSize:12,padding:"8px 14px"}}>{t.resetStats}</button>
-            </div>
-            {/* BYOK buttons hidden — temporarily disabled
+{/* BYOK buttons hidden — temporarily disabled
             <button onClick={()=>setVw("byok")} style={sx.bo}>{t.apiKeyBadge}</button>
             <button onClick={removeAuth} style={{...sx.bg,color:"#ef4444",borderColor:"rgba(239,68,68,0.3)",marginTop:12}}>{t.rmKey}</button>
             */}
@@ -1086,7 +1130,7 @@ export default function App(){
 
     {(vw==="home"||vw==="new_goal")&&auth!=="in"&&(
       <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
-        <div style={{textAlign:"center",marginTop:48,marginBottom:16}}><h1 style={{fontSize:26,fontWeight:700,color:c.tx,margin:0}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:14,marginTop:4,animation:"heroFade 3s ease forwards",minHeight:"1.4em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
+        <div style={{textAlign:"center",marginTop:48,marginBottom:16}}><h1 style={{fontSize:26,fontWeight:700,color:c.tx,margin:0}}>{t.hero}</h1><HeroSubtitle phrases={t.heroS} paused={!!inp} style={{color:c.tm,fontSize:14,marginTop:4,animation:"heroFade 3s ease forwards",minHeight:"1.4em"}}/></div>
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginBottom:10}}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{display:"block",flexShrink:0,color:c.gt}}>
             <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5"/>
@@ -1146,7 +1190,7 @@ export default function App(){
 
     {vw==="dash"&&(
       <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
-        <div style={{textAlign:"center",marginTop:20,marginBottom:20}}><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:0}}>{t.dW}</h1><p style={{color:c.tm,fontSize:13,marginTop:2}}>{t.dS}</p></div>
+        <div style={{textAlign:"center",marginTop:20,marginBottom:20}}><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:0}}>{user?.name?(t.dWName||"Welcome back, {name}!").replace("{name}",user.name.split(" ")[0]):t.dW}</h1><p style={{color:c.tm,fontSize:13,marginTop:2}}>{t.dS}</p></div>
         <button onClick={()=>setVw("new_goal")} style={{...sx.bo,marginTop:0,marginBottom:16}}>{t.nG}</button>
         {hist.length===0?(<div style={{...sx.cd,textAlign:"center",padding:40}}><div style={{marginBottom:10,display:"flex",justifyContent:"center",color:c.ac,filter:"drop-shadow(0 0 8px "+c.ac+")"}}><svg width="40" height="24" viewBox="0 0 52 32" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M26 16C24 10 19.5 7 14 7C7.5 7 4 11.5 4 16C4 20.5 7.5 25 14 25C19.5 25 24 22 26 16C28 10 32.5 7 38 7C44.5 7 48 11.5 48 16C48 20.5 44.5 25 38 25C32.5 25 28 22 26 16Z"/></svg></div><p style={{color:c.tf,margin:0}}>{t.noG}</p></div>):(
           <div style={{display:"flex",flexDirection:"column",gap:10}}>{hist.map((h,i)=>{const p=prog(h);return(
@@ -1171,7 +1215,7 @@ export default function App(){
 
     {vw==="new_goal"&&auth==="in"&&(
       <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
-        <div style={{textAlign:"center",marginTop:48,marginBottom:16}}><h1 style={{fontSize:22,fontWeight:700,color:c.tx,margin:0}}>{t.hero}</h1><p key={heroSIdx} style={{color:c.tm,fontSize:13,marginTop:2,animation:"heroFade 3s ease forwards",minHeight:"1.3em"}}>{(t.heroS||[])[heroSIdx%((t.heroS||[]).length||1)]||""}</p></div>
+        <div style={{textAlign:"center",marginTop:48,marginBottom:16}}><h1 style={{fontSize:22,fontWeight:700,color:c.tx,margin:0}}>{t.hero}</h1><HeroSubtitle phrases={t.heroS} paused={!!inp} style={{color:c.tm,fontSize:13,marginTop:2,animation:"heroFade 3s ease forwards",minHeight:"1.3em"}}/></div>
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginBottom:10}}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{display:"block",flexShrink:0,color:c.gt}}>
             <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5"/>
@@ -1340,35 +1384,53 @@ export default function App(){
       const curVal=woopData[curKey]||"";
       const isLast=woopStep===3;
       const allFilled=woopData.wish.trim()&&woopData.outcome.trim()&&woopData.obstacle.trim()&&woopData.plan.trim();
+      const STEP_NUMS=["I","II","III","IV"];
       const WOOP_ICONS=[
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{display:"block"}}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/><path d="M20 3v4"/><path d="M22 5h-4"/></svg>,
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>,
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{display:"block"}}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>,
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>,
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
       ];
       return(
         <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
-          <div style={{textAlign:"center",marginBottom:20}}>
-            <h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"0 0 2px"}}>{t.woopTitle||"WOOP Method"}</h1>
-            <p style={{color:c.tm,fontSize:13,margin:0,lineHeight:1.5,maxWidth:380,marginInline:"auto"}}>{t.woopSub||""}</p>
-            <a href="https://woopmylife.org/en/science" target="_blank" rel="noopener noreferrer" style={{color:c.ac,fontSize:12,marginTop:4,display:"inline-block",textDecoration:"none",opacity:0.8}}>{t.woopLink||"Learn about the science"} ↗</a>
+
+          {/* Header */}
+          <div style={{marginBottom:18}}>
+            <div style={{display:"flex",alignItems:"baseline",gap:8,marginBottom:4}}>
+              <h1 style={{fontSize:18,fontWeight:800,color:c.tx,margin:0,letterSpacing:"-0.03em"}}>{t.woopTitle||"WOOP"}</h1>
+              <a href="https://woopmylife.org/en/science" target="_blank" rel="noopener noreferrer" style={{color:c.ac,fontSize:10,textDecoration:"none",opacity:0.75,letterSpacing:"0.05em",fontWeight:600}}>{t.woopLink||"science ↗"}</a>
+            </div>
+            <p style={{color:c.tf,fontSize:12,margin:0,lineHeight:1.5}}>{t.woopSub||""}</p>
           </div>
-          {/* Step progress dots */}
-          <div style={{display:"flex",justifyContent:"center",gap:10,marginBottom:20}}>
-            {[0,1,2,3].map(i=>(
-              <button key={i} onClick={()=>setWoopStep(i)} style={{width:i===woopStep?48:10,height:10,borderRadius:5,background:i<woopStep?c.gr:i===woopStep?c.ac:c.ghr,border:"none",cursor:"pointer",transition:"all 0.3s",padding:0,display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden"}}>
-                {i===woopStep&&<span style={{fontSize:9,fontWeight:700,color:c.bt,whiteSpace:"nowrap",paddingInline:6}}>{(labels[i]||"").toUpperCase()}</span>}
-              </button>
-            ))}
+
+          {/* Chapter-style progress bar */}
+          <div style={{display:"flex",gap:4,marginBottom:20,alignItems:"stretch"}}>
+            {[0,1,2,3].map(i=>{
+              const done=i<woopStep;
+              const active=i===woopStep;
+              return(
+                <button key={i} onClick={()=>setWoopStep(i)} style={{flex:active?2:done?1:1,height:36,borderRadius:8,border:"1px solid "+(active?c.abr:done?c.gbr:c.cb),background:active?c.ab:done?c.gb:"transparent",cursor:"pointer",padding:"0 8px",display:"flex",alignItems:"center",justifyContent:active?"space-between":"center",gap:4,transition:"all 0.25s ease",overflow:"hidden",minWidth:0}}>
+                  <span style={{fontSize:9,fontWeight:800,color:active?c.ac:done?c.gr:c.tf,letterSpacing:"0.08em",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{active?labels[i].toUpperCase():done?"✓":""}</span>
+                  {active&&<span style={{fontSize:16,fontWeight:900,color:c.ac,opacity:0.35,fontVariantNumeric:"tabular-nums",lineHeight:1,flexShrink:0}}>{STEP_NUMS[i]}</span>}
+                </button>
+              );
+            })}
           </div>
-          <div style={{...sx.cd,animation:"fadeIn 0.3s ease"}}>
-            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
-              <div style={{width:36,height:36,borderRadius:10,background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"center",justifyContent:"center",color:c.ac,flexShrink:0}}>{WOOP_ICONS[woopStep]}</div>
-              <div>
-                <div style={{fontSize:16,fontWeight:700,color:c.tx}}>{labels[woopStep]}</div>
-                <div style={{fontSize:12,color:c.tm,lineHeight:1.4}}>{woopStep===3?(hints[3]||"").replace(/\[obstacle\]|\[obstakel\]|\[Hindernis\]|\[obstacle\]|\[obstáculo\]|\[障碍\]|\[बाधा\]|\[obstáculo\]|\[العقبة\]|\[engel\]|\[障害\]|\[hambatan\]|\[engel\]|\[engel\]/gi,woopData.obstacle||"...").replace(/\[action\]|\[actie\]|\[Aktion\]|\[action\]|\[acción\]|\[行动\]|\[कार्य\]|\[ação\]|\[الإجراء\]|\[eylem\]|\[行動\]|\[tindakan\]|\[действие\]|\[কর্ম\]|\[hatua\]/gi,woopData.plan||"..."):hints[woopStep]}</div>
+
+          {/* Main card */}
+          <div style={{...sx.cd,position:"relative",overflow:"hidden",animation:"fadeIn 0.3s ease"}}>
+            {/* Ghost numeral */}
+            <div style={{position:"absolute",top:-8,right:8,fontSize:96,fontWeight:900,color:c.ac,opacity:0.045,lineHeight:1,pointerEvents:"none",userSelect:"none",letterSpacing:"-0.05em"}}>{STEP_NUMS[woopStep]}</div>
+
+            {/* Step header */}
+            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14,position:"relative"}}>
+              <div style={{width:32,height:32,borderRadius:8,background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"center",justifyContent:"center",color:c.ac,flexShrink:0}}>{WOOP_ICONS[woopStep]}</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:15,fontWeight:800,color:c.tx,letterSpacing:"-0.02em"}}>{labels[woopStep]}</div>
+                <div style={{fontSize:11,color:c.tm,lineHeight:1.4,marginTop:1}}>{woopStep===3?(hints[3]||"").replace(/\[obstacle\]|\[obstakel\]|\[Hindernis\]|\[obstacle\]|\[obstáculo\]|\[障碍\]|\[बाधा\]|\[obstáculo\]|\[العقبة\]|\[engel\]|\[障害\]|\[hambatan\]|\[engel\]|\[engel\]/gi,woopData.obstacle||"...").replace(/\[action\]|\[actie\]|\[Aktion\]|\[action\]|\[acción\]|\[行动\]|\[कार्य\]|\[ação\]|\[الإجراء\]|\[eylem\]|\[行動\]|\[tindakan\]|\[действие\]|\[কর্ম\]|\[hatua\]/gi,woopData.plan||"..."):hints[woopStep]}</div>
               </div>
             </div>
+
             <HoneypotField/>
             <textarea
               key={woopStep}
@@ -1381,15 +1443,16 @@ export default function App(){
               autoFocus
             />
             {err&&<div style={sx.err}>{err}</div>}
-            <div style={{display:"flex",gap:10,marginTop:14,width:"100%"}}>
+
+            <div style={{display:"flex",gap:8,marginTop:12,width:"100%"}}>
               {woopStep>0&&(
-                <button onClick={()=>{setErr(null);setWoopStep(s=>s-1);}} style={{...sx.bg,marginTop:0,width:"auto",flex:"0 0 auto",padding:"13px 16px"}}>
-                  {t.back||"← Back"}
+                <button onClick={()=>{setErr(null);setWoopStep(s=>s-1);}} style={{...sx.bg,marginTop:0,width:"auto",flex:"0 0 auto",padding:"13px 14px"}}>
+                  {BACK_SVG}
                 </button>
               )}
               {!isLast?(
                 <button onClick={()=>{if(curVal.trim())setWoopStep(s=>s+1);}} disabled={!curVal.trim()} style={curVal.trim()?{...sx.bo,marginTop:0,flex:1}:{...sx.bd,marginTop:0,flex:1}}>
-                  {labels[woopStep+1]||"Next"} →
+                  {labels[woopStep+1]} →
                 </button>
               ):(
                 <button onClick={submitWoop} disabled={busy||!allFilled} style={busy||!allFilled?{...sx.bd,marginTop:0,flex:1}:{...sx.bo,marginTop:0,flex:1}}>
@@ -1398,81 +1461,49 @@ export default function App(){
               )}
             </div>
           </div>
-          {/* Summary of completed steps */}
+
+          {/* Completed steps summary */}
           {woopStep>0&&(
-            <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:6}}>
+            <div style={{marginTop:10,display:"flex",flexDirection:"column",gap:5}}>
               {woopKeys.slice(0,woopStep).map((k,i)=>woopData[k]&&(
-                <div key={k} style={{padding:"8px 12px",borderRadius:8,background:c.gb,border:"1px solid "+c.gbr,display:"flex",gap:8,alignItems:"flex-start"}}>
-                  <span style={{fontSize:14,flexShrink:0}}>{WOOP_ICONS[i]}</span>
-                  <div>
-                    <div style={{fontSize:11,fontWeight:600,color:c.gr,marginBottom:2}}>{labels[i]}</div>
-                    <div style={{fontSize:12,color:c.tm,lineHeight:1.4}}>{woopData[k]}</div>
+                <div key={k} onClick={()=>setWoopStep(i)} style={{padding:"8px 12px",borderRadius:8,background:c.gb,border:"1px solid "+c.gbr,display:"flex",gap:8,alignItems:"flex-start",cursor:"pointer"}}>
+                  <span style={{color:c.gr,flexShrink:0,marginTop:1}}>{WOOP_ICONS[i]}</span>
+                  <div style={{minWidth:0}}>
+                    <div style={{fontSize:10,fontWeight:700,color:c.gr,marginBottom:1,letterSpacing:"0.05em"}}>{labels[i].toUpperCase()}</div>
+                    <div style={{fontSize:12,color:c.tm,lineHeight:1.4,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{woopData[k]}</div>
                   </div>
                 </div>
               ))}
             </div>
           )}
-          <button onClick={()=>{setErr(null);setVw(auth==="in"?"new_goal":"home");}} style={{...sx.bg,marginTop:12}}>{t.back||"← Back"}</button>
+
+          <button onClick={()=>{setErr(null);setVw(auth==="in"?"new_goal":"home");}} style={{...sx.bg,marginTop:10}}><span style={{display:"flex",alignItems:"center",gap:5,justifyContent:"center"}}>{BACK_SVG}{t.back||"Back"}</span></button>
         <BottomBar/><style>{GS}</style></div></div>
       );
     })()}
 
-    {vw==="revenue"&&(()=>{
-      const fmtAmt=(cents,cur)=>{
-        const abs=Math.abs(cents/100);
-        const sym=cur==="eur"?"€":cur==="usd"?"$":cur.toUpperCase()+" ";
-        return (cents<0?"-":"")+sym+abs.toFixed(2);
-      };
-      const CARD_IC=<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>;
-      const TYPE_ICON={
-        charge:CARD_IC,payment:CARD_IC,
-        payout:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
-        refund:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.67"/></svg>,
-        adjustment:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 1.66 13.6M4.93 19.07A10 10 0 0 1 3.27 5.47"/><path d="m17.66 17.66-1.41-1.41M7.76 7.76 6.34 6.34M14.83 9.17l1.41-1.41M9.17 14.83l-1.41 1.41"/></svg>,
-        stripe_fee:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>,
-      };
-      const totalNet=revenueTxns.filter(t=>t.type==="charge"||t.type==="payment").reduce((s,t)=>s+t.net,0);
-      const cur=revenueTxns[0]?.currency||"eur";
-      return(
-        <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
-          <div style={{textAlign:"center",marginBottom:20}}><h1 style={{fontSize:20,fontWeight:700,color:c.tx,margin:0}}>{t.revenue||"Revenue"}</h1></div>
-          {revenueTxns.length>0&&(
-            <div style={{...sx.cd,marginBottom:12,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-              <span style={{fontSize:13,color:c.tm,fontWeight:500}}>{t.revTotal||"Total income"}</span>
-              <span style={{fontSize:22,fontWeight:800,color:c.gr}}>{fmtAmt(totalNet,cur)}</span>
-            </div>
-          )}
-          <div style={{display:"flex",flexDirection:"column",gap:8}}>
-            {revenueTxns.length===0&&!revenueBusy&&(
-              <div style={{...sx.cd,textAlign:"center",padding:40,color:c.tf}}>{revenueErr||t.revEmpty||"No transactions yet."}</div>
-            )}
-            {revenueTxns.map((tx,i)=>(
-              <div key={tx.id} style={{...sx.cd,padding:"12px 16px",animation:"slideUp 0.25s ease "+Math.min(i*0.03,0.4)+"s both"}}>
-                <div style={{display:"flex",alignItems:"center",gap:12}}>
-                  <div style={{flexShrink:0,color:c.tm}}>{TYPE_ICON[tx.type]||<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>}</div>
-                  <div style={{flex:1,minWidth:0}}>
-                    <div style={{fontSize:13,fontWeight:600,color:c.tx,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{tx.description||tx.type}</div>
-                    <div style={{fontSize:11,color:c.tf,marginTop:2}}>{new Date(tx.created*1000).toLocaleDateString(lang||undefined,{day:"numeric",month:"short",year:"numeric"})}</div>
-                  </div>
-                  <div style={{textAlign:"right",flexShrink:0}}>
-                    <div style={{fontSize:14,fontWeight:700,color:tx.amount<0?c.et:c.tx}}>{fmtAmt(tx.amount,tx.currency)}</div>
-                    <div style={{fontSize:11,color:c.tf}}>net {fmtAmt(tx.net,tx.currency)}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          {revenueBusy&&<div style={{textAlign:"center",padding:24,color:c.tm}}>…</div>}
-          {revenueErr&&revenueTxns.length>0&&<div style={sx.err}>{revenueErr}</div>}
-          {revenueHasMore&&!revenueBusy&&(
-            <button onClick={()=>loadRevenue(revenueCursor)} style={{...sx.bg,marginTop:8}}>{t.revMore||"Load more"}</button>
-          )}
-          <button onClick={()=>setVw(auth==="in"?"dash":"home")} style={sx.bg}>{t.back}</button>
-        <BottomBar/><style>{GS}</style></div></div>
-      );
-    })()}
 
-    {!["lang","byok","no_credits","manage_auth","loading","home","new_goal","dash","result","save_prompt","woop_input","revenue"].includes(vw)&&(
+    {vw==="feedback"&&(
+      <><FeedbackPage c={c} sx={sx} t={t} dir={dir} onBack={()=>setVw(auth==="in"?"dash":"home")}/><BottomBar/><style>{GS}</style></>
+    )}
+
+    {vw==="terms"&&(
+      <><LegalView type="terms" lang={lang} c={c} sx={sx} t={t} dir={dir} onBack={()=>setVw(auth==="in"?"dash":"home")} onSwitch={()=>setVw("privacy")}/><BottomBar/><style>{GS}</style></>
+    )}
+
+    {vw==="privacy"&&(
+      <><LegalView type="privacy" lang={lang} c={c} sx={sx} t={t} dir={dir} onBack={()=>setVw(auth==="in"?"dash":"home")} onSwitch={()=>setVw("terms")}/><BottomBar/><style>{GS}</style></>
+    )}
+
+    {vw==="donate"&&(
+      <><DonateView lang={lang} c={c} sx={sx} t={t} dir={dir} onBack={()=>setVw(auth==="in"?"dash":"home")}/><BottomBar/><style>{GS}</style></>
+    )}
+
+    {vw==="uitleg"&&(
+      <><HowItWorksView lang={lang} c={c} sx={sx} t={t} dir={dir} onBack={()=>setVw(auth==="in"?"dash":"home")} onStart={()=>setVw(auth==="in"?"new_goal":"home")}/><BottomBar/><style>{GS}</style></>
+    )}
+
+    {!["lang","byok","no_credits","manage_auth","loading","home","new_goal","dash","result","save_prompt","woop_input","feedback","terms","privacy","donate","uitleg"].includes(vw)&&(
       <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}><div style={{textAlign:"center",padding:40}}><button onClick={()=>setVw("lang")} style={sx.bo}>Start</button></div><BottomBar/><style>{GS}</style></div></div>
     )}
   </>);
