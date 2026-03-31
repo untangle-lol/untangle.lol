@@ -868,7 +868,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
         <a href="https://stats.fabrikage.nl/share/AE078t90MeCuVl4I" target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none",transition:"opacity 0.15s",opacity:0.7}}>{t.stats||"Stats"}</a>
         <button onClick={()=>setVw("feedback")} style={{fontSize:10,color:c.tf,textDecoration:"none",background:"none",border:"none",padding:0,cursor:"pointer",opacity:0.7,transition:"opacity 0.15s",fontFamily:"inherit"}}>{t.fbTitle||"Feedback"}</button>
       </div>
-      <div style={{paddingBottom:8}}><a href="https://bachsoftware.nl" target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none",opacity:0.38,letterSpacing:"0.01em"}}>Mogelijk gemaakt door Bach Software</a></div>
+      <div style={{paddingBottom:8}}><a href="https://bachsoftware.nl" target="_blank" rel="noreferrer" style={{fontSize:10,color:c.tf,textDecoration:"none",opacity:0.38,letterSpacing:"0.01em"}}>{t.madeBy||"Made possible by Bach Software"}</a></div>
     </div>
   );};
 
