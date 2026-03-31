@@ -1175,7 +1175,6 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
           <button onClick={()=>{setErr(null);setWoopData({wish:"",outcome:"",obstacle:"",plan:""});setWoopStep(0);setVw("woop_input");}} style={{...sx.bg,marginTop:0,display:"flex",alignItems:"center",justifyContent:"center",gap:6}}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>{t.woop||"Try WOOP"}</button>
           <Err/>
         </div>
-        <div style={{textAlign:"center",marginTop:10}}><a className="donate-txt" href={"/donate?lang="+(lang||"nl")} style={{fontSize:13,color:"#c9a227",textDecoration:"underline",textDecorationColor:"rgba(201,162,39,0.4)",textUnderlineOffset:"3px",fontWeight:600,display:"inline-flex",alignItems:"center",gap:4,cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.textDecorationColor="#c9a227"} onMouseLeave={e=>e.currentTarget.style.textDecorationColor="rgba(201,162,39,0.4)"}><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style={{display:"block",flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>{t.donateMsg||"Your donation makes the world a little better"}</a></div>
         {auth!=="in"&&(
           <div style={{marginTop:20,textAlign:"center"}}>
             <p style={{fontSize:12,color:c.tf,marginBottom:12}}>{t.signInSub}</p>
@@ -1225,7 +1224,6 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
             {hist.length>3&&<button onClick={clrAll} style={{...sx.bg,marginTop:4,color:"#ef4444",borderColor:"rgba(239,68,68,0.2)"}}>{t.clr}</button>}
           </div>
         )}
-        <div style={{textAlign:"center",marginTop:14}}><a href={"/donate?lang="+(lang||"nl")} style={{fontSize:12,color:c.ac,textDecoration:"none",fontWeight:500,display:"inline-flex",alignItems:"center",gap:3}}><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style={{display:"block",flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>{t.donate||"Donate"}</a></div>
         <BottomBar/><style>{GS}</style></div></div>
     )}
 
