@@ -669,24 +669,6 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
   const del=(id)=>{const nh=hist.filter(h=>h.id!==id);setHist(nh);if(auth==="in")ls.set(eKey(userRef.current),JSON.stringify(nh));else ls.set(KEYS.guestHist,JSON.stringify(nh));};
   const clrAll=()=>{setHist([]);if(auth==="in")ls.set(eKey(userRef.current),"[]");else ls.set(KEYS.guestHist,"[]");};
   const goHome=()=>{
-    // Check if returning from a completed altruistic goal that hasn't been rewarded yet
-    if(activeId){
-      const entry=hist.find(h=>h.id===activeId);
-      const allDone=localComp.length>0&&localComp.every(Boolean);
-      if(entry&&entry.isAltruistic&&!entry.altruismBonusClaimed&&allDone){
-        const lastBonus=parseInt(ls.get(KEYS.altruismBonusTs)||"0",10);
-        const canClaim=(Date.now()-lastBonus)>=24*60*60*1000;
-        if(canClaim){
-          addCredits(ALTRUISM_BONUS_CREDITS);
-          ls.set(KEYS.altruismBonusTs,String(Date.now()));
-          utrack("altruism_bonus_earned",{credits:ALTRUISM_BONUS_CREDITS});
-          setTimeout(()=>setAltruismBonusPopup(true),300);
-        }
-        const markClaimed=(ph)=>ph.map(h=>h.id===activeId?{...h,altruismBonusClaimed:true}:h);
-        if(auth==="in"){setHist(ph=>{const nh=markClaimed(ph);ls.set(eKey(userRef.current),JSON.stringify(nh));return nh;});}
-        else{setHist(ph=>{const nh=markClaimed(ph);ls.set(KEYS.guestHist,JSON.stringify(nh));return nh;});}
-      }
-    }
     setInp("");setSteps(null);setErr(null);setActiveId(null);setLocalComp([]);setShareOpen(false);setVw(auth==="in"?"dash":"home");
   };
   const prog=(e)=>{const tt=e.resultaat?.stappen?.length||0;const dn=(e.completed||[]).filter(Boolean).length;return{dn,tt,pct:tt>0?Math.round(dn/tt*100):0};};
@@ -776,9 +758,29 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     }
     const url=sid?`https://untangle.lol/s/${sid}`:'https://untangle.lol';
     const text=buildShareText(ps,url);
+
+    // Award altruism bonus when sharing an altruistic plan (once per 24h)
+    const claimAltruismBonus=()=>{
+      const entry=hist.find(h=>h.id===activeId);
+      if(!entry?.isAltruistic||entry?.altruismBonusClaimed||!canEarnAltruismBonus)return;
+      addCredits(ALTRUISM_BONUS_CREDITS);
+      ls.set(KEYS.altruismBonusTs,String(Date.now()));
+      utrack("altruism_bonus_earned",{credits:ALTRUISM_BONUS_CREDITS,trigger:"share"});
+      const markClaimed=(ph)=>ph.map(h=>h.id===activeId?{...h,altruismBonusClaimed:true}:h);
+      if(auth==="in"){setHist(ph=>{const nh=markClaimed(ph);ls.set(eKey(userRef.current),JSON.stringify(nh));return nh;});}
+      else{setHist(ph=>{const nh=markClaimed(ph);ls.set(KEYS.guestHist,JSON.stringify(nh));return nh;});}
+      setTimeout(()=>setAltruismBonusPopup(true),800);
+    };
+
     if(navigator.share){
-      try{await navigator.share({title:ps.titel,text,url});utrack('share_native');return;}catch(e){if(e.name==='AbortError')return;}
+      try{
+        await navigator.share({title:ps.titel,text,url});
+        claimAltruismBonus();
+        utrack('share_native');
+        return;
+      }catch(e){if(e.name==='AbortError')return;}
     }
+    claimAltruismBonus();
     setShareOpen(o=>!o);
     setShareCopied(false);
     utrack('share_open');
@@ -1298,7 +1300,10 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
             {ae?.isAltruistic&&!ae?.altruismBonusClaimed&&(
               <div style={{marginBottom:10,padding:"10px 14px",borderRadius:10,background:"rgba(251,191,36,0.1)",border:"1px solid rgba(251,191,36,0.3)",display:"flex",alignItems:"center",gap:8}}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="#f59e0b" style={{display:"block",flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                <span style={{fontSize:12,color:c.ac,fontWeight:500}}>{t.altruismPopupMsg}</span>
+                <span style={{fontSize:12,color:c.ac,fontWeight:500,flex:1}}>{t.altruismPopupMsg}</span>
+                <button onClick={()=>doShare(steps)} style={{flexShrink:0,padding:"5px 10px",background:"rgba(245,158,11,0.2)",border:"1px solid rgba(245,158,11,0.5)",borderRadius:6,fontSize:12,fontWeight:700,color:"#d97706",cursor:"pointer",whiteSpace:"nowrap"}}>
+                  {t.share} →
+                </button>
               </div>
             )}
             {ae?.isAltruistic&&ae?.altruismBonusClaimed&&(
