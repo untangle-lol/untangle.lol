@@ -2,14 +2,8 @@
 const nextConfig = {
   output: "standalone",
   async rewrites() {
-    // SPA routes — serve the main page but keep the URL intact
-    const spaRoutes = [
-      "lang", "dashboard", "new", "woop", "key", "payment", "settings", "revenue", "feedback",
-    ];
-    return spaRoutes.map((route) => ({
-      source: `/${route}`,
-      destination: "/",
-    }));
+    // Admin SPA routes that don't have their own page.jsx
+    return [{ source: "/revenue", destination: "/" }];
   },
   async headers() {
     return [
