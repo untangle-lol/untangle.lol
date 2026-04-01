@@ -18,7 +18,27 @@ export const metadata = {
     "Claude AI planner",
     "productivity app",
   ],
-  alternates: { canonical: "https://untangle.lol/" },
+  alternates: {
+    canonical: "https://untangle.lol/",
+    languages: {
+      "x-default": "https://untangle.lol/",
+      en: "https://untangle.lol/donate/en",
+      nl: "https://untangle.lol/donate/nl",
+      de: "https://untangle.lol/donate/de",
+      fr: "https://untangle.lol/donate/fr",
+      es: "https://untangle.lol/donate/es",
+      pt: "https://untangle.lol/donate/pt",
+      ar: "https://untangle.lol/donate/ar",
+      bn: "https://untangle.lol/donate/bn",
+      hi: "https://untangle.lol/donate/hi",
+      id: "https://untangle.lol/donate/id",
+      ja: "https://untangle.lol/donate/ja",
+      ru: "https://untangle.lol/donate/ru",
+      sw: "https://untangle.lol/donate/sw",
+      tr: "https://untangle.lol/donate/tr",
+      zh: "https://untangle.lol/donate/zh",
+    },
+  },
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
@@ -173,6 +193,11 @@ export default function RootLayout({ children }) {
         <meta name="theme-color" content="#0f172a" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta property="fb:app_id" content="0" />
+        {/* Geo metadata — company registered in the Netherlands */}
+        <meta name="geo.region" content="NL" />
+        <meta name="geo.country" content="NL" />
+        <meta name="geo.placename" content="Netherlands" />
+        <meta name="language" content="en,nl,de,fr,es,pt,ar,bn,hi,id,ja,ru,sw,tr,zh" />
         <link rel="me" href="https://untangle.lol/" />
         <script
           type="application/ld+json"

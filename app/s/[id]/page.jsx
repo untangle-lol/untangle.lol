@@ -17,6 +17,7 @@ export async function generateMetadata({ params }) {
     title,
     description,
     robots: { index: false, follow: false },
+    alternates: { canonical: `https://untangle.lol/s/${params.id}` },
     openGraph: {
       type: "article",
       url: `https://untangle.lol/s/${params.id}`,
@@ -48,6 +49,10 @@ export default async function SharePage({ params }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{steps.titel} — untangle</title>
         <meta name="description" content={`Action plan: ${steps.titel}`} />
+        <link rel="canonical" href={`https://untangle.lol/s/${params.id}`} />
+        <meta name="geo.region" content="NL" />
+        <meta name="geo.country" content="NL" />
+        <meta name="geo.placename" content="Netherlands" />
         <style>{`
           *{box-sizing:border-box;margin:0;padding:0}
           body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8fafc;color:#1e293b;min-height:100dvh;padding:24px 16px 48px}

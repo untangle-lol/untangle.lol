@@ -45,6 +45,7 @@ const KEYS = {
 const recentsKey=(lang)=>"untangle_recents_"+(lang||"nl");
 
 const FREE_CREDITS = 3;
+const STRIPE_ENABLED = false; // disabled — set to true to re-enable Stripe payments
 
 
 function eKey(email) { return "untangle_hist_" + email.toLowerCase().replace(/[^a-z0-9]/g,"_"); }
@@ -1048,11 +1049,11 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
                       <div style={{fontSize:11,color:c.tf,marginTop:3}}>{tier.perQ} {t.perQ||"/ question"}</div>
                     </div>
                   </div>
-                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-                    <button onClick={()=>startTopUp(tier.id)} disabled={!!busy} style={{padding:"10px 8px",background:topUpBusy===tier.id?"rgba(103,114,229,0.8)":"linear-gradient(135deg,#6772e5,#4f46e5)",color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:600,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,opacity:busy&&topUpBusy!==tier.id?0.5:1,transition:"opacity 0.15s"}}>
+                  <div style={{display:"grid",gridTemplateColumns:STRIPE_ENABLED?"1fr 1fr":"1fr",gap:8}}>
+                    {STRIPE_ENABLED&&<button onClick={()=>startTopUp(tier.id)} disabled={!!busy} style={{padding:"10px 8px",background:topUpBusy===tier.id?"rgba(103,114,229,0.8)":"linear-gradient(135deg,#6772e5,#4f46e5)",color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:600,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,opacity:busy&&topUpBusy!==tier.id?0.5:1,transition:"opacity 0.15s"}}>
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                       {topUpBusy===tier.id?"...":"Card"}
-                    </button>
+                    </button>}
                     <button onClick={()=>startMollieTopUp(tier.id)} disabled={!!busy} style={{padding:"10px 8px",background:mollieBusy===tier.id?"rgba(232,76,32,0.8)":"linear-gradient(135deg,#ff6640,#e84c20)",color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:600,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,opacity:busy&&mollieBusy!==tier.id?0.5:1,transition:"opacity 0.15s"}}>
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                       {mollieBusy===tier.id?"...":"iDEAL"}
@@ -1074,18 +1075,18 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
                   <div style={{fontSize:11,color:c.tf,marginTop:3}}>€0.25 {t.perQ||"/ question"}</div>
                 </div>
               </div>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-                <button onClick={()=>startTopUp("custom",safeQty)} disabled={!!busy} style={{padding:"10px 8px",background:topUpBusy==="custom"?"rgba(103,114,229,0.8)":"linear-gradient(135deg,#6772e5,#4f46e5)",color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:600,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,opacity:busy&&topUpBusy!=="custom"?0.5:1,transition:"opacity 0.15s"}}>
+              <div style={{display:"grid",gridTemplateColumns:STRIPE_ENABLED?"1fr 1fr":"1fr",gap:8}}>
+                {STRIPE_ENABLED&&<button onClick={()=>startTopUp("custom",safeQty)} disabled={!!busy} style={{padding:"10px 8px",background:topUpBusy==="custom"?"rgba(103,114,229,0.8)":"linear-gradient(135deg,#6772e5,#4f46e5)",color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:600,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,opacity:busy&&topUpBusy!=="custom"?0.5:1,transition:"opacity 0.15s"}}>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                   {topUpBusy==="custom"?"...":"Card"}
-                </button>
+                </button>}
                 <button onClick={()=>startMollieTopUp("custom",safeQty)} disabled={!!busy} style={{padding:"10px 8px",background:mollieBusy==="custom"?"rgba(232,76,32,0.8)":"linear-gradient(135deg,#ff6640,#e84c20)",color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:600,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,opacity:busy&&mollieBusy!=="custom"?0.5:1,transition:"opacity 0.15s"}}>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                   {mollieBusy==="custom"?"...":"iDEAL"}
                 </button>
               </div>
             </div>
-            <p style={{textAlign:"center",fontSize:11,color:c.tf,margin:"12px 0 0"}}>🔒 {t.paySecure||"Secure payment via Stripe & Mollie"}</p>
+            <p style={{textAlign:"center",fontSize:11,color:c.tf,margin:"12px 0 0"}}>🔒 {STRIPE_ENABLED?(t.paySecure||"Secure payment via Stripe & Mollie"):"Secure payment via Mollie"}</p>
             <button onClick={()=>setVw(auth==="in"?"dash":"home")} style={{...sx.bg,marginTop:12}}>{t.back}</button>
           </div>
         <BottomBar/><style>{GS}</style></div></div>

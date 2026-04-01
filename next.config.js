@@ -1,6 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  async rewrites() {
+    // SPA routes — serve the main page but keep the URL intact
+    const spaRoutes = [
+      "lang", "dashboard", "new", "woop", "key", "payment", "settings", "revenue", "feedback",
+    ];
+    return spaRoutes.map((route) => ({
+      source: `/${route}`,
+      destination: "/",
+    }));
+  },
   async headers() {
     return [
       {
