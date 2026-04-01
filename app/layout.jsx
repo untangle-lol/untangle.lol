@@ -94,7 +94,33 @@ const webAppSchema = {
     "Supports Anthropic (Claude) and OpenRouter API keys",
   ],
   screenshot: "https://untangle.lol/og.png",
-  creator: { "@type": "Organization", name: "untangle.lol", url: "https://untangle.lol/" },
+  creator: {
+    "@type": "Organization",
+    name: "untangle.lol",
+    url: "https://untangle.lol/",
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "NL",
+    },
+  },
+  countriesSupported: "Worldwide",
+  availableLanguage: [
+    { "@type": "Language", name: "English", alternateName: "en" },
+    { "@type": "Language", name: "Dutch", alternateName: "nl" },
+    { "@type": "Language", name: "German", alternateName: "de" },
+    { "@type": "Language", name: "French", alternateName: "fr" },
+    { "@type": "Language", name: "Spanish", alternateName: "es" },
+    { "@type": "Language", name: "Portuguese", alternateName: "pt" },
+    { "@type": "Language", name: "Arabic", alternateName: "ar" },
+    { "@type": "Language", name: "Bengali", alternateName: "bn" },
+    { "@type": "Language", name: "Hindi", alternateName: "hi" },
+    { "@type": "Language", name: "Indonesian", alternateName: "id" },
+    { "@type": "Language", name: "Japanese", alternateName: "ja" },
+    { "@type": "Language", name: "Russian", alternateName: "ru" },
+    { "@type": "Language", name: "Swahili", alternateName: "sw" },
+    { "@type": "Language", name: "Turkish", alternateName: "tr" },
+    { "@type": "Language", name: "Chinese", alternateName: "zh" },
+  ],
 };
 
 const orgSchema = {
@@ -104,6 +130,19 @@ const orgSchema = {
   url: "https://untangle.lol/",
   logo: "https://untangle.lol/og.png",
   description: "untangle.lol builds free, private, AI-powered productivity tools. Our flagship product turns any goal into an instant, step-by-step to-do list using Claude AI.",
+  address: {
+    "@type": "PostalAddress",
+    addressCountry: "NL",
+    addressRegion: "Netherlands",
+  },
+  areaServed: "Worldwide",
+  foundingLocation: {
+    "@type": "Place",
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "NL",
+    },
+  },
   sameAs: [],
 };
 
