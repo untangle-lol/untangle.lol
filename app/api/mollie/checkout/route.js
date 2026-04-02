@@ -41,7 +41,7 @@ export async function POST(request) {
     const payment = await mollie.payments.create({
       amount:      { currency: "EUR", value: bundle.amount },
       description: `${bundle.credits} questions — untangle.lol`,
-      redirectUrl: `${origin}/?topup=success&ref=${clientRef}`,
+      redirectUrl: `${origin}/?topup=success&ref=${clientRef}&provider=mollie&tier=${tier}&credits=${bundle.credits}`,
       webhookUrl:  `https://untangle.lol/api/mollie/webhook`,
       metadata:    { clientRef, credits: String(bundle.credits) },
     });

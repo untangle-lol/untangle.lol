@@ -124,6 +124,7 @@ export default function FeedbackWidget({ c, rt, t }) {
       });
       if (res.ok) {
         setStatus("sent");
+        try{window.umami?.track("feedback_sent");}catch{}
         setTimeout(() => { setOpen(false); setStatus("idle"); setText(""); }, 1800);
       } else {
         setStatus("error");

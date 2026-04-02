@@ -56,7 +56,7 @@ export async function POST(request) {
         },
       ],
       mode: "payment",
-      success_url: `${origin}/?topup=success&ref=${clientRef}`,
+      success_url: `${origin}/?topup=success&ref=${clientRef}&provider=stripe&tier=${tier}&credits=${bundle.credits}`,
       cancel_url:  `${origin}/payment`,
       metadata: { clientRef, credits: String(bundle.credits) },
     });

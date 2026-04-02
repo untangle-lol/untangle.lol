@@ -366,6 +366,9 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     const signedIn=params.get("signed_in")==="1";
     const authErr=params.get("auth_error")==="1";
     const topupSuccess=params.get("topup")==="success";
+    const topupProvider=params.get("provider")||"unknown";
+    const topupTier=params.get("tier")||"unknown";
+    const topupCreditsExpected=parseInt(params.get("credits")||"0",10)||0;
     const restoreId=params.get("id");
     const pn=window.location.pathname;
     const hashVw=pn==='/'?null:HASH_VW[pn.slice(1)];
@@ -389,7 +392,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
         const hv=ls.get(eKey(email));if(hv){try{parsedHist=JSON.parse(hv);}catch{}}
         setHist(parsedHist);
         if(signedIn)utrack("sign_in");
-        if(topupSuccess){setTopUpMsg("pending");pollCredits(ref);}
+        if(topupSuccess){setTopUpMsg("pending");pollCredits(ref,0,topupProvider,topupTier,topupCreditsExpected);}
         if(restoreId){const e=parsedHist.find(h=>String(h.id)===restoreId);if(e){setSteps(e.resultaat);setActiveId(e.id);setLocalComp(e.completed||e.resultaat.stappen.map(()=>false));setVw("result");setReady(true);return;}}
         const AUTH_VWS=["dash","new_goal","woop_input","byok","no_credits","manage_auth","lang","result","feedback","terms","privacy","donate"];
         const savedVw=hashVw||ls.get(KEYS.view);
@@ -399,7 +402,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     let parsedGuestHist=[];
     const gh=ls.get(KEYS.guestHist);if(gh){try{parsedGuestHist=JSON.parse(gh);}catch{}}
     setHist(parsedGuestHist);
-    if(topupSuccess){setTopUpMsg("pending");pollCredits(ref);}
+    if(topupSuccess){setTopUpMsg("pending");pollCredits(ref,0,topupProvider,topupTier,topupCreditsExpected);}
     if(restoreId){const e=parsedGuestHist.find(h=>String(h.id)===restoreId);if(e){setSteps(e.resultaat);setActiveId(e.id);setLocalComp(e.completed||e.resultaat.stappen.map(()=>false));setVw("result");setReady(true);return;}}
     const GUEST_VWS=["home","woop_input","byok","no_credits","lang","result","feedback","terms","privacy","donate"];
     const savedVwG=hashVw||ls.get(KEYS.view);
@@ -418,21 +421,21 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     else{setRecents([]);}
   },[lang]);
 
-  // Poll /api/credits/claim until credits land (after Stripe redirect)
-  const pollCredits=async(ref,attempts=0)=>{
+  // Poll /api/credits/verify until credits land (after payment redirect)
+  const pollCredits=async(ref,attempts=0,provider="unknown",tier="unknown",creditsExpected=0)=>{
     if(attempts>10)return;
     try{
       const r=await fetch("/api/credits/verify?ref="+encodeURIComponent(ref));
       const d=await r.json();
       if(d.credits>0){
         addCredits(d.credits);
-        utrack("credits_topped_up",{credits:d.credits});
+        utrack("payment_completed",{provider,tier,credits:d.credits,creditsExpected});
         setTopUpMsg(null);
         setTopUpPopup({credits:d.credits});
         return;
       }
     }catch{}
-    setTimeout(()=>pollCredits(ref,attempts+1),3000);
+    setTimeout(()=>pollCredits(ref,attempts+1,provider,tier,creditsExpected),3000);
   };
 
   // Returns the correct localStorage key for credits based on whether a user is logged in
@@ -537,7 +540,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     if(honeypot)return;
     const {valid}=getCredential();
     if(!valid){
-      if(credits<=0){setVw("no_credits");return;}
+      if(credits<=0){utrack("no_credits_reached",{from:"goal"});setVw("no_credits");return;}
     }
     setBusy(true);setErr(null);setSteps(null);setVw("loading");setLoadingAltruistic(false);
     utrack("goal_submitted",{lang,mode:valid?"byok":"free"});
@@ -581,7 +584,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
         utrack("goal_result",{lang,isAltruistic,fromCache,steps:ps.stappen?.length||0});
       };
       if(isAltruistic&&!fromCache){setTimeout(navigate,1800);}else{navigate();}
-    }catch(e){setErr(t.err);setVw(auth==="in"?"new_goal":"home");}finally{setBusy(false);}
+    }catch(e){utrack("goal_error",{lang,msg:e?.message||"unknown"});setErr(t.err);setVw(auth==="in"?"new_goal":"home");}finally{setBusy(false);}
   };
 
   const submitWoop=async()=>{
@@ -589,7 +592,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     if(honeypot)return;
     const {valid}=getCredential();
     if(!valid){
-      if(credits<=0){setVw("no_credits");return;}
+      if(credits<=0){utrack("no_credits_reached",{from:"woop"});setVw("no_credits");return;}
     }
     setBusy(true);setErr(null);setSteps(null);setVw("loading");setLoadingAltruistic(false);
     utrack("woop_submitted",{lang,mode:valid?"byok":"free"});
@@ -628,7 +631,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
       // Reset woop state for next use
       setWoopData({wish:"",outcome:"",obstacle:"",plan:""});setWoopStep(0);
       if(isAltruistic){setTimeout(navigate,1800);}else{navigate();}
-    }catch(e){setErr(t.err);setVw("woop_input");}finally{setBusy(false);}
+    }catch(e){utrack("goal_error",{lang,mode:"woop",msg:e?.message||"unknown"});setErr(t.err);setVw("woop_input");}finally{setBusy(false);}
   };
 
   const toggleStep=(idx)=>{
@@ -674,8 +677,8 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
       const r=await fetch("/api/stripe/checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientRef:ref,tier,...(tier==="custom"?{customCredits}:{})})});
       const d=await r.json();
       if(d.url){window.location.href=d.url;}
-      else{setTopUpMsg("error");}
-    }catch{setTopUpMsg("error");}
+      else{utrack("topup_checkout_error",{provider:"stripe",tier});setTopUpMsg("error");}
+    }catch(e){utrack("topup_checkout_error",{provider:"stripe",tier,msg:e?.message||"unknown"});setTopUpMsg("error");}
     setTopUpBusy(false);
   };
 
@@ -688,8 +691,8 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
       const r=await fetch("/api/mollie/checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientRef:ref,tier,...(tier==="custom"?{customCredits}:{})})});
       const d=await r.json();
       if(d.url){window.location.href=d.url;}
-      else{setTopUpMsg("error");}
-    }catch{setTopUpMsg("error");}
+      else{utrack("topup_checkout_error",{provider:"mollie",tier});setTopUpMsg("error");}
+    }catch(e){utrack("topup_checkout_error",{provider:"mollie",tier,msg:e?.message||"unknown"});setTopUpMsg("error");}
     setMollieBusy(false);
   };
 
@@ -824,7 +827,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
       setTimeout(()=>setAltruismBonusPopup(true),800);
     } else {
       utrack("altruism_bonus_exhausted",{tier:count+1,trigger:"share"});
-      setTimeout(()=>setVw("no_credits"),800);
+      utrack("no_credits_reached",{from:"altruism_exhausted"});setTimeout(()=>setVw("no_credits"),800);
     }
   };
 
