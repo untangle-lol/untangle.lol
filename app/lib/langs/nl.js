@@ -29,7 +29,7 @@ const nl = {
   altruismPopupTitle:"Wat lief van je!",
   altruismPopupMsg:"Je doel is voor een ander — deel je stappenplan en ontvang 2 gratis vragen.",
   altruismPopupBtn:"Plan delen →",
-  altruismBonusTitle:"+{n} vragen verdiend!",
+  altruismBonusTitle:"+{n} vragen verdiend!",altruismBonusTitleSg:"+1 vraag verdiend!",
   altruismBonusMsg:"Je hebt je plan gedeeld! Als dank ontvang je gratis vragen.",
   altruismBonusBtn:"Super, bedankt!",
   altruismTeaser:"Als je plan anderen helpt, kun je gratis vragen verdienen.",

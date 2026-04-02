@@ -973,7 +973,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
       <Modal c={c}>
         <div style={{textAlign:"center"}}>
           <div style={{display:"flex",justifyContent:"center",marginBottom:12,animation:"pop 0.5s ease",color:c.gr}}><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
-          <h2 style={{fontSize:20,fontWeight:700,color:c.gr,margin:"0 0 10px"}}>{(t.altruismBonusTitle||"+{n} vragen verdiend!").replace("{n}",earnedBonus)}</h2>
+          <h2 style={{fontSize:20,fontWeight:700,color:c.gr,margin:"0 0 10px"}}>{earnedBonus===1?(t.altruismBonusTitleSg||"+1 vraag verdiend!"):(t.altruismBonusTitle||"+{n} vragen verdiend!").replace("{n}",earnedBonus)}</h2>
           <p style={{fontSize:14,color:c.tm,lineHeight:1.6,margin:"0 0 12px"}}>{t.altruismBonusMsg}</p>
           <div style={{fontSize:40,fontWeight:800,color:c.gr,margin:"0 0 16px"}}>+{earnedBonus}</div>
           <button onClick={()=>setAltruismBonusPopup(false)} style={{...sx.bo,marginTop:0,background:c.ag}}>{t.altruismBonusBtn}</button>
