@@ -689,16 +689,16 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     setMollieBusy(false);
   };
 
-  // Create a server-side share and update the browser URL to /id/<shareId>.
-  // Persists shareId back into the history entry so re-opens don't call the API again.
+  // Create a server-side share and persist shareId so the share panel can use it.
+  // Does NOT change the browser URL — replaceState to /id/* would trigger Next.js navigation
+  // and unmount the SPA, clearing activeId and breaking step checkboxes.
   const ensureShareUrl=async(entry)=>{
-    if(entry.shareId){setShareId(entry.shareId);window.history.replaceState(null,'','/id/'+entry.shareId);return;}
+    if(entry.shareId){setShareId(entry.shareId);return;}
     try{
       const r=await fetch('/api/share',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({steps:entry.resultaat,lang:entry.lang,guest:auth!=="in"})});
       if(!r.ok)return;
       const{id:sid}=await r.json();
       setShareId(sid);
-      window.history.replaceState(null,'','/id/'+sid);
       const addSid=ph=>ph.map(h=>h.id===entry.id?{...h,shareId:sid}:h);
       if(auth==="in"){setHist(ph=>{const nh=addSid(ph);ls.set(eKey(userRef.current),JSON.stringify(nh));return nh;});}
       else{setHist(ph=>{const nh=addSid(ph);ls.set(KEYS.guestHist,JSON.stringify(nh));return nh;});}
