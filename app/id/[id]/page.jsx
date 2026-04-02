@@ -90,11 +90,6 @@ export default async function PlanPage({ params }) {
   return (
     <html lang={htmlLang} dir={dir}>
       <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>{steps.titel} | untangle.lol</title>
-        <meta name="description" content={description} />
-        <link rel="canonical" href={url} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet" />

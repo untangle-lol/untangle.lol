@@ -973,7 +973,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
       <Modal c={c}>
         <div style={{textAlign:"center"}}>
           <div style={{display:"flex",justifyContent:"center",marginBottom:12,animation:"pop 0.5s ease",color:c.gr}}><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
-          <h2 style={{fontSize:20,fontWeight:700,color:c.gr,margin:"0 0 10px"}}>{t.altruismBonusTitle}</h2>
+          <h2 style={{fontSize:20,fontWeight:700,color:c.gr,margin:"0 0 10px"}}>{(t.altruismBonusTitle||"+{n} vragen verdiend!").replace("{n}",earnedBonus)}</h2>
           <p style={{fontSize:14,color:c.tm,lineHeight:1.6,margin:"0 0 12px"}}>{t.altruismBonusMsg}</p>
           <div style={{fontSize:40,fontWeight:800,color:c.gr,margin:"0 0 16px"}}>+{earnedBonus}</div>
           <button onClick={()=>setAltruismBonusPopup(false)} style={{...sx.bo,marginTop:0,background:c.ag}}>{t.altruismBonusBtn}</button>
@@ -1244,7 +1244,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
           </div>
           {RecentsSection()}
           {SuggChips()}
-          {canEarnAltruismBonus&&<p style={{marginTop:32,marginBottom:8,textAlign:"center",fontSize:13,color:"#f59e0b",fontWeight:600}}>{t.altruismTeaser}</p>}
+          {canEarnAltruismBonus&&<p style={{marginTop:32,marginBottom:8,textAlign:"center",fontSize:13,color:c.tm}}>{t.altruismTeaser}</p>}
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button>
           <div style={{display:"flex",alignItems:"center",gap:8,marginTop:10,marginBottom:10}}>
             <div style={{flex:1,height:1,background:c.cb}}/>
@@ -1326,7 +1326,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
           <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
           {RecentsSection()}
           {SuggChips()}
-          {canEarnAltruismBonus&&<p style={{marginTop:32,marginBottom:8,textAlign:"center",fontSize:13,color:"#f59e0b",fontWeight:600}}>{t.altruismTeaser}</p>}
+          {canEarnAltruismBonus&&<p style={{marginTop:32,marginBottom:8,textAlign:"center",fontSize:13,color:c.tm}}>{t.altruismTeaser}</p>}
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button>
           <div style={{display:"flex",alignItems:"center",gap:8,marginTop:10,marginBottom:10}}>
             <div style={{flex:1,height:1,background:c.cb}}/>
@@ -1357,10 +1357,10 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
           <div style={{animation:"fadeIn 0.4s ease"}}>
             {/* Altruistic goal progress indicator */}
             {ae?.isAltruistic&&!ae?.altruismBonusClaimed&&nextAltruismBonus>0&&(
-              <div style={{marginBottom:10,padding:"10px 14px",borderRadius:10,background:"rgba(251,191,36,0.1)",border:"1px solid rgba(251,191,36,0.3)",display:"flex",alignItems:"center",gap:8}}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="#f59e0b" style={{display:"block",flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                <span style={{fontSize:12,color:c.ac,fontWeight:500,flex:1}}>{t.altruismPopupMsg}</span>
-                <button onClick={()=>doShare(steps)} style={{flexShrink:0,padding:"5px 10px",background:"rgba(245,158,11,0.2)",border:"1px solid rgba(245,158,11,0.5)",borderRadius:6,fontSize:12,fontWeight:700,color:"#d97706",cursor:"pointer",whiteSpace:"nowrap"}}>
+              <div style={{marginBottom:10,padding:"10px 14px",borderRadius:10,background:"rgba(245,197,24,0.1)",border:"1px solid rgba(245,197,24,0.3)",display:"flex",alignItems:"center",gap:8}}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#f5c518" style={{display:"block",flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <span style={{fontSize:12,color:"#f5c518",fontWeight:500,flex:1}}>{t.altruismPopupMsg}</span>
+                <button onClick={()=>doShare(steps)} style={{flexShrink:0,padding:"3px 8px",background:"rgba(245,197,24,0.15)",border:"1px solid rgba(245,197,24,0.4)",borderRadius:5,fontSize:11,fontWeight:600,color:"#f5c518",cursor:"pointer",whiteSpace:"nowrap"}}>
                   {t.share} →
                 </button>
               </div>
@@ -1412,12 +1412,12 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
             </div>
             <button onClick={goHome} style={sx.bg}>{t.resB}</button>
             {ae?.isAltruistic&&!ae?.altruismBonusClaimed&&nextAltruismBonus>0&&(
-              <p style={{textAlign:"center",fontSize:12,color:"#d97706",fontWeight:600,margin:"14px 0 4px",display:"flex",alignItems:"center",justifyContent:"center",gap:5}}>
+              <p style={{textAlign:"center",fontSize:12,color:"#f5c518",fontWeight:500,margin:"14px 0 4px",display:"flex",alignItems:"center",justifyContent:"center",gap:5}}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style={{flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                 {(t.altruismShareCta||"Share this plan and earn +{n} free questions").replace(/\+\d+/,`+${nextAltruismBonus}`)}
               </p>
             )}
-            <button onClick={()=>doShare(steps)} style={{...sx.bg,marginTop:ae?.isAltruistic&&!ae?.altruismBonusClaimed&&nextAltruismBonus>0?4:8,...(ae?.isAltruistic&&!ae?.altruismBonusClaimed&&nextAltruismBonus>0?{background:"rgba(245,158,11,0.12)",border:"1px solid rgba(245,158,11,0.45)",color:"#d97706"}:{}),display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+            <button onClick={()=>doShare(steps)} style={{...sx.bg,marginTop:ae?.isAltruistic&&!ae?.altruismBonusClaimed&&nextAltruismBonus>0?4:8,...(ae?.isAltruistic&&!ae?.altruismBonusClaimed&&nextAltruismBonus>0?{background:"rgba(245,197,24,0.1)",border:"1px solid rgba(245,197,24,0.35)",color:"#f5c518"}:{}),display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
               <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
               {t.share||'Share'}
             </button>
