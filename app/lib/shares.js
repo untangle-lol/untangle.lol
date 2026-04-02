@@ -43,14 +43,14 @@ export function getShare(id) {
   const entry = store[id];
   if (!entry) return null;
   if (Date.now() - entry.createdAt >= TTL_MS) return null;
-  return { steps: entry.steps, lang: entry.lang, createdAt: entry.createdAt };
+  return { steps: entry.steps, lang: entry.lang, createdAt: entry.createdAt, guest: entry.guest !== false };
 }
 
-export function createShare(steps, lang) {
+export function createShare(steps, lang, guest = true) {
   let store = loadShares();
   store = pruneShares(store);
   const id = crypto.randomBytes(5).toString("base64url");
-  store[id] = { steps, lang, createdAt: Date.now() };
+  store[id] = { steps, lang, createdAt: Date.now(), guest };
   saveShares(store);
   return id;
 }

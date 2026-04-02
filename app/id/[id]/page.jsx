@@ -11,7 +11,7 @@ export async function generateMetadata({ params }) {
       robots: { index: false, follow: false },
     };
   }
-  const { steps } = share;
+  const { steps, guest } = share;
   const numSteps = steps.stappen?.length || 0;
   const title = `${steps.titel} — Action Plan | untangle.lol`;
   const description = `Free step-by-step action plan: "${steps.titel}". ${numSteps} actionable steps created with untangle.lol, the free AI goal planner.`;
@@ -19,7 +19,8 @@ export async function generateMetadata({ params }) {
   return {
     title,
     description,
-    robots: { index: true, follow: true },
+    // Only index guest (anonymous) plans — logged-in user plans stay private
+    robots: guest ? { index: true, follow: true } : { index: false, follow: false },
     alternates: { canonical: url },
     openGraph: {
       type: "article",
@@ -42,7 +43,7 @@ export default async function PlanPage({ params }) {
   const share = getShare(params.id);
   if (!share) notFound();
 
-  const { steps, lang, createdAt } = share;
+  const { steps, lang, createdAt, guest } = share;
   const htmlLang = (lang || "en").split("-")[0];
   const url = `https://untangle.lol/id/${params.id}`;
   const numSteps = steps.stappen?.length || 0;
@@ -85,10 +86,12 @@ export default async function PlanPage({ params }) {
         <meta name="geo.country" content="NL" />
         <meta name="geo.placename" content="Netherlands" />
         <link rel="canonical" href={url} />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        {guest && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          />
+        )}
         <style>{`
           *{box-sizing:border-box;margin:0;padding:0}
           body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8fafc;color:#1e293b;min-height:100dvh;padding:24px 16px 48px}

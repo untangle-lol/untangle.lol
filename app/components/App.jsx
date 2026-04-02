@@ -683,7 +683,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
   const ensureShareUrl=async(entry)=>{
     if(entry.shareId){setShareId(entry.shareId);window.history.replaceState(null,'','/id/'+entry.shareId);return;}
     try{
-      const r=await fetch('/api/share',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({steps:entry.resultaat,lang:entry.lang})});
+      const r=await fetch('/api/share',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({steps:entry.resultaat,lang:entry.lang,guest:auth!=="in"})});
       if(!r.ok)return;
       const{id:sid}=await r.json();
       setShareId(sid);

@@ -23,7 +23,7 @@ export async function POST(request) {
     return NextResponse.json({ error: "bad json" }, { status: 400 });
   }
 
-  const { steps, lang } = body ?? {};
+  const { steps, lang, guest } = body ?? {};
 
   if (!steps || typeof steps !== "object") {
     return NextResponse.json({ error: "missing steps" }, { status: 400 });
@@ -32,6 +32,6 @@ export async function POST(request) {
     return NextResponse.json({ error: "missing lang" }, { status: 400 });
   }
 
-  const id = createShare(steps, lang);
+  const id = createShare(steps, lang, guest !== false);
   return NextResponse.json({ id });
 }
