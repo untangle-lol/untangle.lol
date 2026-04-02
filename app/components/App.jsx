@@ -94,7 +94,7 @@ const TH = {
   light:{bg:"linear-gradient(135deg,#f8fafc,#e2e8f0,#f8fafc)",card:"#ffffff",cb:"rgba(0,0,0,0.08)",ib:"#fff",ibr:"rgba(0,0,0,0.15)",tx:"#1e293b",tm:"#64748b",tf:"#94a3b8",ac:"#b45309",ag:"linear-gradient(135deg,#f59e0b,#d97706)",ab:"rgba(245,158,11,0.12)",abr:"rgba(245,158,11,0.4)",am:"rgba(245,158,11,0.15)",bt:"#fff",gr:"#16a34a",gb:"rgba(22,163,74,0.06)",gbr:"rgba(22,163,74,0.15)",gt:"#16a34a",eb:"rgba(239,68,68,0.08)",et:"#dc2626",ghb:"rgba(0,0,0,0.03)",ghr:"rgba(0,0,0,0.1)",ckb:"#fff",ckr:"rgba(0,0,0,0.2)",cm:"#fff",dt:"#4d7c56",sb:"rgba(0,0,0,0.015)",sr:"rgba(0,0,0,0.06)",dm:"#94a3b8",sh:"0 2px 8px rgba(0,0,0,0.07),0 1px 2px rgba(0,0,0,0.04)",hp:"rgba(245,158,11,0.06)",hpr:"rgba(245,158,11,0.2)"},
 };
 
-const GS=`@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes heroFade{0%{opacity:0;transform:translateY(6px)}15%{opacity:1;transform:translateY(0)}85%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-6px)}}@keyframes pulse{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.4);opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}@keyframes modalIn{from{opacity:0;transform:translateY(24px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}.sugg-fading{opacity:0;transition:opacity 0.15s ease}.sugg-list{opacity:1;transition:opacity 0.2s ease}@keyframes diceRoll{0%{transform:rotate(0deg) scale(1)}20%{transform:rotate(-30deg) scale(1.3)}50%{transform:rotate(200deg) scale(1.5)}75%{transform:rotate(330deg) scale(1.2)}90%{transform:rotate(350deg) scale(1.05)}100%{transform:rotate(360deg) scale(1)}}.dice-roll{animation:diceRoll 0.6s cubic-bezier(0.25,0.46,0.45,0.94) forwards}@keyframes spinBorder{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}.ta-glow{display:block;position:relative;border-radius:12px;padding:1px;overflow:hidden;isolation:isolate;background:var(--ta-border-color,#d1d5db)}.ta-glow::before{content:"";position:absolute;inset:-100%;width:300%;height:300%;background:conic-gradient(from 0deg,transparent 60%,rgba(250,204,21,0.9) 75%,rgba(254,240,138,1) 80%,rgba(250,204,21,0.9) 85%,transparent 100%);animation:spinBorder 2.4s linear infinite;z-index:0;opacity:1;transition:opacity 0.4s ease}.ta-glow::after{content:"";position:absolute;inset:0;border-radius:12px;background:rgba(250,204,21,0.9);z-index:0;opacity:0;transition:opacity 0.4s ease}.ta-glow-focused::before{opacity:0}.ta-glow-focused::after{opacity:1;animation:glowPulse 2s ease-in-out infinite}@keyframes glowPulse{0%,100%{opacity:1}50%{opacity:0.55}}.ta-glow textarea{position:relative;z-index:1;border:none!important;border-radius:10px;display:block;width:100%;box-sizing:border-box;margin:0}@media(min-width:768px){.uw{max-width:640px!important}.uw h1{font-size:34px!important}.uw h2{font-size:24px!important}.uw label{font-size:17px!important;line-height:1.5!important}.uw p{font-size:16px!important}.uw input,.uw textarea{font-size:18px!important}.uw button{font-size:16px!important}.uw .ci-lbl{font-size:17px!important}.uw .ci-dsc{font-size:15px!important}.bb,.bb button,.bb a,.bb span{font-size:12px!important}.uw .eth-txt,.uw .donate-txt{font-size:15px!important}.uw .altruism-txt{font-size:16px!important}@media(min-width:768px){.nb .nb-logo{font-size:18px!important}.nb .nb-tld{font-size:10px!important}.nb .nb-ico{font-size:24px!important}}}*{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}button:not(:disabled):active{transform:scale(0.97)!important;opacity:0.88!important}@media(max-width:479px){.nb-dy{display:none!important}.nb-login-full{display:none!important}.nb-login-short{display:inline!important}}`;
+const GS=`@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes heroFade{0%{opacity:0;transform:translateY(6px)}15%{opacity:1;transform:translateY(0)}85%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-6px)}}@keyframes pulse{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.4);opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}@keyframes slideInRight{from{opacity:0;transform:translateX(100%)}to{opacity:1;transform:translateX(0)}}@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}@keyframes modalIn{from{opacity:0;transform:translateY(24px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}.sugg-fading{opacity:0;transition:opacity 0.15s ease}.sugg-list{opacity:1;transition:opacity 0.2s ease}@keyframes diceRoll{0%{transform:rotate(0deg) scale(1)}20%{transform:rotate(-30deg) scale(1.3)}50%{transform:rotate(200deg) scale(1.5)}75%{transform:rotate(330deg) scale(1.2)}90%{transform:rotate(350deg) scale(1.05)}100%{transform:rotate(360deg) scale(1)}}.dice-roll{animation:diceRoll 0.6s cubic-bezier(0.25,0.46,0.45,0.94) forwards}@keyframes spinBorder{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}.ta-glow{display:block;position:relative;border-radius:12px;padding:1px;overflow:hidden;isolation:isolate;background:var(--ta-border-color,#d1d5db)}.ta-glow::before{content:"";position:absolute;inset:-100%;width:300%;height:300%;background:conic-gradient(from 0deg,transparent 60%,rgba(250,204,21,0.9) 75%,rgba(254,240,138,1) 80%,rgba(250,204,21,0.9) 85%,transparent 100%);animation:spinBorder 2.4s linear infinite;z-index:0;opacity:1;transition:opacity 0.4s ease}.ta-glow::after{content:"";position:absolute;inset:0;border-radius:12px;background:rgba(250,204,21,0.9);z-index:0;opacity:0;transition:opacity 0.4s ease}.ta-glow-focused::before{opacity:0}.ta-glow-focused::after{opacity:1;animation:glowPulse 2s ease-in-out infinite}@keyframes glowPulse{0%,100%{opacity:1}50%{opacity:0.55}}.ta-glow textarea{position:relative;z-index:1;border:none!important;border-radius:10px;display:block;width:100%;box-sizing:border-box;margin:0}@media(min-width:768px){.uw{max-width:640px!important}.uw h1{font-size:34px!important}.uw h2{font-size:24px!important}.uw label{font-size:17px!important;line-height:1.5!important}.uw p{font-size:16px!important}.uw input,.uw textarea{font-size:18px!important}.uw button{font-size:16px!important}.uw .ci-lbl{font-size:17px!important}.uw .ci-dsc{font-size:15px!important}.bb,.bb button,.bb a,.bb span{font-size:12px!important}.uw .eth-txt,.uw .donate-txt{font-size:15px!important}.uw .altruism-txt{font-size:16px!important}@media(min-width:768px){.nb .nb-logo{font-size:18px!important}.nb .nb-tld{font-size:10px!important}.nb .nb-ico{font-size:24px!important}}}*{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}button:not(:disabled):active{transform:scale(0.97)!important;opacity:0.88!important}@media(max-width:479px){.nb-dy{display:none!important}.nb-login-full{display:none!important}.nb-login-short{display:inline!important}}`;
 
 function tz(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone}catch{return"UTC"}}
 function fmtDate(iso,z,lc){try{return new Date(iso).toLocaleString(lc||undefined,{timeZone:z,day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}catch{return new Date(iso).toLocaleString()}}
@@ -238,6 +238,7 @@ const [lang,setLang]=useState(null);
   const [customQty,setCustomQty]=useState(75);
   const [topUpMsg,setTopUpMsg]=useState(null);
   const [avatarMenu,setAvatarMenu]=useState(false);
+  const [hamburgerOpen,setHamburgerOpen]=useState(false);
   const [topUpPopup,setTopUpPopup]=useState(null); // { credits: N }
   const [clientRef,setClientRef]=useState(null);
   // Revenue
@@ -893,58 +894,92 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     const {key:_bk}=getCredential();
     const showCred=!_bk&&credits!==undefined;
     const lowCred=showCred&&credits<=3;
-    return(
-    <div className="nb" dir={dir} style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 16px",paddingTop:"calc(8px + env(safe-area-inset-top))",background:rt==="dark"?"rgba(15,23,42,0.92)":"rgba(248,250,252,0.92)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+c.cb}}>
-      <button onClick={goHome} style={{background:"none",border:"none",padding:0,cursor:"pointer",display:"flex",alignItems:"center",gap:5,flexShrink:0}}>
-        <span className="nb-ico" style={{filter:"drop-shadow(0 0 8px "+c.ac+")",lineHeight:1,display:"flex",alignItems:"center",color:c.ac}}><svg width="26" height="16" viewBox="0 0 52 32" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" style={{display:"block"}}><path d="M26 16C24 10 19.5 7 14 7C7.5 7 4 11.5 4 16C4 20.5 7.5 25 14 25C19.5 25 24 22 26 16C28 10 32.5 7 38 7C44.5 7 48 11.5 48 16C48 20.5 44.5 25 38 25C32.5 25 28 22 26 16Z"/></svg></span>
-        <span className="nb-logo" style={{fontSize:14,fontWeight:800,letterSpacing:"-0.03em",color:c.tx,lineHeight:1}}>untangle</span>
-        <span className="nb-tld" style={{fontSize:9,fontWeight:500,letterSpacing:"0.15em",color:c.tf,textTransform:"uppercase",lineHeight:1}}>.lol</span>
+    const close=()=>setHamburgerOpen(false);
+    const nbBg=rt==="dark"?"rgba(15,23,42,0.95)":"rgba(248,250,252,0.95)";
+    const Row=({icon,label,right,onClick,danger,border=true})=>(
+      <button onClick={()=>{onClick&&onClick();}} style={{display:"flex",alignItems:"center",gap:12,width:"100%",padding:"12px 16px",background:"none",border:"none",borderBottom:border?"1px solid "+c.cb:"none",cursor:onClick?"pointer":"default",color:danger?"#ef4444":c.tx,fontSize:14,fontWeight:500,textAlign:"left",fontFamily:"inherit",transition:"background 0.12s"}}
+        onMouseEnter={e=>{if(onClick)e.currentTarget.style.background=rt==="dark"?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.03)";}}
+        onMouseLeave={e=>{e.currentTarget.style.background="none";}}>
+        <span style={{color:danger?"#ef4444":c.tm,display:"flex",flexShrink:0}}>{icon}</span>
+        <span style={{flex:1,lineHeight:1.2}}>{label}</span>
+        {right&&<span style={{flexShrink:0}}>{right}</span>}
       </button>
-      <div style={{display:"flex",alignItems:"center",gap:8}}>
-        {showCred&&(
-          <button onClick={()=>setVw("no_credits")} style={{display:"flex",alignItems:"center",gap:4,background:lowCred?"rgba(239,68,68,0.1)":c.ab,border:"1px solid "+(lowCred?"rgba(239,68,68,0.35)":c.abr),borderRadius:20,padding:"3px 10px 3px 7px",cursor:"pointer",color:lowCred?"#ef4444":c.ac,transition:"background 0.15s,border-color 0.15s",flexShrink:0}}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            <span style={{fontSize:12,fontWeight:700,lineHeight:1}}>{credits}</span>
+    );
+    return(
+    <>
+      <div className="nb" dir={dir} style={{position:"fixed",top:0,left:0,right:0,zIndex:200,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 16px",paddingTop:"calc(8px + env(safe-area-inset-top))",background:nbBg,backdropFilter:"blur(12px)",borderBottom:"1px solid "+c.cb}}>
+        {/* Logo */}
+        <button onClick={()=>{goHome();close();}} style={{background:"none",border:"none",padding:0,cursor:"pointer",display:"flex",alignItems:"center",gap:5,flexShrink:0}}>
+          <span className="nb-ico" style={{filter:"drop-shadow(0 0 8px "+c.ac+")",lineHeight:1,display:"flex",alignItems:"center",color:c.ac}}><svg width="26" height="16" viewBox="0 0 52 32" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" style={{display:"block"}}><path d="M26 16C24 10 19.5 7 14 7C7.5 7 4 11.5 4 16C4 20.5 7.5 25 14 25C19.5 25 24 22 26 16C28 10 32.5 7 38 7C44.5 7 48 11.5 48 16C48 20.5 44.5 25 38 25C32.5 25 28 22 26 16Z"/></svg></span>
+          <span className="nb-logo" style={{fontSize:14,fontWeight:800,letterSpacing:"-0.03em",color:c.tx,lineHeight:1}}>untangle</span>
+          <span className="nb-tld" style={{fontSize:9,fontWeight:500,letterSpacing:"0.15em",color:c.tf,textTransform:"uppercase",lineHeight:1}}>.lol</span>
+        </button>
+        {/* Right controls */}
+        <div style={{display:"flex",alignItems:"center",gap:6}}>
+          {/* Language — always visible */}
+          <button onClick={()=>{setVw("lang");close();}} title={t.lSel} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:8,padding:"5px 8px",cursor:"pointer",lineHeight:1,display:"flex",alignItems:"center",gap:4,flexShrink:0,color:c.tm,transition:"background 0.15s,border-color 0.15s,color 0.15s"}}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span style={{fontSize:11,fontWeight:600,letterSpacing:"0.03em"}}>{(lang||"en").toUpperCase()}</span>
           </button>
-        )}
-        <button onClick={()=>setVw("lang")} title={t.lSel} style={{background:c.ghb,border:"1px solid "+c.ghr,borderRadius:8,padding:"5px 8px",cursor:"pointer",lineHeight:1,display:"flex",alignItems:"center",gap:4,flexShrink:0,color:c.tm,transition:"background 0.15s,border-color 0.15s,color 0.15s"}}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span style={{fontSize:11,fontWeight:600,letterSpacing:"0.03em"}}>{(lang||"en").toUpperCase()}</span></button>
-        <TTog mode={tm} set={chTm} c={c}/>
-        <span className="nb-dy"><DyTog on={dy} set={chDy} c={c} label={t.dyslexia||"Dyslexia-friendly font"}/></span>
-        {!user&&auth!=="in"&&(
-          <button onClick={()=>setVw("manage_auth")} style={{background:c.ab,border:"1px solid "+c.abr,borderRadius:8,padding:"5px 12px",cursor:"pointer",color:c.ac,fontSize:12,fontWeight:700,letterSpacing:"0.01em",fontFamily:"inherit",flexShrink:0,transition:"background 0.15s",whiteSpace:"nowrap"}}><span className="nb-login-full">{t.signIn||"Log in"}</span><span className="nb-login-short" style={{display:"none"}}>Log in</span></button>
-        )}
-        {user&&(
-          <div style={{position:"relative"}}>
-            <button onClick={()=>setAvatarMenu(v=>!v)} style={{background:"none",border:"none",padding:0,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>
+          {/* Login / Avatar — always visible */}
+          {!user&&auth!=="in"&&(
+            <button onClick={()=>{setVw("manage_auth");close();}} style={{background:c.ab,border:"1px solid "+c.abr,borderRadius:8,padding:"5px 12px",cursor:"pointer",color:c.ac,fontSize:12,fontWeight:700,letterSpacing:"0.01em",fontFamily:"inherit",flexShrink:0,transition:"background 0.15s",whiteSpace:"nowrap"}}>
+              <span className="nb-login-full">{t.signIn||"Log in"}</span>
+              <span className="nb-login-short" style={{display:"none"}}>Log in</span>
+            </button>
+          )}
+          {user&&(
+            <button onClick={()=>setHamburgerOpen(v=>!v)} style={{background:"none",border:"1px solid "+c.cb,borderRadius:"50%",padding:0,cursor:"pointer",width:30,height:30,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,overflow:"hidden"}}>
               {user.picture
-                ?<img src={user.picture} alt={user.name||""} referrerPolicy="no-referrer" style={{width:26,height:26,borderRadius:"50%",border:"1px solid "+c.cb,flexShrink:0}}/>
-                :<div style={{width:26,height:26,borderRadius:"50%",background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"center",justifyContent:"center",color:c.ac}}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                ?<img src={user.picture} alt={user.name||""} referrerPolicy="no-referrer" style={{width:30,height:30,borderRadius:"50%",display:"block"}}/>
+                :<div style={{width:30,height:30,borderRadius:"50%",background:c.ab,display:"flex",alignItems:"center",justifyContent:"center",color:c.ac}}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
               }
             </button>
-            {avatarMenu&&(
-              <>
-                <div onClick={()=>setAvatarMenu(false)} style={{position:"fixed",inset:0,zIndex:149}}/>
-                <div style={{position:"absolute",top:"calc(100% + 8px)",right:0,zIndex:150,background:rt==="dark"?"rgba(15,23,42,0.98)":"rgba(255,255,255,0.98)",border:"1px solid "+c.cb,borderRadius:10,boxShadow:"0 8px 24px rgba(0,0,0,0.18)",backdropFilter:"blur(12px)",minWidth:160,overflow:"hidden",animation:"fadeIn 0.15s ease"}}>
-                  <button onClick={()=>{setAvatarMenu(false);setVw("no_credits");}} style={{display:"flex",alignItems:"center",gap:8,width:"100%",padding:"10px 14px",background:"none",border:"none",borderBottom:"1px solid "+c.cb,cursor:"pointer",color:c.tx,fontSize:13,fontWeight:500,textAlign:"left",fontFamily:"inherit"}}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0,color:c.ac}}><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    {t.topUp||"Buy questions"}
-                  </button>
-                  <button onClick={()=>{setAvatarMenu(false);setVw("uitleg");}} style={{display:"flex",alignItems:"center",gap:8,width:"100%",padding:"10px 14px",background:"none",border:"none",borderBottom:"1px solid "+c.cb,cursor:"pointer",color:c.tx,fontSize:13,fontWeight:500,textAlign:"left",fontFamily:"inherit"}}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0,color:c.tm}}><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-                    {t.howToUse||"How it works"}
-                  </button>
-                  <button onClick={()=>{setAvatarMenu(false);logout();}} style={{display:"flex",alignItems:"center",gap:8,width:"100%",padding:"10px 14px",background:"none",border:"none",cursor:"pointer",color:"#ef4444",fontSize:13,fontWeight:500,textAlign:"left",fontFamily:"inherit"}}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                    {t.signOut||t.out||"Log out"}
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        )}
+          )}
+          {/* Hamburger */}
+          <button onClick={()=>setHamburgerOpen(v=>!v)} aria-label="Menu" style={{background:hamburgerOpen?c.ab:c.ghb,border:"1px solid "+(hamburgerOpen?c.abr:c.ghr),borderRadius:8,padding:"6px 7px",cursor:"pointer",display:"flex",flexDirection:"column",gap:"4px",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"background 0.15s,border-color 0.15s",width:32,height:32}}>
+            <span style={{display:"block",width:14,height:1.5,background:hamburgerOpen?c.ac:c.tm,borderRadius:1,transition:"transform 0.2s,opacity 0.2s",transform:hamburgerOpen?"translateY(5.5px) rotate(45deg)":"none"}}/>
+            <span style={{display:"block",width:14,height:1.5,background:hamburgerOpen?c.ac:c.tm,borderRadius:1,transition:"opacity 0.2s",opacity:hamburgerOpen?0:1}}/>
+            <span style={{display:"block",width:14,height:1.5,background:hamburgerOpen?c.ac:c.tm,borderRadius:1,transition:"transform 0.2s,opacity 0.2s",transform:hamburgerOpen?"translateY(-5.5px) rotate(-45deg)":"none"}}/>
+          </button>
+        </div>
       </div>
-    </div>
+      {/* Backdrop */}
+      {hamburgerOpen&&<div onClick={close} style={{position:"fixed",inset:0,zIndex:198,background:"rgba(0,0,0,0.25)",backdropFilter:"blur(2px)",animation:"fadeIn 0.15s ease"}}/>}
+      {/* Drawer */}
+      {hamburgerOpen&&(
+        <div style={{position:"fixed",top:"calc(48px + env(safe-area-inset-top))",right:0,width:"min(280px,85vw)",zIndex:199,background:nbBg,backdropFilter:"blur(16px)",borderLeft:"1px solid "+c.cb,borderBottom:"1px solid "+c.cb,borderBottomLeftRadius:16,boxShadow:rt==="dark"?"0 16px 48px rgba(0,0,0,0.5)":"0 16px 48px rgba(0,0,0,0.12)",overflow:"hidden",animation:"slideInRight 0.2s cubic-bezier(0.16,1,0.3,1)"}}>
+          {/* Credits */}
+          {showCred&&(
+            <Row
+              icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>}
+              label={<span>{credits} <span style={{color:c.tf,fontWeight:400}}>{t.credFree||"free questions"}</span></span>}
+              right={<span onClick={()=>{close();setVw("no_credits");}} style={{fontSize:12,fontWeight:600,color:c.ac,cursor:"pointer",padding:"3px 8px",background:c.ab,border:"1px solid "+c.abr,borderRadius:6}}>{t.topUp||"Buy"}</span>}
+            />
+          )}
+          {/* Theme */}
+          <Row
+            icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>}
+            label={tm==="dark"?"Dark":(tm==="light"?"Light":"System")}
+            right={<TTog mode={tm} set={chTm} c={c}/>}
+          />
+          {/* Dyslexia */}
+          <Row
+            icon={<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="7" r="5" stroke="currentColor" strokeWidth="1.4"/><circle cx="6" cy="6.5" r="0.85" fill="currentColor"/><circle cx="10" cy="6.5" r="0.85" fill="currentColor"/><path d="M5.5 9 Q8 11.5 10.5 9" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" fill="none"/></svg>}
+            label={t.dyslexia||"Dyslexia-friendly font"}
+            right={<DyTog on={dy} set={chDy} c={c}/>}
+            border={auth==="in"}
+          />
+          {/* Logged-in items */}
+          {auth==="in"&&<>
+            <Row icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>} label={t.howToUse||"How it works"} onClick={()=>{close();setVw("uitleg");}}/>
+            <Row icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>} label={t.signOut||t.out||"Log out"} onClick={()=>{close();logout();}} danger border={false}/>
+          </>}
+        </div>
+      )}
+    </>
   );};
+
 
   const BottomBar=()=>{
     return(
