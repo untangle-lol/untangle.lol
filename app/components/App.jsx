@@ -483,6 +483,15 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
   // Reset share state when switching entries
   useEffect(()=>{setShareId(null);setShareOpen(false);setShareCopied(false);},[activeId]);
 
+  // Boot-restore: when result view is active and URL is still /?id= (e.g. page reload),
+  // create a share and upgrade the URL to /id/<shareId>
+  useEffect(()=>{
+    if(vw!=="result"||!activeId||!ready)return;
+    if(window.location.pathname.startsWith("/id/"))return;
+    const entry=hist.find(h=>h.id===activeId);
+    if(entry)ensureShareUrl(entry);
+  },[vw,activeId,ready]);// eslint-disable-line react-hooks/exhaustive-deps
+
   const callAPI=async(messages,maxTokens=1000)=>{
     const {key,provider}=getCredential();
     if(provider==="openrouter"){
@@ -550,7 +559,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
       const navigate=()=>{
         if(auth==="in"){const nh=[entry,...hist];setHist(nh);ls.set(eKey(userRef.current),JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
         else{const nh=[entry,...hist].slice(0,10);setHist(nh);ls.set(KEYS.guestHist,JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
-        window.history.replaceState(null,'','/?id='+entry.id);
+        ensureShareUrl(entry);
         // Show altruism popup after a short delay so result view renders first
         if(isAltruistic){setTimeout(()=>setAltruismPopup(true),600);}
         utrack("goal_result",{lang,isAltruistic,steps:ps.stappen?.length||0});
@@ -597,7 +606,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
       const navigate=()=>{
         if(auth==="in"){const nh=[entry,...hist];setHist(nh);ls.set(eKey(userRef.current),JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
         else{const nh=[entry,...hist].slice(0,10);setHist(nh);ls.set(KEYS.guestHist,JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
-        window.history.replaceState(null,'','/?id='+entry.id);
+        ensureShareUrl(entry);
         if(isAltruistic){setTimeout(()=>setAltruismPopup(true),600);}
         utrack("woop_result",{lang,isAltruistic,steps:ps.stappen?.length||0});
       };
@@ -669,7 +678,23 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     setMollieBusy(false);
   };
 
-  const openEntry=(entry)=>{setSteps(entry.resultaat);setActiveId(entry.id);setLocalComp(entry.completed||entry.resultaat.stappen.map(()=>false));setShareOpen(false);setVw("result");window.history.replaceState(null,'','/?id='+entry.id);};
+  // Create a server-side share and update the browser URL to /id/<shareId>.
+  // Persists shareId back into the history entry so re-opens don't call the API again.
+  const ensureShareUrl=async(entry)=>{
+    if(entry.shareId){setShareId(entry.shareId);window.history.replaceState(null,'','/id/'+entry.shareId);return;}
+    try{
+      const r=await fetch('/api/share',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({steps:entry.resultaat,lang:entry.lang})});
+      if(!r.ok)return;
+      const{id:sid}=await r.json();
+      setShareId(sid);
+      window.history.replaceState(null,'','/id/'+sid);
+      const addSid=ph=>ph.map(h=>h.id===entry.id?{...h,shareId:sid}:h);
+      if(auth==="in"){setHist(ph=>{const nh=addSid(ph);ls.set(eKey(userRef.current),JSON.stringify(nh));return nh;});}
+      else{setHist(ph=>{const nh=addSid(ph);ls.set(KEYS.guestHist,JSON.stringify(nh));return nh;});}
+    }catch{}
+  };
+
+  const openEntry=(entry)=>{setSteps(entry.resultaat);setActiveId(entry.id);setLocalComp(entry.completed||entry.resultaat.stappen.map(()=>false));setShareOpen(false);setShareId(null);setVw("result");ensureShareUrl(entry);};
   const del=(id)=>{const nh=hist.filter(h=>h.id!==id);setHist(nh);if(auth==="in")ls.set(eKey(userRef.current),JSON.stringify(nh));else ls.set(KEYS.guestHist,JSON.stringify(nh));};
   const clrAll=()=>{setHist([]);if(auth==="in")ls.set(eKey(userRef.current),"[]");else ls.set(KEYS.guestHist,"[]");};
   const goHome=()=>{
