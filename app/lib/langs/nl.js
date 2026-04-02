@@ -59,6 +59,7 @@ const nl = {
   ],
   woopGo:"Maak mijn plan →",woopLink:"Meer over de wetenschap",woopSummaryTitle:"Jouw WOOP",
   suggLabel:"Kom je er niet uit? Kies een suggestie hieronder",
+  recentQ:"Recente vragen",
   taClrConfirm:"wis?",
   celebTitle:"Gefeliciteerd!",
   celebMsg:"Je hebt alle stappen afgerond. Goed gedaan — dit verdient een feestje!",

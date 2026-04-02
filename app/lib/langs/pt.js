@@ -59,6 +59,7 @@ const pt = {
   ],
   woopGo:"Criar meu plano →",woopLink:"Saiba mais sobre a ciência",woopSummaryTitle:"Seu WOOP",
   suggLabel:"Não sabe o que escrever? Escolha uma sugestão",
+  recentQ:"Perguntas recentes",
   taClrConfirm:"limpar?",
   celebTitle:"Parabéns!",
   celebMsg:"Você concluiu todas as etapas. Muito bem — isso merece comemoração!",

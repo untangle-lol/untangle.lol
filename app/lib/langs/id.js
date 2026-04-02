@@ -59,6 +59,7 @@ const id = {
   ],
   woopGo:"Buat rencanaku →",woopLink:"Pelajari tentang ilmunya",woopSummaryTitle:"WOOP-mu",
   suggLabel:"Tidak tahu mau menulis apa? Pilih saran di bawah",
+  recentQ:"Pertanyaan terbaru",
   taClrConfirm:"hapus?",
   celebTitle:"Selamat!",
   celebMsg:"Kamu telah menyelesaikan semua langkah. Bagus sekali — ini layak dirayakan!",

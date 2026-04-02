@@ -59,6 +59,7 @@ const ar = {
   ],
   woopGo:"أنشئ خطتي ←",woopLink:"اقرأ عن العلم",woopSummaryTitle:"WOOP الخاص بك",
   suggLabel:"لا تعرف ماذا تكتب؟ اختر اقتراحاً أدناه",
+  recentQ:"الأسئلة الأخيرة",
   taClrConfirm:"حذف؟",
   celebTitle:"تهانينا!",
   celebMsg:"لقد أكملت جميع الخطوات. أحسنت — هذا يستحق احتفالاً!",

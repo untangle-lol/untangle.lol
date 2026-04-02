@@ -59,6 +59,7 @@ const en = {
   ],
   woopGo:"Create my plan →",woopLink:"Learn about the science",woopSummaryTitle:"Your WOOP",
   suggLabel:"Not sure what to type? Pick a suggestion below",
+  recentQ:"Recent questions",
   taClrConfirm:"clear?",
   celebTitle:"Congratulations!",
   celebMsg:"You've completed every step. Well done — this calls for a celebration!",

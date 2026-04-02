@@ -59,6 +59,7 @@ const fr = {
   ],
   woopGo:"Créer mon plan →",woopLink:"En savoir plus sur la science",woopSummaryTitle:"Ton WOOP",
   suggLabel:"Pas sûr(e) quoi écrire ? Choisis une suggestion",
+  recentQ:"Questions récentes",
   taClrConfirm:"effacer?",
   celebTitle:"Félicitations !",
   celebMsg:"Tu as complété toutes les étapes. Bravo — ça se fête !",

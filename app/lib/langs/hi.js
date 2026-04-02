@@ -59,6 +59,7 @@ const hi = {
   ],
   woopGo:"मेरी योजना बनाएं →",woopLink:"विज्ञान के बारे में जानें",woopSummaryTitle:"आपका WOOP",
   suggLabel:"क्या टाइप करें? नीचे से एक सुझाव चुनें",
+  recentQ:"हाल के प्रश्न",
   taClrConfirm:"हटाएं?",
   celebTitle:"बधाई हो!",
   celebMsg:"आपने सभी चरण पूरे कर लिए। शाबाश — यह उत्सव के योग्य है!",

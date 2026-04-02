@@ -59,6 +59,7 @@ const sw = {
   ],
   woopGo:"Unda mpango wangu →",woopLink:"Jifunze kuhusu sayansi",woopSummaryTitle:"WOOP yako",
   suggLabel:"Hujui cha kuandika? Chagua pendekezo hapa chini",
+  recentQ:"Maswali ya hivi karibuni",
   taClrConfirm:"futa?",
   celebTitle:"Hongera!",
   celebMsg:"Umekamilisha hatua zote. Vizuri sana — hii inastahili kusherehekewa!",

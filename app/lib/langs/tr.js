@@ -59,6 +59,7 @@ const tr = {
   ],
   woopGo:"Planımı oluştur →",woopLink:"Bilim hakkında öğren",woopSummaryTitle:"Senin WOOP'un",
   suggLabel:"Ne yazacağını bilmiyor musun? Aşağıdan bir öneri seç",
+  recentQ:"Son sorular",
   taClrConfirm:"temizle?",
   celebTitle:"Tebrikler!",
   celebMsg:"Tüm adımları tamamladınız. Aferin — bu kutlamayı hak ediyor!",
