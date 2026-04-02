@@ -8,7 +8,8 @@ import LegalView from "./LegalView.jsx";
 import DonateView from "./DonateView.jsx";
 import HowItWorksView from "./HowItWorksView.jsx";
 
-const ALTRUISM_BONUS_CREDITS = 2;
+const ALTRUISM_BONUS_TIER1 = 2; // first altruistic share
+const ALTRUISM_BONUS_TIER2 = 1; // second altruistic share
 
 // Umami custom event helper — safe no-op if script hasn't loaded yet
 const utrack=(event,data)=>{try{window.umami?.track(event,data);}catch{}};
@@ -38,7 +39,7 @@ const KEYS = {
   usage:    "untangle_usage",
    credits:  "untangle_credits",
    creditsTs: "untangle_credits_ts",
-   altruismBonusTs: "untangle_altruism_bonus_ts",
+   altruismShareCount: "untangle_altruism_share_count",
    clientRef:"untangle_client_ref",
 };
 
@@ -215,11 +216,14 @@ const [lang,setLang]=useState(null);
   const [honeypot,setHoneypot]=useState("");
   // Altruism
   const [altruismPopup,setAltruismPopup]=useState(false);   // show "you're helping others!" popup
-  const [altruismBonusPopup,setAltruismBonusPopup]=useState(false); // show "+10 credits earned!" popup
+  const [altruismBonusPopup,setAltruismBonusPopup]=useState(false); // show "+n credits earned!" popup
+  const [earnedBonus,setEarnedBonus]=useState(ALTRUISM_BONUS_TIER1); // amount earned in last share
   const [pendingAltruismId,setPendingAltruismId]=useState(null); // entry id that has pending bonus
   const [loadingAltruistic,setLoadingAltruistic]=useState(false); // show amber pill on loading screen
-  // true when the user hasn't received an altruism bonus in the last 24 hours
-  const canEarnAltruismBonus=(()=>{const ts=parseInt(ls.get(KEYS.altruismBonusTs)||"0",10);return(Date.now()-ts)>=24*60*60*1000;})();
+  // Tier-based altruism bonus: 1st share → +2, 2nd share → +1, 3rd+ → 0 (payment CTA)
+  const altruismShareCount=(()=>parseInt(ls.get(KEYS.altruismShareCount)||"0",10))();
+  const nextAltruismBonus=altruismShareCount===0?ALTRUISM_BONUS_TIER1:altruismShareCount===1?ALTRUISM_BONUS_TIER2:0;
+  const canEarnAltruismBonus=nextAltruismBonus>0;
   // Hero subtitle cycling handled by HeroSubtitle component
   // Stripe
   const [topUpBusy,setTopUpBusy]=useState(false);
@@ -745,17 +749,26 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     return lines.join('\n').trim();
   };
 
-  // Award altruism bonus — only when the user actually shares (not just opens the panel)
+  // Award altruism bonus — only when the user actually shares (button pressed)
+  // Tier: 1st share → +2, 2nd share → +1, 3rd+ → 0 (navigate to payment view)
   const claimAltruismBonus=()=>{
     const entry=hist.find(h=>h.id===activeId);
-    if(!entry?.isAltruistic||entry?.altruismBonusClaimed||!canEarnAltruismBonus)return;
-    addCredits(ALTRUISM_BONUS_CREDITS);
-    ls.set(KEYS.altruismBonusTs,String(Date.now()));
-    utrack("altruism_bonus_earned",{credits:ALTRUISM_BONUS_CREDITS,trigger:"share"});
+    if(!entry?.isAltruistic||entry?.altruismBonusClaimed)return;
+    const count=parseInt(ls.get(KEYS.altruismShareCount)||"0",10);
+    const bonus=count===0?ALTRUISM_BONUS_TIER1:count===1?ALTRUISM_BONUS_TIER2:0;
+    ls.set(KEYS.altruismShareCount,String(count+1));
     const markClaimed=(ph)=>ph.map(h=>h.id===activeId?{...h,altruismBonusClaimed:true}:h);
     if(auth==="in"){setHist(ph=>{const nh=markClaimed(ph);ls.set(eKey(userRef.current),JSON.stringify(nh));return nh;});}
     else{setHist(ph=>{const nh=markClaimed(ph);ls.set(KEYS.guestHist,JSON.stringify(nh));return nh;});}
-    setTimeout(()=>setAltruismBonusPopup(true),800);
+    if(bonus>0){
+      addCredits(bonus);
+      utrack("altruism_bonus_earned",{credits:bonus,tier:count+1,trigger:"share"});
+      setEarnedBonus(bonus);
+      setTimeout(()=>setAltruismBonusPopup(true),800);
+    } else {
+      utrack("altruism_bonus_exhausted",{tier:count+1,trigger:"share"});
+      setTimeout(()=>setVw("no_credits"),800);
+    }
   };
 
   const doShare=async(ps)=>{
@@ -919,9 +932,14 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
         <div style={{textAlign:"center"}}>
           <div style={{display:"flex",justifyContent:"center",marginBottom:12,animation:"pop 0.5s ease",color:c.gr}}><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
           <h2 style={{fontSize:20,fontWeight:700,color:c.gr,margin:"0 0 10px"}}>{t.altruismBonusTitle}</h2>
-          <p style={{fontSize:14,color:c.tm,lineHeight:1.6,margin:"0 0 20px"}}>{t.altruismBonusMsg}</p>
-          <div style={{fontSize:32,fontWeight:800,color:c.gr,margin:"0 0 16px"}}>+{ALTRUISM_BONUS_CREDITS}</div>
+          <p style={{fontSize:14,color:c.tm,lineHeight:1.6,margin:"0 0 12px"}}>{t.altruismBonusMsg}</p>
+          <div style={{fontSize:40,fontWeight:800,color:c.gr,margin:"0 0 16px"}}>+{earnedBonus}</div>
           <button onClick={()=>setAltruismBonusPopup(false)} style={{...sx.bo,marginTop:0,background:c.ag}}>{t.altruismBonusBtn}</button>
+          {earnedBonus===ALTRUISM_BONUS_TIER2&&(
+            <button onClick={()=>{setAltruismBonusPopup(false);setVw("no_credits");}} style={{display:"block",width:"100%",marginTop:10,padding:"10px 16px",background:"none",border:"1px solid "+c.cb,borderRadius:10,color:c.ac,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+              {t.topUp||"Buy questions"} →
+            </button>
+          )}
         </div>
       </Modal>
     )}
@@ -1294,7 +1312,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
         <div className="uw" style={sx.w}>
           <div style={{animation:"fadeIn 0.4s ease"}}>
             {/* Altruistic goal progress indicator */}
-            {ae?.isAltruistic&&!ae?.altruismBonusClaimed&&(
+            {ae?.isAltruistic&&!ae?.altruismBonusClaimed&&nextAltruismBonus>0&&(
               <div style={{marginBottom:10,padding:"10px 14px",borderRadius:10,background:"rgba(251,191,36,0.1)",border:"1px solid rgba(251,191,36,0.3)",display:"flex",alignItems:"center",gap:8}}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="#f59e0b" style={{display:"block",flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                 <span style={{fontSize:12,color:c.ac,fontWeight:500,flex:1}}>{t.altruismPopupMsg}</span>
@@ -1349,13 +1367,13 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
               </div>
             </div>
             <button onClick={goHome} style={sx.bg}>{t.resB}</button>
-            {ae?.isAltruistic&&!ae?.altruismBonusClaimed&&(
+            {ae?.isAltruistic&&!ae?.altruismBonusClaimed&&nextAltruismBonus>0&&(
               <p style={{textAlign:"center",fontSize:12,color:"#d97706",fontWeight:600,margin:"14px 0 4px",display:"flex",alignItems:"center",justifyContent:"center",gap:5}}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style={{flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                {t.altruismShareCta||"Share this plan and earn +2 free questions"}
+                {(t.altruismShareCta||"Share this plan and earn +{n} free questions").replace(/\+\d+/,`+${nextAltruismBonus}`)}
               </p>
             )}
-            <button onClick={()=>doShare(steps)} style={{...sx.bg,marginTop:ae?.isAltruistic&&!ae?.altruismBonusClaimed?4:8,...(ae?.isAltruistic&&!ae?.altruismBonusClaimed?{background:"rgba(245,158,11,0.12)",border:"1px solid rgba(245,158,11,0.45)",color:"#d97706"}:{}),display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+            <button onClick={()=>doShare(steps)} style={{...sx.bg,marginTop:ae?.isAltruistic&&!ae?.altruismBonusClaimed&&nextAltruismBonus>0?4:8,...(ae?.isAltruistic&&!ae?.altruismBonusClaimed&&nextAltruismBonus>0?{background:"rgba(245,158,11,0.12)",border:"1px solid rgba(245,158,11,0.45)",color:"#d97706"}:{}),display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
               <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
               {t.share||'Share'}
             </button>
