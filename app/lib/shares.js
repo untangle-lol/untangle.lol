@@ -43,7 +43,7 @@ export function getShare(id) {
   const entry = store[id];
   if (!entry) return null;
   if (Date.now() - entry.createdAt >= TTL_MS) return null;
-  return { steps: entry.steps, lang: entry.lang };
+  return { steps: entry.steps, lang: entry.lang, createdAt: entry.createdAt };
 }
 
 export function createShare(steps, lang) {

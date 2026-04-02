@@ -1,6 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  async redirects() {
+    return [
+      // Old share URL format → new clean plan URL
+      { source: "/s/:id", destination: "/id/:id", permanent: true },
+      // Old query-param share links e.g. /?id=1775128715110
+      {
+        source: "/",
+        has: [{ type: "query", key: "id", value: "(?<id>[^&]+)" }],
+        destination: "/id/:id",
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     // Admin SPA routes that don't have their own page.jsx
     return [{ source: "/revenue", destination: "/" }];

@@ -769,7 +769,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
       }catch{}
       setShareLoading(false);
     }
-    const url=sid?`https://untangle.lol/s/${sid}`:'https://untangle.lol';
+    const url=sid?`https://untangle.lol/id/${sid}`:'https://untangle.lol';
     const text=buildShareText(ps,url);
     if(navigator.share){
       try{
@@ -1360,7 +1360,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
               {t.share||'Share'}
             </button>
             {shareOpen&&(()=>{
-              const _shareUrl=shareId?`https://untangle.lol/s/${shareId}`:'https://untangle.lol';
+              const _shareUrl=shareId?`https://untangle.lol/id/${shareId}`:'https://untangle.lol';
               const _text=buildShareText(steps,_shareUrl);
               const _enc=encodeURIComponent(_text);
               const _url=encodeURIComponent(_shareUrl);
