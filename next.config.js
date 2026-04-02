@@ -5,8 +5,8 @@ const nextConfig = {
     return [
       // Old share URL format → new clean plan URL
       { source: "/s/:id", destination: "/id/:id", permanent: true },
-      // Note: /?id= redirects are handled in middleware.js to avoid Next.js
-      // appending the query param to the destination URL.
+      // Note: /?id=<n> URLs are the SPA's own navigation URLs (localStorage restore).
+      // They must NOT be redirected — the SPA reads ?id= itself on boot.
     ];
   },
   async rewrites() {
