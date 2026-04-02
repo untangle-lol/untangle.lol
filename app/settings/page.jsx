@@ -1,7 +1,6 @@
 import App from "../components/App";
 
 export const metadata = {
-  title: "Account & Settings — untangle.lol",
   description: "Manage your account and settings on untangle.lol — free AI goal planner.",
   robots: { index: false, follow: false },
   alternates: { canonical: "https://untangle.lol/settings" },
@@ -9,7 +8,6 @@ export const metadata = {
     type: "website",
     url: "https://untangle.lol/settings",
     siteName: "untangle.lol",
-    title: "Account & Settings — untangle.lol",
     description: "Manage your account and settings on untangle.lol.",
     images: [{ url: "/og.png", width: 1200, height: 630 }],
   },

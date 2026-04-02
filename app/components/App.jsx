@@ -406,8 +406,8 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     setReady(true);
   })();},[]);
 
-  // Update document title when language changes
-  useEffect(()=>{if(t.pageTitle)document.title=t.pageTitle;},[t.pageTitle]);
+  // Update document title on language or view change (overrides any Next.js route metadata)
+  useEffect(()=>{if(t.pageTitle)document.title=t.pageTitle;},[t.pageTitle,vw]);
 
   // Load lang-scoped recents whenever lang changes
   useEffect(()=>{
@@ -1112,59 +1112,51 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
               <p style={{fontSize:13,color:c.tm,margin:0}}>{t.paySubtitle||"Each question generates a complete AI action plan"}</p>
             </div>
             {/* Tier cards */}
-            <div style={{display:"flex",flexDirection:"column",gap:10,padding:"0 0 4px"}}>
+            <div style={{display:"flex",flexDirection:"column",gap:8,padding:"0 0 4px"}}>
               {TIERS.map(tier=>(
-                <div key={tier.id} style={{position:"relative",borderRadius:14,border:"2px solid "+(tier.popular?c.abr:c.cb),background:tier.popular?c.ab:c.card,padding:"18px 20px",overflow:"hidden",transition:"border-color 0.15s"}}>
-                  {tier.popular&&<div style={{position:"absolute",top:0,right:0,background:c.ac,color:rt==="dark"?"#0f172a":"#fff",fontSize:10,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",padding:"4px 10px",borderRadius:"0 12px 0 8px"}}>{t.tierBadge||"Most popular"}</div>}
-                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
+                <div key={tier.id} style={{position:"relative",borderRadius:16,border:"2px solid "+(tier.popular?c.abr:c.cb),background:tier.popular?c.ab:c.card,padding:"18px 20px 16px",overflow:"hidden"}}>
+                  {tier.popular&&<div style={{position:"absolute",top:0,right:0,background:c.ac,color:rt==="dark"?"#0f172a":"#fff",fontSize:9,fontWeight:800,letterSpacing:"0.1em",textTransform:"uppercase",padding:"5px 12px",borderRadius:"0 14px 0 10px"}}>{t.tierBadge||"Populair"}</div>}
+                  <div style={{display:"flex",alignItems:"flex-end",justifyContent:"space-between",marginBottom:14,paddingRight:tier.popular?56:0}}>
                     <div>
-                      <div style={{fontSize:11,fontWeight:600,letterSpacing:"0.08em",textTransform:"uppercase",color:tier.popular?c.ac:c.tf,marginBottom:3}}>{tier.label}</div>
-                      <div style={{display:"flex",alignItems:"baseline",gap:6}}>
-                        <span style={{fontSize:32,fontWeight:800,color:c.tx,letterSpacing:"-0.04em",lineHeight:1}}>{tier.credits}</span>
-                        <span style={{fontSize:13,color:c.tm,fontWeight:500}}>{t.cred||"questions"}</span>
+                      <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.12em",textTransform:"uppercase",color:tier.popular?c.ac:c.tf,marginBottom:5}}>{tier.label}</div>
+                      <div style={{display:"flex",alignItems:"baseline",gap:5}}>
+                        <span style={{fontSize:38,fontWeight:900,color:c.tx,letterSpacing:"-0.05em",lineHeight:1}}>{tier.credits}</span>
+                        <span style={{fontSize:12,color:c.tm,fontWeight:500,marginBottom:2}}>{t.cred||"vragen"}</span>
                       </div>
                     </div>
-                    <div style={{textAlign:"right"}}>
-                      <div style={{fontSize:26,fontWeight:800,color:tier.popular?c.ac:c.tx,letterSpacing:"-0.03em",lineHeight:1}}>{tier.price}</div>
-                      <div style={{fontSize:11,color:c.tf,marginTop:3}}>{tier.perQ} {t.perQ||"/ question"}</div>
+                    <div style={{textAlign:"right",paddingBottom:2}}>
+                      <div style={{fontSize:28,fontWeight:800,color:tier.popular?c.ac:c.tx,letterSpacing:"-0.04em",lineHeight:1}}>{tier.price}</div>
+                      <div style={{fontSize:10,color:c.tf,marginTop:4}}>{tier.perQ} {t.perQ||"/ vraag"}</div>
                     </div>
                   </div>
-                  <div style={{display:"grid",gridTemplateColumns:STRIPE_ENABLED?"1fr 1fr":"1fr",gap:8}}>
-                    {STRIPE_ENABLED&&<button onClick={()=>startTopUp(tier.id)} disabled={!!busy} style={{padding:"10px 8px",background:topUpBusy===tier.id?"rgba(103,114,229,0.8)":"linear-gradient(135deg,#6772e5,#4f46e5)",color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:600,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,opacity:busy&&topUpBusy!==tier.id?0.5:1,transition:"opacity 0.15s"}}>
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                      {topUpBusy===tier.id?"...":"Card"}
-                    </button>}
-                    <button onClick={()=>startMollieTopUp(tier.id)} disabled={!!busy} style={{padding:"10px 8px",background:mollieBusy===tier.id?"rgba(232,76,32,0.8)":"linear-gradient(135deg,#ff6640,#e84c20)",color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:600,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,opacity:busy&&mollieBusy!==tier.id?0.5:1,transition:"opacity 0.15s"}}>
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                      {mollieBusy===tier.id?"...":"iDEAL"}
-                    </button>
-                  </div>
+                  {STRIPE_ENABLED&&<button onClick={()=>startTopUp(tier.id)} disabled={!!busy} style={{width:"100%",marginBottom:8,padding:"11px 16px",background:topUpBusy===tier.id?"rgba(103,114,229,0.7)":"linear-gradient(135deg,#6772e5,#4f46e5)",color:"#fff",border:"none",borderRadius:10,fontSize:14,fontWeight:700,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,opacity:busy&&topUpBusy!==tier.id?0.45:1,transition:"opacity 0.15s",letterSpacing:"-0.01em",fontFamily:"inherit"}}>
+                    {topUpBusy===tier.id?"...":"Card"}
+                  </button>}
+                  <button onClick={()=>startMollieTopUp(tier.id)} disabled={!!busy} style={{width:"100%",padding:"11px 16px",background:tier.popular?(mollieBusy===tier.id?"rgba(234,179,8,0.7)":c.ag):"transparent",color:tier.popular?c.bt:c.ac,border:tier.popular?"none":"1.5px solid "+(mollieBusy===tier.id?c.ac:c.abr),borderRadius:10,fontSize:14,fontWeight:700,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,opacity:busy&&mollieBusy!==tier.id?0.45:1,transition:"opacity 0.15s",letterSpacing:"-0.01em",fontFamily:"inherit"}}>
+                    {mollieBusy===tier.id?"...":<>{t.buy||"Kopen"}<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></>}
+                  </button>
                 </div>
               ))}
             </div>
             {/* Custom tier */}
-            <div style={{borderRadius:14,border:"2px solid "+c.cb,background:c.card,padding:"18px 20px"}}>
-              <div style={{fontSize:11,fontWeight:600,letterSpacing:"0.08em",textTransform:"uppercase",color:c.tf,marginBottom:10}}>{t.tierCustom||"Custom"}</div>
-              <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
+            <div style={{borderRadius:16,border:"1.5px solid "+c.cb,background:c.card,padding:"18px 20px"}}>
+              <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.12em",textTransform:"uppercase",color:c.tf,marginBottom:12}}>{t.tierCustom||"Aangepast"}</div>
+              <div style={{display:"flex",alignItems:"flex-end",gap:10,marginBottom:14}}>
                 <div style={{flex:1}}>
-                  <label style={{fontSize:12,color:c.tm,display:"block",marginBottom:4}}>{t.tierCustomLabel||"Number of questions (min. 50)"}</label>
-                  <input type="number" min="50" step="5" value={customQty} onChange={e=>setCustomQty(Math.max(50,parseInt(e.target.value)||50))} style={{width:"100%",boxSizing:"border-box",background:c.sb,border:"1px solid "+c.cb,borderRadius:8,padding:"9px 12px",fontSize:16,fontWeight:700,color:c.tx,outline:"none"}}/>
+                  <label style={{fontSize:11,color:c.tm,display:"block",marginBottom:5}}>{t.tierCustomLabel||"Aantal vragen (min. 50)"}</label>
+                  <input type="number" min="50" step="5" value={customQty} onChange={e=>setCustomQty(Math.max(50,parseInt(e.target.value)||50))} style={{width:"100%",boxSizing:"border-box",background:c.sb,border:"1.5px solid "+c.cb,borderRadius:10,padding:"9px 12px",fontSize:16,fontWeight:700,color:c.tx,outline:"none",fontFamily:"inherit"}}/>
                 </div>
-                <div style={{textAlign:"right",flexShrink:0}}>
-                  <div style={{fontSize:26,fontWeight:800,color:c.tx,letterSpacing:"-0.03em",lineHeight:1}}>{customPrice}</div>
-                  <div style={{fontSize:11,color:c.tf,marginTop:3}}>€0.25 {t.perQ||"/ question"}</div>
+                <div style={{textAlign:"right",flexShrink:0,paddingBottom:2}}>
+                  <div style={{fontSize:28,fontWeight:800,color:c.tx,letterSpacing:"-0.04em",lineHeight:1}}>{customPrice}</div>
+                  <div style={{fontSize:10,color:c.tf,marginTop:4}}>€0,25 {t.perQ||"/ vraag"}</div>
                 </div>
               </div>
-              <div style={{display:"grid",gridTemplateColumns:STRIPE_ENABLED?"1fr 1fr":"1fr",gap:8}}>
-                {STRIPE_ENABLED&&<button onClick={()=>startTopUp("custom",safeQty)} disabled={!!busy} style={{padding:"10px 8px",background:topUpBusy==="custom"?"rgba(103,114,229,0.8)":"linear-gradient(135deg,#6772e5,#4f46e5)",color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:600,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,opacity:busy&&topUpBusy!=="custom"?0.5:1,transition:"opacity 0.15s"}}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                  {topUpBusy==="custom"?"...":"Card"}
-                </button>}
-                <button onClick={()=>startMollieTopUp("custom",safeQty)} disabled={!!busy} style={{padding:"10px 8px",background:mollieBusy==="custom"?"rgba(232,76,32,0.8)":"linear-gradient(135deg,#ff6640,#e84c20)",color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:600,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,opacity:busy&&mollieBusy!=="custom"?0.5:1,transition:"opacity 0.15s"}}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                  {mollieBusy==="custom"?"...":"iDEAL"}
-                </button>
-              </div>
+              {STRIPE_ENABLED&&<button onClick={()=>startTopUp("custom",safeQty)} disabled={!!busy} style={{width:"100%",marginBottom:8,padding:"11px 16px",background:topUpBusy==="custom"?"rgba(103,114,229,0.7)":"linear-gradient(135deg,#6772e5,#4f46e5)",color:"#fff",border:"none",borderRadius:10,fontSize:14,fontWeight:700,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,opacity:busy&&topUpBusy!=="custom"?0.45:1,transition:"opacity 0.15s",letterSpacing:"-0.01em",fontFamily:"inherit"}}>
+                {topUpBusy==="custom"?"...":"Card"}
+              </button>}
+              <button onClick={()=>startMollieTopUp("custom",safeQty)} disabled={!!busy} style={{width:"100%",padding:"11px 16px",background:"transparent",color:c.ac,border:"1.5px solid "+(mollieBusy==="custom"?c.ac:c.abr),borderRadius:10,fontSize:14,fontWeight:700,cursor:busy?"not-allowed":"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,opacity:busy&&mollieBusy!=="custom"?0.45:1,transition:"opacity 0.15s",letterSpacing:"-0.01em",fontFamily:"inherit"}}>
+                {mollieBusy==="custom"?"...":<>{t.buy||"Kopen"}<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></>}
+              </button>
             </div>
             <p style={{textAlign:"center",fontSize:11,color:c.tf,margin:"12px 0 0"}}>🔒 {STRIPE_ENABLED?(t.paySecure||"Secure payment via Stripe & Mollie"):"Secure payment via Mollie"}</p>
             <button onClick={()=>setVw(auth==="in"?"dash":"home")} style={{...sx.bg,marginTop:12}}>{t.back}</button>
