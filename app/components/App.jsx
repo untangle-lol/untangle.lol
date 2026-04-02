@@ -800,10 +800,9 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
   // Build plain-text share message from current steps
   const buildShareText=(ps,url)=>{
     if(!ps)return'';
-    const link=url||'https://untangle.lol';
-    const lines=[t.shareMsg||'Check out my action plan on untangle.lol:','',ps.titel,''];
-    (ps.stappen||[]).forEach((s,i)=>{lines.push((i+1)+'. '+s.actie);lines.push('   '+s.toelichting);lines.push('');});
-    lines.push(link);
+    const lines=[ps.titel,''];
+    (ps.stappen||[]).forEach((s,i)=>{lines.push((i+1)+'. '+s.actie);if(s.toelichting)lines.push('   '+s.toelichting);lines.push('');});
+    if(url)lines.push(url);
     return lines.join('\n').trim();
   };
 
