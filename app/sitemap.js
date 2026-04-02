@@ -25,8 +25,14 @@ export default function sitemap() {
 
   const staticPages = [
     { url: `${BASE}/`,        lastModified: now, changeFrequency: "weekly",  priority: 1.0 },
-    { url: `${BASE}/privacy`, lastModified: now, changeFrequency: "monthly", priority: 0.3 },
-    { url: `${BASE}/terms`,   lastModified: now, changeFrequency: "monthly", priority: 0.3 },
+    {
+      url: `${BASE}/privacy`, lastModified: now, changeFrequency: "monthly", priority: 0.3,
+      alternates: { languages: Object.fromEntries(LANGS.map((l) => [l, `${BASE}/privacy`])) },
+    },
+    {
+      url: `${BASE}/terms`,   lastModified: now, changeFrequency: "monthly", priority: 0.3,
+      alternates: { languages: Object.fromEntries(LANGS.map((l) => [l, `${BASE}/terms`])) },
+    },
     ...LANGS.map((lang) => ({
       url: `${BASE}/donate/${lang}`,
       lastModified: now,
