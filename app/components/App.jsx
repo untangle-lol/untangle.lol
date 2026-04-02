@@ -324,7 +324,7 @@ const [lang,setLang]=useState(null);
 
   // Persist current view so refresh restores the same page
   useEffect(()=>{
-    if(vw&&vw!=="splash"&&vw!=="loading")ls.set(KEYS.view,vw);
+    if(vw&&vw!=="splash"&&vw!=="loading"&&vw!=="result")ls.set(KEYS.view,vw);
   },[vw]);
 
 
