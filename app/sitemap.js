@@ -1,5 +1,7 @@
 import fs from "fs";
 
+export const dynamic = "force-dynamic";
+
 const LANGS = ["nl","en","de","fr","es","pt","ar","bn","hi","id","ja","ru","sw","tr","zh"];
 const BASE   = "https://untangle.lol";
 const DATA_FILE = "/data/shares.json";
