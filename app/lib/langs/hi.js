@@ -84,6 +84,7 @@ const hi = {
   remaining:"शेष",
   fbPageDesc:"कुछ काम नहीं कर रहा, या कोई सुझाव है? हम हर संदेश पढ़ते हैं और सभी के लिए untangle.lol को बेहतर बनाने के लिए आपकी प्रतिक्रिया का उपयोग करते हैं।",
   dWName:"वापस स्वागत है, {name}!",
+  pageTitle:"untangle.lol — निःशुल्क AI लक्ष्य योजनाकार",
   madeBy:"Bach Software द्वारा संभव बनाया गया",
 };
 export default hi;

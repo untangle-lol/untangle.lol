@@ -84,6 +84,7 @@ const zh = {
   remaining:"剩余",
   fbPageDesc:"有什么不工作，或者有建议？我们阅读每条消息，并使用您的反馈为所有人改进 untangle.lol。",
   dWName:"欢迎回来，{name}！",
+  pageTitle:"untangle.lol — 免费 AI 目标规划工具",
   madeBy:"由 Bach Software 提供支持",
 };
 export default zh;

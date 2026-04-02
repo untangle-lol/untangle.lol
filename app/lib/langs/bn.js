@@ -84,6 +84,7 @@ const bn = {
   remaining:"বাকি",
   fbPageDesc:"কিছু কাজ করছে না, বা কোনো পরামর্শ আছে? আমরা প্রতিটি বার্তা পড়ি এবং আপনার মতামত ব্যবহার করে সবার জন্য untangle.lol উন্নত করি।",
   dWName:"স্বাগতম আবার, {name}!",
+  pageTitle:"untangle.lol — বিনামূল্যে AI লক্ষ্য পরিকল্পনাকারী",
   madeBy:"Bach Software দ্বারা সম্ভব হয়েছে",
 };
 export default bn;

@@ -84,6 +84,7 @@ const ja = {
   remaining:"残り",
   fbPageDesc:"うまくいかないことや、ご提案があればお知らせください。すべてのメッセージを読み、あなたのフィードバックをuntangle.lolの改善に役立てています。",
   dWName:"おかえりなさい、{name}さん！",
+  pageTitle:"untangle.lol — 無料 AI ゴールプランナー",
   madeBy:"Bach Softwareによって実現",
 };
 export default ja;

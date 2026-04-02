@@ -84,6 +84,7 @@ const id = {
   remaining:"tersisa",
   fbPageDesc:"Ada yang tidak berfungsi, atau punya saran? Kami membaca setiap pesan dan menggunakan masukan kamu untuk membuat untangle.lol lebih baik bagi semua orang.",
   dWName:"Selamat datang kembali, {name}!",
+  pageTitle:"untangle.lol — Perencana Tujuan AI Gratis",
   madeBy:"Dimungkinkan oleh Bach Software",
 };
 export default id;

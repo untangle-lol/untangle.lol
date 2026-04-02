@@ -84,6 +84,7 @@ const ru = {
   remaining:"осталось",
   fbPageDesc:"Что-то не работает, или есть предложение? Мы читаем каждое сообщение и используем ваш отзыв, чтобы сделать untangle.lol лучше для всех.",
   dWName:"С возвращением, {name}!",
+  pageTitle:"untangle.lol — Бесплатный ИИ-планировщик целей",
   madeBy:"Реализовано при поддержке Bach Software",
 };
 export default ru;

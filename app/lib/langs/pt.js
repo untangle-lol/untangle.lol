@@ -84,6 +84,7 @@ const pt = {
   remaining:"restantes",
   fbPageDesc:"Algo não está funcionando, ou tem uma sugestão? Lemos cada mensagem e usamos seu feedback para melhorar untangle.lol para todos.",
   dWName:"Bem-vindo de volta, {name}!",
+  pageTitle:"untangle.lol — Planejador de metas com IA grátis",
   madeBy:"Possibilitado por Bach Software",
 };
 export default pt;

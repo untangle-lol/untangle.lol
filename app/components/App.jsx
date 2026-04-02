@@ -406,6 +406,9 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     setReady(true);
   })();},[]);
 
+  // Update document title when language changes
+  useEffect(()=>{if(t.pageTitle)document.title=t.pageTitle;},[t.pageTitle]);
+
   // Load lang-scoped recents whenever lang changes
   useEffect(()=>{
     if(!lang)return;

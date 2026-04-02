@@ -84,6 +84,7 @@ const de = {
   remaining:"verbleibend",
   fbPageDesc:"Etwas funktioniert nicht oder hast du einen Vorschlag? Wir lesen jede Nachricht und nutzen dein Feedback, um untangle.lol für alle zu verbessern.",
   dWName:"Willkommen zurück, {name}!",
+  pageTitle:"untangle.lol — Kostenloser KI-Zielplaner",
   madeBy:"Ermöglicht durch Bach Software",
 };
 export default de;

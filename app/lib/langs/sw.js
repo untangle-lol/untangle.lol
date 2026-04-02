@@ -84,6 +84,7 @@ const sw = {
   remaining:"zilizobaki",
   fbPageDesc:"Kuna kitu kinachokosekana, au una pendekezo? Tunasoma kila ujumbe na kutumia maoni yako kuboresha untangle.lol kwa kila mtu.",
   dWName:"Karibu tena, {name}!",
+  pageTitle:"untangle.lol — Mpangilio wa Malengo wa AI bure",
   madeBy:"Imewezeshwa na Bach Software",
 };
 export default sw;

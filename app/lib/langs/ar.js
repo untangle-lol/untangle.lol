@@ -84,6 +84,7 @@ const ar = {
   remaining:"متبقية",
   fbPageDesc:"هناك شيء لا يعمل، أو لديك اقتراح؟ نقرأ كل رسالة ونستخدم ملاحظاتك لتحسين untangle.lol للجميع.",
   dWName:"مرحباً بعودتك، {name}!",
+  pageTitle:"untangle.lol — مخطط أهداف ذكاء اصطناعي مجاني",
   madeBy:"بدعم من Bach Software",
 };
 export default ar;

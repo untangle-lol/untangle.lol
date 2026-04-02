@@ -84,6 +84,7 @@ const tr = {
   remaining:"kalan",
   fbPageDesc:"Bir şey çalışmıyor mu, yoksa bir öneriniz mi var? Her mesajı okuyoruz ve geri bildiriminizi herkes için untangle.lol'u daha iyi hale getirmek için kullanıyoruz.",
   dWName:"Tekrar hoş geldiniz, {name}!",
+  pageTitle:"untangle.lol — Ücretsiz Yapay Zeka Hedef Planlayıcı",
   madeBy:"Bach Software tarafından mümkün kılındı",
 };
 export default tr;

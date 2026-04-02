@@ -84,6 +84,7 @@ const en = {
   remaining:"remaining",
   fbPageDesc:"Something not working, or have a suggestion? We read every message and use your feedback to make untangle.lol better for everyone.",
   dWName:"Welcome back, {name}!",
+  pageTitle:"untangle.lol — Free AI Goal Planner",
   madeBy:"Made possible by Bach Software",
 };
 export default en;

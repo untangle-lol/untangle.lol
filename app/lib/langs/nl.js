@@ -84,6 +84,7 @@ const nl = {
   remaining:"resterend",
   fbPageDesc:"Iets werkt niet, of heb je een suggestie? We lezen elk bericht en gebruiken jouw feedback om untangle.lol beter te maken voor iedereen.",
   dWName:"Welkom terug, {name}!",
+  pageTitle:"untangle.lol — Gratis AI doelplanner",
   madeBy:"Mogelijk gemaakt door Bach Software",
 };
 export default nl;
