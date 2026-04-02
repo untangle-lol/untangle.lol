@@ -32,7 +32,7 @@ const nl = {
   altruismBonusTitle:"+2 vragen verdiend!",
   altruismBonusMsg:"Je hebt je plan gedeeld! Als dank ontvang je 2 gratis vragen.",
   altruismBonusBtn:"Super, bedankt!",
-  altruismTeaser:"Deel een plan voor een ander en verdien 2 gratis vragen.",
+  altruismTeaser:"Goed bezig! Deel je plan met de ander en ontvang 2 gratis vragen.",
   altruismPopupMsgRepeat:"Je doel helpt anderen — mooi! Deel je plan en inspireer iemand.",
   altruismShareCta:"Deel dit plan en ontvang +2 gratis vragen",
   analyticsNote:"We verzamelen anonieme gebruiksstatistieken (geen cookies, geen persoonsgegevens).",

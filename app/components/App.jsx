@@ -41,7 +41,15 @@ const KEYS = {
    creditsTs: "untangle_credits_ts",
    altruismShareCount: "untangle_altruism_share_count",
    clientRef:"untangle_client_ref",
+   planCache: "untangle_plan_cache",
 };
+
+const PLAN_CACHE_MAX = 40;
+const planCacheKey=(lang,q)=>lang+"|"+q.trim().toLowerCase();
+const getPlanCache=()=>{try{return JSON.parse(ls.get(KEYS.planCache)||"{}");}catch{return{};}};
+const setPlanCache=(cache)=>{try{ls.set(KEYS.planCache,JSON.stringify(cache));}catch{}};
+const readFromCache=(lang,q)=>{const c=getPlanCache();return c[planCacheKey(lang,q)]??null;};
+const writeToCache=(lang,q,plan)=>{const c=getPlanCache();const k=planCacheKey(lang,q);c[k]=plan;const keys=Object.keys(c);if(keys.length>PLAN_CACHE_MAX){delete c[keys[0]];}setPlanCache(c);};
 
 const recentsKey=(lang)=>"untangle_recents_"+(lang||"nl");
 
@@ -215,7 +223,6 @@ const [lang,setLang]=useState(null);
   // Honeypot
   const [honeypot,setHoneypot]=useState("");
   // Altruism
-  const [altruismPopup,setAltruismPopup]=useState(false);   // show "you're helping others!" popup
   const [altruismBonusPopup,setAltruismBonusPopup]=useState(false); // show "+n credits earned!" popup
   const [earnedBonus,setEarnedBonus]=useState(ALTRUISM_BONUS_TIER1); // amount earned in last share
   const [pendingAltruismId,setPendingAltruismId]=useState(null); // entry id that has pending bonus
@@ -531,26 +538,33 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     setBusy(true);setErr(null);setSteps(null);setVw("loading");setLoadingAltruistic(false);
     utrack("goal_submitted",{lang,mode:valid?"byok":"free"});
     try{
-      let tx,inputTokens,outputTokens;
-      if(valid){
-        const r=await callAPI([{role:"user",content:prompt(inp.trim())}],1000);
-        tx=r.text;inputTokens=r.inputTokens;outputTokens=r.outputTokens;
+      let ps,inputTokens=0,outputTokens=0,fromCache=false;
+      const cached=readFromCache(lang,inp.trim());
+      if(cached){
+        ps=cached;fromCache=true;
       }else{
-        const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:prompt(inp.trim())}],lang})});
-        if(!r.ok)throw new Error("proxy fail");
-        const d=await r.json();if(d.error)throw new Error(d.error);
-        tx=d.text;inputTokens=d.inputTokens||0;outputTokens=d.outputTokens||0;
+        let tx;
+        if(valid){
+          const r=await callAPI([{role:"user",content:prompt(inp.trim())}],1000);
+          tx=r.text;inputTokens=r.inputTokens;outputTokens=r.outputTokens;
+        }else{
+          const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:prompt(inp.trim())}],lang})});
+          if(!r.ok)throw new Error("proxy fail");
+          const d=await r.json();if(d.error)throw new Error(d.error);
+          tx=d.text;inputTokens=d.inputTokens||0;outputTokens=d.outputTokens||0;
+        }
+        ps=JSON.parse(tx.replace(/```json\s?|```/g,"").trim());
+        if(!ps.titel||!ps.stappen)throw new Error("bad");
+        writeToCache(lang,inp.trim(),ps);
       }
-      const ps=JSON.parse(tx.replace(/```json\s?|```/g,"").trim());
-      if(!ps.titel||!ps.stappen)throw new Error("bad");
       const isAltruistic=ps.altruistic===true;
       if(isAltruistic)setLoadingAltruistic(true);
       setSteps(ps);
-      if(!valid)deductCredit();
-      setUsage(prev=>{const next={calls:prev.calls+1,inputTokens:prev.inputTokens+inputTokens,outputTokens:prev.outputTokens+outputTokens,costUsd:prev.costUsd+calcCost(inputTokens,outputTokens)};ls.set(KEYS.usage,JSON.stringify(next));return next;});
+      if(!valid&&!fromCache)deductCredit();
+      if(!fromCache)setUsage(prev=>{const next={calls:prev.calls+1,inputTokens:prev.inputTokens+inputTokens,outputTokens:prev.outputTokens+outputTokens,costUsd:prev.costUsd+calcCost(inputTokens,outputTokens)};ls.set(KEYS.usage,JSON.stringify(next));return next;});
       const trimmed=inp.trim();
       setRecents(prev=>{const next=[trimmed,...prev.filter(r=>r!==trimmed)].slice(0,5);ls.set(recentsKey(lang),JSON.stringify(next));return next;});
-      fetch("/api/suggestions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({lang,text:trimmed})})
+      if(!fromCache)fetch("/api/suggestions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({lang,text:trimmed})})
         .then(r=>r.ok?r.json():null)
         .then(()=>fetch("/api/suggestions?lang="+lang).then(r=>r.ok?r.json():null).then(d=>{if(d?.suggestions)setGlobalSugg(d.suggestions);}))
         .catch(()=>{});
@@ -560,11 +574,9 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
         if(auth==="in"){const nh=[entry,...hist];setHist(nh);ls.set(eKey(userRef.current),JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
         else{const nh=[entry,...hist].slice(0,10);setHist(nh);ls.set(KEYS.guestHist,JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
         ensureShareUrl(entry);
-        // Show altruism popup after a short delay so result view renders first
-        if(isAltruistic){setTimeout(()=>setAltruismPopup(true),600);}
-        utrack("goal_result",{lang,isAltruistic,steps:ps.stappen?.length||0});
+        utrack("goal_result",{lang,isAltruistic,fromCache,steps:ps.stappen?.length||0});
       };
-      if(isAltruistic){setTimeout(navigate,1800);}else{navigate();}
+      if(isAltruistic&&!fromCache){setTimeout(navigate,1800);}else{navigate();}
     }catch(e){setErr(t.err);setVw(auth==="in"?"new_goal":"home");}finally{setBusy(false);}
   };
 
@@ -607,7 +619,6 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
         if(auth==="in"){const nh=[entry,...hist];setHist(nh);ls.set(eKey(userRef.current),JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
         else{const nh=[entry,...hist].slice(0,10);setHist(nh);ls.set(KEYS.guestHist,JSON.stringify(nh));setActiveId(entry.id);setLocalComp(comp);setVw("result");}
         ensureShareUrl(entry);
-        if(isAltruistic){setTimeout(()=>setAltruismPopup(true),600);}
         utrack("woop_result",{lang,isAltruistic,steps:ps.stappen?.length||0});
       };
       // Reset woop state for next use
@@ -957,18 +968,6 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     {/* ── Feedback widget (fixed, bottom-right, above bottom bar) ── */}
     {ready&&<FeedbackWidget c={c} rt={rt} t={t}/>}
 
-    {/* ── Altruism Announcement Popup ── */}
-    {altruismPopup&&(
-      <Modal c={c}>
-        <div style={{textAlign:"center"}}>
-          <div style={{display:"flex",justifyContent:"center",marginBottom:12,color:"#f59e0b"}}><svg width="52" height="52" viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
-          <h2 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"0 0 10px"}}>{t.altruismPopupTitle}</h2>
-          <p style={{fontSize:14,color:c.tm,lineHeight:1.6,margin:"0 0 20px"}}>{canEarnAltruismBonus?t.altruismPopupMsg:t.altruismPopupMsgRepeat}</p>
-          <button onClick={()=>{setAltruismPopup(false);if(steps)doShare(steps);}} style={{...sx.bo,marginTop:0,background:"linear-gradient(135deg,#f59e0b,#d97706)"}}>{t.altruismPopupBtn}</button>
-        </div>
-      </Modal>
-    )}
-
     {/* ── Altruism Bonus Earned Popup ── */}
     {altruismBonusPopup&&(
       <Modal c={c}>
@@ -1245,7 +1244,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
           </div>
           {RecentsSection()}
           {SuggChips()}
-          {canEarnAltruismBonus&&<div style={{marginTop:10,padding:"10px 14px",borderRadius:10,background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"flex-start",gap:8}}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c.ac} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0,marginTop:2}}><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg><span className="altruism-txt" style={{fontSize:14,color:c.ac}}>{t.altruismTeaser}</span></div>}
+          {canEarnAltruismBonus&&<p style={{marginTop:32,marginBottom:8,textAlign:"center",fontSize:13,color:"#f59e0b",fontWeight:600}}>{t.altruismTeaser}</p>}
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button>
           <div style={{display:"flex",alignItems:"center",gap:8,marginTop:10,marginBottom:10}}>
             <div style={{flex:1,height:1,background:c.cb}}/>
@@ -1327,7 +1326,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
           <textarea value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}} placeholder={t.ph} rows={4} style={{...sx.ip,resize:"none",lineHeight:1.6}}/>
           {RecentsSection()}
           {SuggChips()}
-          {canEarnAltruismBonus&&<div style={{marginTop:10,padding:"10px 14px",borderRadius:10,background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"flex-start",gap:8}}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c.ac} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0,marginTop:2}}><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg><span className="altruism-txt" style={{fontSize:14,color:c.ac}}>{t.altruismTeaser}</span></div>}
+          {canEarnAltruismBonus&&<p style={{marginTop:32,marginBottom:8,textAlign:"center",fontSize:13,color:"#f59e0b",fontWeight:600}}>{t.altruismTeaser}</p>}
           <button onClick={submit} disabled={busy||!inp.trim()} style={busy||!inp.trim()?sx.bd:sx.bo}>{t.go}</button>
           <div style={{display:"flex",alignItems:"center",gap:8,marginTop:10,marginBottom:10}}>
             <div style={{flex:1,height:1,background:c.cb}}/>
