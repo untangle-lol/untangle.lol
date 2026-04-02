@@ -49,7 +49,6 @@ export default async function SharePage({ params }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{steps.titel} — untangle</title>
         <meta name="description" content={`Action plan: ${steps.titel}`} />
-        <link rel="canonical" href={`https://untangle.lol/s/${params.id}`} />
         <meta name="geo.region" content="NL" />
         <meta name="geo.country" content="NL" />
         <meta name="geo.placename" content="Netherlands" />
