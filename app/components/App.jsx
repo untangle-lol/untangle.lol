@@ -840,10 +840,11 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
       setShareLoading(false);
     }
     const url=sid?`https://untangle.lol/id/${sid}`:'https://untangle.lol';
-    const text=buildShareText(ps,url);
     if(navigator.share){
       try{
-        await navigator.share({title:ps.titel,text,url});
+        // Pass url separately so apps like WhatsApp don't show it twice
+        const nativeText=buildShareText(ps,null);
+        await navigator.share({title:ps.titel,text:nativeText,url});
         claimAltruismBonus(); // native share succeeded = actually shared
         utrack('share_native');
         return;
