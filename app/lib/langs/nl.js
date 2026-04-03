@@ -86,5 +86,8 @@ const nl = {
   dWName:"Welkom terug, {name}!",
   pageTitle:"untangle.lol — Gratis AI doelplanner",
   madeBy:"Mogelijk gemaakt door Bach Software",
+  magicOr:"of",magicPh:"jouw@email.nl",magicBtn:"Stuur link",
+  magicSentTitle:"Controleer je inbox",magicSentMsg:"We hebben een inloglink gestuurd naar",magicRetry:"Ander e-mailadres gebruiken",
+  magicError:"Er is iets misgegaan. Probeer opnieuw.",magicRateLimit:"Te veel pogingen. Probeer het later opnieuw.",
 };
 export default nl;

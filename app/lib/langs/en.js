@@ -86,5 +86,8 @@ const en = {
   dWName:"Welcome back, {name}!",
   pageTitle:"untangle.lol — Free AI Goal Planner",
   madeBy:"Made possible by Bach Software",
+  magicOr:"or",magicPh:"your@email.com",magicBtn:"Send link",
+  magicSentTitle:"Check your inbox",magicSentMsg:"We sent a login link to",magicRetry:"Use a different address",
+  magicError:"Something went wrong. Try again.",magicRateLimit:"Too many attempts. Try again later.",
 };
 export default en;

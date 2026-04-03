@@ -204,6 +204,8 @@ export default function App(){
 const [lang,setLang]=useState(null);
   const [auth,setAuth]=useState("out");
   const [user,setUser]=useState(null);
+  const [magicEmail,setMagicEmail]=useState("");
+  const [magicState,setMagicState]=useState("idle"); // idle | loading | sent | error
   const [inp,setInp]=useState("");
 
   const [steps,setSteps]=useState(null);
@@ -485,6 +487,18 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
       if((isNaN(gn)||gn<=0)&&(gnow-gts)>=TOPUP_MS){ls.set(KEYS.credits,String(FREE_CREDITS));ls.set(KEYS.creditsTs,String(gnow));setCredits(FREE_CREDITS);}
       else{setCredits(isNaN(gn)?FREE_CREDITS:Math.max(0,gn));}}
   };
+  const sendMagicLink=async(e)=>{
+    e?.preventDefault();
+    const email=magicEmail.trim().toLowerCase();
+    if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return;
+    setMagicState("loading");
+    try{
+      const r=await fetch("/api/auth/magic/request",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email})});
+      if(r.ok){setMagicState("sent");utrack("magic_link_sent");}
+      else{const d=await r.json();setMagicState(d.error==="too_many_requests"?"ratelimit":"error");}
+    }catch{setMagicState("error");}
+  };
+
   const pickLang=(code)=>{setLang(code);ls.set("untangle_lang",code);utrack("language_selected",{lang:code});setVw(auth==="in"?"dash":"home");};
 
   useEffect(()=>{
@@ -1253,12 +1267,50 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
                 <button onClick={logout} style={{background:"none",border:"1px solid rgba(239,68,68,0.3)",borderRadius:8,padding:"6px 10px",color:"#ef4444",fontSize:12,cursor:"pointer",flexShrink:0,whiteSpace:"nowrap"}}>{t.signOut||t.out}</button>
               </div>
             ):(
-              <div style={{padding:"14px 16px",background:c.sb,border:"1px solid "+c.sr,borderRadius:12,marginBottom:12,textAlign:"center"}}>
-                <p style={{fontSize:12,color:c.tf,margin:"0 0 10px"}}>{t.signInSub}</p>
-                <a href="/api/auth/google" style={{display:"inline-flex",alignItems:"center",gap:10,padding:"10px 18px",background:c.card,border:"1px solid "+c.cb,borderRadius:10,fontSize:13,fontWeight:600,color:c.tx,textDecoration:"none"}}>
-                  <svg width="16" height="16" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
-                  {t.signIn}
-                </a>
+              <div style={{background:c.sb,border:"1px solid "+c.sr,borderRadius:12,marginBottom:12,overflow:"hidden"}}>
+                <div style={{padding:"14px 16px 12px",textAlign:"center"}}>
+                  <p style={{fontSize:12,color:c.tf,margin:"0 0 10px"}}>{t.signInSub}</p>
+                  <a href="/api/auth/google" style={{display:"inline-flex",alignItems:"center",gap:10,padding:"10px 18px",background:c.card,border:"1px solid "+c.cb,borderRadius:10,fontSize:13,fontWeight:600,color:c.tx,textDecoration:"none"}}>
+                    <svg width="16" height="16" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+                    {t.signIn}
+                  </a>
+                </div>
+                {/* Divider */}
+                <div style={{display:"flex",alignItems:"center",gap:10,padding:"0 16px",margin:"4px 0"}}>
+                  <div style={{flex:1,height:1,background:c.cb}}/>
+                  <span style={{fontSize:11,color:c.tf,fontWeight:500}}>{t.magicOr||"or"}</span>
+                  <div style={{flex:1,height:1,background:c.cb}}/>
+                </div>
+                {/* Magic link form */}
+                <div style={{padding:"12px 16px 14px"}}>
+                  {magicState==="sent"?(
+                    <div style={{textAlign:"center",padding:"8px 0"}}>
+                      <div style={{fontSize:22,marginBottom:6}}>✉️</div>
+                      <p style={{margin:"0 0 2px",fontSize:13,fontWeight:600,color:c.tx}}>{t.magicSentTitle||"Check your inbox"}</p>
+                      <p style={{margin:0,fontSize:12,color:c.tm}}>{t.magicSentMsg||"We sent a login link to"} <strong>{magicEmail}</strong></p>
+                      <button onClick={()=>{setMagicState("idle");setMagicEmail("");}} style={{marginTop:10,background:"none",border:"none",color:c.ac,fontSize:12,cursor:"pointer",padding:0,fontFamily:"inherit"}}>{t.magicRetry||"Use a different address"}</button>
+                    </div>
+                  ):(
+                    <form onSubmit={sendMagicLink} style={{display:"flex",gap:8}}>
+                      <input
+                        type="email"
+                        value={magicEmail}
+                        onChange={e=>setMagicEmail(e.target.value)}
+                        placeholder={t.magicPh||"your@email.com"}
+                        disabled={magicState==="loading"}
+                        style={{flex:1,padding:"9px 12px",borderRadius:8,border:"1px solid "+(magicState==="error"||magicState==="ratelimit"?"#ef4444":c.cb),background:c.card,color:c.tx,fontSize:13,fontFamily:"inherit",outline:"none",minWidth:0}}
+                      />
+                      <button
+                        type="submit"
+                        disabled={magicState==="loading"||!magicEmail.trim()}
+                        style={{flexShrink:0,padding:"9px 14px",borderRadius:8,background:c.ac,color:"#fff",border:"none",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",opacity:(magicState==="loading"||!magicEmail.trim())?0.6:1}}
+                      >{magicState==="loading"?"…":(t.magicBtn||"Send link")}</button>
+                    </form>
+                  )}
+                  {(magicState==="error"||magicState==="ratelimit")&&(
+                    <p style={{margin:"6px 0 0",fontSize:11,color:"#ef4444"}}>{magicState==="ratelimit"?(t.magicRateLimit||"Too many attempts. Try again later."):(t.magicError||"Something went wrong. Try again.")}</p>
+                  )}
+                </div>
               </div>
             )}
             {/* Credits balance */}
