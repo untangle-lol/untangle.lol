@@ -29,7 +29,7 @@ const de = {
   altruismPopupTitle:"Wie nett von dir!",
   altruismPopupMsg:"Dein Ziel ist für andere — teile deinen Plan und erhalte 2 Gratisfragen.",
   altruismPopupBtn:"Plan teilen →",
-  altruismBonusTitle:"+2 Fragen verdient!",
+  altruismBonusTitle:"+{n} Fragen verdient!",altruismBonusTitleSg:"+1 Frage verdient!",
   altruismBonusMsg:"Du hast deinen Plan geteilt! Als Dankeschön erhältst du 2 Gratisfragen.",
   altruismBonusBtn:"Super, danke!",
   altruismTeaser:"Teile einen Plan für andere und verdiene 2 Gratisfragen.",

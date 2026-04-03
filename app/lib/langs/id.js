@@ -29,7 +29,7 @@ const id = {
   altruismPopupTitle:"Betapa baiknya kamu!",
   altruismPopupMsg:"Tujuanmu untuk orang lain — bagikan rencanamu dan dapatkan 2 pertanyaan gratis.",
   altruismPopupBtn:"Bagikan rencana →",
-  altruismBonusTitle:"+2 pertanyaan diperoleh!",
+  altruismBonusTitle:"+{n} pertanyaan diperoleh!",altruismBonusTitleSg:"+1 pertanyaan diperoleh!",
   altruismBonusMsg:"Kamu sudah membagikan rencanamu! Sebagai ucapan terima kasih, ini 2 pertanyaan gratis.",
   altruismBonusBtn:"Luar biasa, terima kasih!",
   altruismTeaser:"Bagikan rencana untuk orang lain dan dapatkan 2 pertanyaan gratis.",

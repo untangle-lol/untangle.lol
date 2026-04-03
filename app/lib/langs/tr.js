@@ -29,7 +29,7 @@ const tr = {
   altruismPopupTitle:"Ne kadar naziksiniz!",
   altruismPopupMsg:"Hedefin başkaları için — planını paylaş ve 2 ücretsiz soru kazan.",
   altruismPopupBtn:"Planı paylaş →",
-  altruismBonusTitle:"+2 soru kazanıldı!",
+  altruismBonusTitle:"+{n} soru kazanıldı!",altruismBonusTitleSg:"+1 soru kazanıldı!",
   altruismBonusMsg:"Planını paylaştın! Teşekkür olarak 2 ücretsiz soru kazandın.",
   altruismBonusBtn:"Harika, teşekkürler!",
   altruismTeaser:"Başkaları için plan paylaş ve 2 ücretsiz soru kazan.",

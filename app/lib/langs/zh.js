@@ -29,7 +29,7 @@ const zh = {
   altruismPopupTitle:"你真善良！",
   altruismPopupMsg:"你的目标是为了他人 — 分享计划，获得 2 个免费提问。",
   altruismPopupBtn:"分享计划 →",
-  altruismBonusTitle:"+2 次提问已获得！",
+  altruismBonusTitle:"+{n} 次提问已获得！",altruismBonusTitleSg:"+1 次提问已获得！",
   altruismBonusMsg:"你分享了你的计划！感谢你，这里有 2 个免费提问。",
   altruismBonusBtn:"太棒了，谢谢！",
   altruismTeaser:"为他人分享计划，赚取 2 个免费提问。",

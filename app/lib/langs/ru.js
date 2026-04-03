@@ -29,7 +29,7 @@ const ru = {
   altruismPopupTitle:"Какой добрый поступок!",
   altruismPopupMsg:"Твоя цель для других — поделись планом и получи 2 бесплатных вопроса.",
   altruismPopupBtn:"Поделиться планом →",
-  altruismBonusTitle:"+2 вопроса заработано!",
+  altruismBonusTitle:"+{n} вопроса заработано!",altruismBonusTitleSg:"+1 вопрос заработан!",
   altruismBonusMsg:"Ты поделился планом! В благодарность — 2 бесплатных вопроса.",
   altruismBonusBtn:"Здорово, спасибо!",
   altruismTeaser:"Поделись планом для других и заработай 2 бесплатных вопроса.",

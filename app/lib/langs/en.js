@@ -29,7 +29,7 @@ const en = {
   altruismPopupTitle:"How kind of you!",
   altruismPopupMsg:"Your goal is for others — share your plan and earn 2 free questions.",
   altruismPopupBtn:"Share plan →",
-  altruismBonusTitle:"+2 questions earned!",
+  altruismBonusTitle:"+{n} questions earned!",altruismBonusTitleSg:"+1 question earned!",
   altruismBonusMsg:"You shared your plan! As a thank-you, here are 2 free questions.",
   altruismBonusBtn:"Awesome, thank you!",
   altruismTeaser:"Share a plan for others and earn 2 free questions.",

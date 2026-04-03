@@ -29,7 +29,7 @@ const bn = {
   altruismPopupTitle:"কত সদয় আপনি!",
   altruismPopupMsg:"তোমার লক্ষ্য অন্যদের জন্য — প্ল্যান শেয়ার করো এবং ২টি বিনামূল্যে প্রশ্ন পাও।",
   altruismPopupBtn:"প্ল্যান শেয়ার করুন →",
-  altruismBonusTitle:"+২ প্রশ্ন অর্জিত!",
+  altruismBonusTitle:"+{n} প্রশ্ন অর্জিত!",altruismBonusTitleSg:"+১ প্রশ্ন অর্জিত!",
   altruismBonusMsg:"তুমি প্ল্যান শেয়ার করেছ! ধন্যবাদস্বরূপ ২টি বিনামূল্যে প্রশ্ন পেলে।",
   altruismBonusBtn:"অসাধারণ, ধন্যবাদ!",
   altruismTeaser:"অন্যদের জন্য প্ল্যান শেয়ার করো এবং ২টি বিনামূল্যে প্রশ্ন পাও।",

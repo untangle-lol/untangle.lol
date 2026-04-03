@@ -29,7 +29,7 @@ const pt = {
   altruismPopupTitle:"Que gentileza!",
   altruismPopupMsg:"O teu objetivo é para outros — partilha o plano e ganha 2 perguntas grátis.",
   altruismPopupBtn:"Partilhar plano →",
-  altruismBonusTitle:"+2 perguntas ganhas!",
+  altruismBonusTitle:"+{n} perguntas ganhas!",altruismBonusTitleSg:"+1 pergunta ganha!",
   altruismBonusMsg:"Partilhaste o teu plano! Como obrigado, aqui estão 2 perguntas grátis.",
   altruismBonusBtn:"Incrível, obrigado!",
   altruismTeaser:"Partilha um plano para outros e ganha 2 perguntas grátis.",

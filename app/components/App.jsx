@@ -874,7 +874,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     const count=parseInt(ls.get(KEYS.altruismShareCount)||"0",10);
     const bonus=count===0?ALTRUISM_BONUS_TIER1:count===1?ALTRUISM_BONUS_TIER2:0;
     ls.set(KEYS.altruismShareCount,String(count+1));
-    const markClaimed=(ph)=>ph.map(h=>h.id===activeId?{...h,altruismBonusClaimed:true}:h);
+    const markClaimed=(ph)=>ph.map(h=>h.id===activeId?{...h,altruismBonusClaimed:true,altruismBonusEarned:bonus}:h);
     if(auth==="in"){setHist(ph=>{const nh=markClaimed(ph);ls.set(eKey(userRef.current),JSON.stringify(nh));return nh;});}
     else{setHist(ph=>{const nh=markClaimed(ph);ls.set(KEYS.guestHist,JSON.stringify(nh));return nh;});}
     if(bonus>0){
@@ -1500,7 +1500,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
             {ae?.isAltruistic&&ae?.altruismBonusClaimed&&(
               <div style={{marginBottom:10,padding:"10px 14px",borderRadius:10,background:c.gb,border:"1px solid "+c.gbr,display:"flex",alignItems:"center",gap:8}}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c.gr} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-                <span style={{fontSize:12,color:c.gr,fontWeight:600}}>{t.altruismBonusTitle}</span>
+                <span style={{fontSize:12,color:c.gr,fontWeight:600}}>{ae.altruismBonusEarned===1?(t.altruismBonusTitleSg||"+1 vraag verdiend!"):(t.altruismBonusTitle||"+{n} vragen verdiend!").replace("{n}",ae.altruismBonusEarned||2)}</span>
               </div>
             )}
             <div style={sx.cd}>

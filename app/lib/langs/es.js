@@ -29,7 +29,7 @@ const es = {
   altruismPopupTitle:"¡Qué amable eres!",
   altruismPopupMsg:"Tu meta es para otros — comparte tu plan y gana 2 preguntas gratis.",
   altruismPopupBtn:"Compartir plan →",
-  altruismBonusTitle:"¡+2 preguntas ganadas!",
+  altruismBonusTitle:"¡+{n} preguntas ganadas!",altruismBonusTitleSg:"¡+1 pregunta ganada!",
   altruismBonusMsg:"¡Compartiste tu plan! Como agradecimiento, aquí tienes 2 preguntas gratis.",
   altruismBonusBtn:"¡Increíble, gracias!",
   altruismTeaser:"Comparte un plan para otros y gana 2 preguntas gratis.",

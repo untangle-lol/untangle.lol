@@ -29,7 +29,7 @@ const sw = {
   altruismPopupTitle:"Una huruma sana!",
   altruismPopupMsg:"Lengo lako ni kwa wengine — shiriki mpango wako na upate maswali 2 bure.",
   altruismPopupBtn:"Shiriki mpango →",
-  altruismBonusTitle:"+2 maswali yamepatikana!",
+  altruismBonusTitle:"+{n} maswali yamepatikana!",altruismBonusTitleSg:"+1 swali limepatikana!",
   altruismBonusMsg:"Umeshiriki mpango wako! Asante, hapa kuna maswali 2 bure.",
   altruismBonusBtn:"Ajabu, asante!",
   altruismTeaser:"Shiriki mpango kwa wengine na upate maswali 2 bure.",

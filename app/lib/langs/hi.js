@@ -29,7 +29,7 @@ const hi = {
   altruismPopupTitle:"आप कितने दयालु हैं!",
   altruismPopupMsg:"तुम्हारा लक्ष्य दूसरों के लिए है — प्लान शेयर करें और 2 मुफ़्त सवाल पाएं।",
   altruismPopupBtn:"प्लान शेयर करें →",
-  altruismBonusTitle:"+2 सवाल मिले!",
+  altruismBonusTitle:"+{n} सवाल मिले!",altruismBonusTitleSg:"+1 सवाल मिला!",
   altruismBonusMsg:"तुमने अपना प्लान शेयर किया! शुक्रिया के तौर पर 2 मुफ़्त सवाल मिले।",
   altruismBonusBtn:"शानदार, धन्यवाद!",
   altruismTeaser:"दूसरों के लिए प्लान शेयर करें और 2 मुफ़्त सवाल कमाएं।",

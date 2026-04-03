@@ -29,7 +29,7 @@ const ja = {
   altruismPopupTitle:"なんて親切なんでしょう！",
   altruismPopupMsg:"あなたの目標は他者のため — プランをシェアして2問無料でゲット。",
   altruismPopupBtn:"プランをシェア →",
-  altruismBonusTitle:"+2回の質問を獲得！",
+  altruismBonusTitle:"+{n}回の質問を獲得！",altruismBonusTitleSg:"+1回の質問を獲得！",
   altruismBonusMsg:"プランをシェアしました！ありがとう、2問無料でどうぞ。",
   altruismBonusBtn:"素晴らしい、ありがとう！",
   altruismTeaser:"他の人のためにプランをシェアして2問無料でゲット。",

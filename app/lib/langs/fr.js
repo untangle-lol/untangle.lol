@@ -29,7 +29,7 @@ const fr = {
   altruismPopupTitle:"Comme c'est gentil !",
   altruismPopupMsg:"Ton objectif est pour les autres — partage ton plan et gagne 2 questions gratuites.",
   altruismPopupBtn:"Partager le plan →",
-  altruismBonusTitle:"+2 questions gagnées !",
+  altruismBonusTitle:"+{n} questions gagnées !",altruismBonusTitleSg:"+1 question gagnée !",
   altruismBonusMsg:"Tu as partagé ton plan ! En guise de merci, voici 2 questions gratuites.",
   altruismBonusBtn:"Super, merci !",
   altruismTeaser:"Partage un plan pour les autres et gagne 2 questions gratuites.",

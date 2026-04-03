@@ -29,7 +29,7 @@ const ar = {
   altruismPopupTitle:"يا له من تصرف رائع!",
   altruismPopupMsg:"هدفك لأجل الآخرين — شارك خطتك واحصل على سؤالين مجاناً.",
   altruismPopupBtn:"مشاركة الخطة →",
-  altruismBonusTitle:"+2 أسئلة مكتسبة!",
+  altruismBonusTitle:"+{n} أسئلة مكتسبة!",altruismBonusTitleSg:"+1 سؤال مكتسب!",
   altruismBonusMsg:"لقد شاركت خطتك! شكراً لك، إليك سؤالان مجاناً.",
   altruismBonusBtn:"رائع، شكراً!",
   altruismTeaser:"شارك خطة لمساعدة الآخرين واكسب سؤالين مجاناً.",
