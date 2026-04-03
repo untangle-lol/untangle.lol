@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { signSession, sessionCookieHeader } from "../../../../../lib/session.js";
+import { upsertUser } from "../../../../lib/userStore.js";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -45,6 +46,12 @@ export async function GET(request) {
     if (!profile.email) {
       return NextResponse.redirect(`${baseUrl}/?auth_error=1`);
     }
+
+    // Persist/update profile so magic-link logins can inherit name + avatar
+    upsertUser(profile.email, {
+      name: profile.name || profile.email.split("@")[0],
+      picture: profile.picture || null,
+    });
 
     // Sign session
     const payload = {

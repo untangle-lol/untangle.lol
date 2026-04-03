@@ -1,16 +1,9 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
 import { signSession, sessionCookieHeader } from "../../../../../lib/session.js";
+import { getUser } from "../../../../lib/userStore.js";
+import { getDb } from "../../../../lib/db.js";
 
-const DATA_FILE = "/data/magic_tokens.json";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://untangle.lol";
-
-function loadTokens() {
-  try { return JSON.parse(fs.readFileSync(DATA_FILE, "utf8")); } catch { return {}; }
-}
-function saveTokens(store) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(store), "utf8");
-}
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -18,24 +11,27 @@ export async function GET(request) {
 
   if (!token) return NextResponse.redirect(`${BASE_URL}/?auth_error=1`);
 
-  const store = loadTokens();
-  const entry = store[token];
+  const db = getDb();
+  const entry = db.prepare(
+    `SELECT email, expires_at, used FROM magic_tokens WHERE token = ?`
+  ).get(token);
 
-  if (!entry || entry.used || Date.now() > entry.expiresAt) {
+  if (!entry || entry.used || Math.floor(Date.now() / 1000) > entry.expires_at) {
     return NextResponse.redirect(`${BASE_URL}/?auth_error=1`);
   }
 
   // Mark as used immediately (single-use)
-  store[token].used = true;
-  saveTokens(store);
+  db.prepare(`UPDATE magic_tokens SET used = 1 WHERE token = ?`).run(token);
 
   const email = entry.email;
-  const name = email.split("@")[0];
+
+  // Merge with stored profile (inherits name/avatar from Google login if same email)
+  const stored = getUser(email);
 
   const payload = {
     email,
-    name,
-    picture: null,
+    name: stored?.name || email.split("@")[0],
+    picture: stored?.picture || null,
     iat: Math.floor(Date.now() / 1000),
   };
 

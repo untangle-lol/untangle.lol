@@ -9,6 +9,7 @@
   "dependencies": {
     "@fingerprintjs/fingerprintjs": "^5.1.0",
     "@mollie/api-client": "^4.4.0",
+    "better-sqlite3": "^12.8.0",
     "canvas-confetti": "^1.9.4",
     "html2canvas": "^1.4.1",
     "next": "^14.2.29",

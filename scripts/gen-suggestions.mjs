@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Daily suggestion generator — runs via system cron
- * Calls Claude Haiku once for all 15 languages, deduplicates, writes to /data/suggestions.json
+ * Calls Claude Haiku for all 15 languages, deduplicates, inserts into /data/untangle.db
  */
 import fs from "fs";
 import path from "path";
@@ -9,11 +9,9 @@ import { fileURLToPath } from "url";
 import { execSync } from "child_process";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ENV_FILE   = path.join(__dirname, "../.env");
-const DATA_FILE    = "/data/suggestions.json";
-const CONTAINER    = "untangle_web";
-const MAX_PER_LANG = 500;
-const LANGS = ["nl","en","de","fr","es","pt","ar","bn","hi","id","ja","ru","sw","tr","zh"];
+const ENV_FILE  = path.join(__dirname, "../.env");
+const CONTAINER = "untangle_web";
+const LANGS     = ["nl","en","de","fr","es","pt","ar","bn","hi","id","ja","ru","sw","tr","zh"];
 
 // ── env ───────────────────────────────────────────────────────────────────────
 function loadEnv(file) {
@@ -30,16 +28,39 @@ const env = loadEnv(ENV_FILE);
 const API_KEY = env.ANTHROPIC_DEFAULT_KEY;
 if (!API_KEY) { console.error("ANTHROPIC_DEFAULT_KEY not found in .env"); process.exit(1); }
 
-// ── data helpers ──────────────────────────────────────────────────────────────
-function load() {
-  try {
-    const raw = execSync(`docker exec ${CONTAINER} cat ${DATA_FILE} 2>/dev/null || echo '{}'`).toString();
-    return JSON.parse(raw);
-  } catch { return {}; }
-}
-function save(store) {
-  const json = JSON.stringify(store);
-  execSync(`docker exec -i ${CONTAINER} sh -c 'cat > ${DATA_FILE}'`, { input: json });
+// ── insert into DB via docker exec ────────────────────────────────────────────
+// Write a helper script into the container once, then pipe JSON to it via stdin.
+const INSERT_SCRIPT = `
+const Database = require('/app/node_modules/better-sqlite3');
+const db = new Database('/data/untangle.db');
+let raw = '';
+process.stdin.on('data', d => raw += d);
+process.stdin.on('end', () => {
+  const data = JSON.parse(raw);
+  const stmt = db.prepare('INSERT OR IGNORE INTO suggestions (lang, text) VALUES (?, ?)');
+  const insert = db.transaction((lang, items) => {
+    let n = 0;
+    for (const t of items) { const r = stmt.run(lang, t); if (r.changes) n++; }
+    return n;
+  });
+  const stats = [];
+  for (const [lang, items] of Object.entries(data)) {
+    if (!Array.isArray(items)) continue;
+    const n = insert(lang, items.filter(t => typeof t === 'string' && t.trim().length >= 5).map(t => t.trim()));
+    stats.push(lang + ':+' + n);
+  }
+  console.log(stats.join('  '));
+});
+`.trim();
+
+function insertIntoDb(generated) {
+  // Upload script (idempotent — same content every run)
+  execSync(`docker exec -i ${CONTAINER} sh -c 'cat > /tmp/sg_insert.js'`, { input: INSERT_SCRIPT });
+  // Pipe JSON to the script
+  return execSync(`docker exec -i ${CONTAINER} node /tmp/sg_insert.js`, {
+    input: JSON.stringify(generated),
+    encoding: "utf8",
+  }).trim();
 }
 
 // ── prompt ────────────────────────────────────────────────────────────────────
@@ -50,15 +71,23 @@ const BATCHES = [
 
 function makePrompt(langs) {
   const keys = langs.map(l => `"${l}":["..."]`).join(",");
-  return `Generate exactly 20 goal suggestions per language. First person singular. Evenly mix these categories: health, career, relationships, finance, creativity, personal growth, altruistic (helping others). Use natural phrasing for each language.
+  return `Generate exactly 20 goal suggestions per language. First person singular. Mix these categories across the 20 suggestions:
+- 6 altruistic (helping others, volunteering, community, charity, caregiving)
+- 5 personal growth / health / wellbeing
+- 3 career / finance
+- 3 funny or meme-able (absurd, self-aware, internet-culture flavoured — but still framed as a real goal)
+- 3 creativity / relationships
+
+Use natural, colloquial phrasing for each language. The funny ones should feel like something a real person would type, not a joke setup.
 
 Return only valid JSON, no markdown, no explanation:
 {${keys}}
 
 Each suggestion: first person, 5–15 words, specific and actionable.
-nl example: "Ik wil elke ochtend 30 minuten wandelen"
-en example: "I want to read one book every month"
-ja example: "毎朝30分散歩したい"`;
+nl funny example: "Ik wil stoppen met dingen uitstellen door dit later te doen"
+en funny example: "I want to become a morning person starting next Monday"
+nl altruistic example: "Ik wil elke week boodschappen doen voor een oudere buur"
+en altruistic example: "I want to teach my neighbor how to use a smartphone"`;
 }
 
 // ── API call ──────────────────────────────────────────────────────────────────
@@ -72,7 +101,7 @@ async function callApi(prompt) {
     },
     body: JSON.stringify({
       model: "claude-haiku-4-5-20251001",
-      max_tokens: 4000,
+      max_tokens: 6000,
       messages: [{ role: "user", content: prompt }],
     }),
   });
@@ -86,43 +115,23 @@ async function callApi(prompt) {
   return JSON.parse(text);
 }
 
-async function generate() {
-  const results = {};
-  for (const batch of BATCHES) {
-    const partial = await callApi(makePrompt(batch));
-    Object.assign(results, partial);
-  }
-  return results;
-}
-
 // ── main ──────────────────────────────────────────────────────────────────────
 async function main() {
   console.log(`[${new Date().toISOString()}] Generating suggestions for ${LANGS.length} languages...`);
 
-  let generated;
-  try {
-    generated = await generate();
-  } catch (e) {
-    console.error(`[${new Date().toISOString()}] Generation failed:`, e.message);
-    process.exit(1);
+  const generated = {};
+  for (const batch of BATCHES) {
+    try {
+      const partial = await callApi(makePrompt(batch));
+      Object.assign(generated, partial);
+    } catch (e) {
+      console.error(`[${new Date().toISOString()}] Batch ${batch.join(",")} failed:`, e.message);
+      process.exit(1);
+    }
   }
 
-  const store = load();
-  const stats = [];
-
-  for (const lang of LANGS) {
-    const existing = store[lang] ?? [];
-    const existingSet = new Set(existing.map(s => s.toLowerCase()));
-    const newOnes = (generated[lang] ?? [])
-      .map(s => s.trim())
-      .filter(s => s.length >= 5 && !existingSet.has(s.toLowerCase()));
-    // Prepend new, keep newest-first, cap at MAX_PER_LANG
-    store[lang] = [...newOnes, ...existing].slice(0, MAX_PER_LANG);
-    stats.push(`${lang}:+${newOnes.length}`);
-  }
-
-  save(store);
-  console.log(`[${new Date().toISOString()}] Done. ${stats.join("  ")}`);
+  const stats = insertIntoDb(generated);
+  console.log(`[${new Date().toISOString()}] Done. ${stats}`);
 }
 
 main().catch(e => { console.error(e); process.exit(1); });

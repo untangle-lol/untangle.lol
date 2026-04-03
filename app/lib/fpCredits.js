@@ -1,90 +1,76 @@
-import fs from "fs";
+/**
+ * Server-side credit operations for guest (fingerprint) users.
+ * All functions are synchronous (better-sqlite3).
+ */
+import { getDb } from "./db.js";
 
-const DATA_FILE = "/data/fp_credits.json";
 const FREE_CREDITS = 3;
-const REFILL_MS = 24 * 60 * 60 * 1000; // 24h
-const MAX_ENTRIES = 50_000; // prune when file grows too large
-
-// Minimal file lock via a module-level promise chain
-let queue = Promise.resolve();
-const withLock = (fn) => { queue = queue.then(fn).catch(() => {}); return queue; };
-
-function read() {
-  try { return JSON.parse(fs.readFileSync(DATA_FILE, "utf8")); } catch { return {}; }
-}
-
-function write(store) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(store), "utf8");
-}
+const REFILL_SECS = 24 * 60 * 60; // 24h
 
 /**
- * Returns { credits, creditsRemaining } after deducting one credit for the given fingerprint.
- * credits       — credits before this request
- * creditsRemaining — credits after deduction (0 if already empty)
- * If credits are 0 and not yet refill time, returns { credits: 0, creditsRemaining: 0 }
+ * Atomically deduct 1 credit for the given fingerprint.
+ * Returns { creditsRemaining, blocked }.
  */
 export function deductFpCredit(fp) {
   if (!fp || typeof fp !== "string" || fp.length < 8) {
-    return { credits: 0, creditsRemaining: 0, blocked: true };
+    return { creditsRemaining: 0, blocked: true };
   }
 
-  const store = read();
-  const now = Date.now();
-  let entry = store[fp];
+  const db = getDb();
+  const now = Math.floor(Date.now() / 1000);
 
-  if (!entry) {
-    // First time this fingerprint is seen
-    entry = { credits: FREE_CREDITS, refillAt: now + REFILL_MS };
-    store[fp] = entry;
-  } else if (entry.credits <= 0 && now >= entry.refillAt) {
-    // Refill window passed
-    entry.credits = FREE_CREDITS;
-    entry.refillAt = now + REFILL_MS;
-  }
+  return db.transaction(() => {
+    let row = db.prepare(`SELECT balance, refill_at FROM fp_credits WHERE fp = ?`).get(fp);
 
-  const before = entry.credits;
-  if (entry.credits <= 0) {
-    write(store);
-    return { credits: 0, creditsRemaining: 0, blocked: true };
-  }
+    if (!row) {
+      db.prepare(
+        `INSERT INTO fp_credits (fp, balance, refill_at) VALUES (?, ?, ?)`
+      ).run(fp, FREE_CREDITS, now + REFILL_SECS);
+      row = { balance: FREE_CREDITS, refill_at: now + REFILL_SECS };
+    } else if (row.balance <= 0 && now >= row.refill_at) {
+      db.prepare(
+        `UPDATE fp_credits SET balance = ?, refill_at = ?, updated_at = unixepoch() WHERE fp = ?`
+      ).run(FREE_CREDITS, now + REFILL_SECS, fp);
+      row = { balance: FREE_CREDITS, refill_at: now + REFILL_SECS };
+    }
 
-  entry.credits = Math.max(0, entry.credits - 1);
+    if (row.balance <= 0) {
+      return { creditsRemaining: 0, blocked: true };
+    }
 
-  // Prune oldest entries if store grows too large
-  const keys = Object.keys(store);
-  if (keys.length > MAX_ENTRIES) {
-    const sorted = keys.sort((a, b) => (store[a].refillAt || 0) - (store[b].refillAt || 0));
-    sorted.slice(0, keys.length - MAX_ENTRIES).forEach((k) => delete store[k]);
-  }
+    db.prepare(
+      `UPDATE fp_credits SET balance = balance - 1, updated_at = unixepoch() WHERE fp = ?`
+    ).run(fp);
+    db.prepare(
+      `INSERT INTO credit_transactions (fp, delta, reason) VALUES (?, -1, 'deduct')`
+    ).run(fp);
 
-  write(store);
-  return { credits: before, creditsRemaining: entry.credits, blocked: false };
+    const after = db.prepare(`SELECT balance FROM fp_credits WHERE fp = ?`).get(fp).balance;
+    return { creditsRemaining: after, blocked: false };
+  })();
 }
 
-/**
- * Add credits to a fingerprint (used after payment).
- */
-export function addFpCredits(fp, n) {
+/** Add N credits to a fingerprint (used after payment for guests). */
+export function addFpCredits(fp, n, meta = null) {
   if (!fp || typeof fp !== "string") return;
-  withLock(() => {
-    const store = read();
-    const now = Date.now();
-    const entry = store[fp] ?? { credits: 0, refillAt: now + REFILL_MS };
-    entry.credits = (entry.credits || 0) + n;
-    store[fp] = entry;
-    write(store);
-  });
+  const db = getDb();
+  const now = Math.floor(Date.now() / 1000);
+  db.prepare(
+    `INSERT INTO fp_credits (fp, balance, refill_at) VALUES (?, ?, ?)
+     ON CONFLICT(fp) DO UPDATE SET balance = balance + ?, updated_at = unixepoch()`
+  ).run(fp, n, now + REFILL_SECS, n);
+  db.prepare(
+    `INSERT INTO credit_transactions (fp, delta, reason, meta) VALUES (?, ?, 'purchase', ?)`
+  ).run(fp, n, meta ? JSON.stringify(meta) : null);
 }
 
-/**
- * Get current credits for a fingerprint without deducting.
- */
+/** Get current balance for a fingerprint without deducting. */
 export function getFpCredits(fp) {
   if (!fp || typeof fp !== "string") return FREE_CREDITS;
-  const store = read();
-  const now = Date.now();
-  const entry = store[fp];
-  if (!entry) return FREE_CREDITS;
-  if (entry.credits <= 0 && now >= entry.refillAt) return FREE_CREDITS;
-  return Math.max(0, entry.credits);
+  const db = getDb();
+  const now = Math.floor(Date.now() / 1000);
+  const row = db.prepare(`SELECT balance, refill_at FROM fp_credits WHERE fp = ?`).get(fp);
+  if (!row) return FREE_CREDITS;
+  if (row.balance <= 0 && now >= row.refill_at) return FREE_CREDITS;
+  return Math.max(0, row.balance);
 }

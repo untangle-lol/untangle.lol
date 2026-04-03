@@ -1,65 +1,56 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { promises as fs } from "fs";
-import path from "path";
+import { getDb } from "../../../lib/db.js";
+import { addCredits } from "../../../lib/userCredits.js";
+import { addFpCredits } from "../../../lib/fpCredits.js";
+import { verifySession, getSessionToken } from "../../../../lib/session.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2024-06-20",
 });
 
-// Track already-claimed Stripe session IDs to prevent double-claiming.
-const CLAIMED_FILE = path.join("/data", "claimed_sessions.json");
-
-async function readClaimed() {
-  try {
-    const raw = await fs.readFile(CLAIMED_FILE, "utf8");
-    return JSON.parse(raw);
-  } catch {
-    return {};
-  }
-}
-
-async function writeClaimed(obj) {
-  await fs.mkdir(path.dirname(CLAIMED_FILE), { recursive: true });
-  await fs.writeFile(CLAIMED_FILE, JSON.stringify(obj), "utf8");
-}
-
 // GET /api/credits/verify?ref=<clientRef>
 // Searches recent Stripe checkout sessions for a paid one matching clientRef.
-// Returns { credits: N } on success, { credits: 0 } if not found or already claimed.
+// For auth users credits are applied server-side and balance is returned.
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const ref = searchParams.get("ref");
   if (!ref) return NextResponse.json({ credits: 0 });
 
   try {
-    // Search recent sessions — Stripe returns most recent first.
-    // We search up to 100 sessions; a clientRef match will almost always be in the first page.
-    const sessions = await stripe.checkout.sessions.list({
-      limit: 100,
-    });
-
+    const sessions = await stripe.checkout.sessions.list({ limit: 100 });
     const match = sessions.data.find(
-      (s) =>
-        s.metadata?.clientRef === ref &&
-        s.payment_status === "paid"
+      (s) => s.metadata?.clientRef === ref && s.payment_status === "paid"
     );
+    if (!match) return NextResponse.json({ credits: 0 });
 
-    if (!match) {
-      return NextResponse.json({ credits: 0 });
-    }
+    const db = getDb();
+    // Deduplicate
+    const already = db.prepare(`SELECT session_id FROM claimed_sessions WHERE session_id = ?`).get(match.id);
+    if (already) return NextResponse.json({ credits: 0 });
 
-    // Dedupe: if this session was already claimed, return 0.
-    const claimed = await readClaimed();
-    if (claimed[match.id]) {
-      return NextResponse.json({ credits: 0 });
-    }
-
-    // Mark as claimed.
-    claimed[match.id] = Date.now();
-    await writeClaimed(claimed);
+    db.prepare(
+      `INSERT INTO claimed_sessions (session_id) VALUES (?)`
+    ).run(match.id);
 
     const credits = parseInt(match.metadata?.credits ?? "0", 10);
+
+    // Auth user → credit server-side
+    const token = getSessionToken(request);
+    const session = token ? await verifySession(token) : null;
+    if (session?.email) {
+      const balance = addCredits(session.email, credits, "purchase", {
+        provider: "stripe",
+        sessionId: match.id,
+        clientRef: ref,
+      });
+      return NextResponse.json({ credits, balance });
+    }
+
+    // Guest → credit fingerprint if provided, return amount for localStorage fallback
+    const fp = searchParams.get("fp");
+    if (fp) addFpCredits(fp, credits, { provider: "stripe", clientRef: ref });
+
     return NextResponse.json({ credits });
   } catch (err) {
     console.error("Credits verify error:", err.message);

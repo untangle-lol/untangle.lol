@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { deductFpCredit } from "../../lib/fpCredits.js";
+import { deductCredit } from "../../lib/userCredits.js";
+import { verifySession, getSessionToken } from "../../../lib/session.js";
 
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const MODEL = "claude-haiku-4-5";
@@ -53,13 +55,27 @@ export async function POST(request) {
     return NextResponse.json({ error: "messages required" }, { status: 400 });
   }
 
-  // Server-side fingerprint credit check
-  const result = deductFpCredit(fp);
-  if (result.blocked) {
-    return NextResponse.json(
-      { error: "no_credits", creditsRemaining: 0 },
-      { status: 402 }
-    );
+  // Prefer authenticated user credits; fall back to fingerprint credits for guests
+  const sessionToken = getSessionToken(request);
+  const session = sessionToken ? await verifySession(sessionToken) : null;
+
+  let creditResult;
+  if (session?.email) {
+    creditResult = deductCredit(session.email);
+    if (creditResult.blocked) {
+      return NextResponse.json(
+        { error: "no_credits", creditsRemaining: 0 },
+        { status: 402 }
+      );
+    }
+  } else {
+    creditResult = deductFpCredit(fp);
+    if (creditResult.blocked) {
+      return NextResponse.json(
+        { error: "no_credits", creditsRemaining: 0 },
+        { status: 402 }
+      );
+    }
   }
 
   const res = await fetch(ANTHROPIC_URL, {
@@ -80,10 +96,14 @@ export async function POST(request) {
   const text = (data.content || []).map((b) => b.text || "").join("");
   const usage = data.usage || {};
 
+  const creditsRemaining = session?.email
+    ? creditResult.balance
+    : creditResult.creditsRemaining;
+
   return NextResponse.json({
     text,
     inputTokens: usage.input_tokens || 0,
     outputTokens: usage.output_tokens || 0,
-    creditsRemaining: result.creditsRemaining,
+    creditsRemaining,
   });
 }

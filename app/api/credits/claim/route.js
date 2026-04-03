@@ -1,35 +1,36 @@
 import { NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
-
-const DATA_FILE = path.join("/data", "pending_credits.json");
-
-async function readPending() {
-  try {
-    const raw = await fs.readFile(DATA_FILE, "utf8");
-    return JSON.parse(raw);
-  } catch {
-    return {};
-  }
-}
-
-async function writePending(obj) {
-  await fs.mkdir(path.dirname(DATA_FILE), { recursive: true });
-  await fs.writeFile(DATA_FILE, JSON.stringify(obj), "utf8");
-}
+import { getDb } from "../../../lib/db.js";
+import { addCredits } from "../../../lib/userCredits.js";
+import { addFpCredits } from "../../../lib/fpCredits.js";
+import { verifySession, getSessionToken } from "../../../../lib/session.js";
 
 // GET /api/credits/claim?ref=<clientRef>
-// Returns { credits: N } and removes the entry so it can only be claimed once.
+// Atomically claims pending credits. For auth users credits go server-side.
+// For guests, returns the amount so the client can add to localStorage.
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const ref = searchParams.get("ref");
   if (!ref) return NextResponse.json({ credits: 0 });
 
-  const pending = await readPending();
-  const amount = pending[ref] || 0;
-  if (amount > 0) {
-    delete pending[ref];
-    await writePending(pending);
+  const db = getDb();
+  const row = db.prepare(`SELECT credits FROM pending_credits WHERE client_ref = ?`).get(ref);
+  const amount = row?.credits ?? 0;
+  if (amount <= 0) return NextResponse.json({ credits: 0 });
+
+  // Consume the pending entry
+  db.prepare(`DELETE FROM pending_credits WHERE client_ref = ?`).run(ref);
+
+  // Credit authenticated user server-side
+  const token = getSessionToken(request);
+  const session = token ? await verifySession(token) : null;
+  if (session?.email) {
+    const balance = addCredits(session.email, amount, "purchase", { clientRef: ref });
+    return NextResponse.json({ credits: amount, balance });
   }
+
+  // Guest: credit fingerprint if provided, return amount for client localStorage fallback
+  const fp = searchParams.get("fp");
+  if (fp) addFpCredits(fp, amount, { clientRef: ref });
+
   return NextResponse.json({ credits: amount });
 }
