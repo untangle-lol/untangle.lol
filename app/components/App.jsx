@@ -257,6 +257,8 @@ const [lang,setLang]=useState(null);
   const [woopData,setWoopData]=useState({wish:"",outcome:"",obstacle:"",plan:""});
   const woopKeys=["wish","outcome","obstacle","plan"];
   const [suggPicks,setSuggPicks]=useState([]);
+  const [suggPool,setSuggPool]=useState([]);
+  const [suggOffset,setSuggOffset]=useState(0);
   const [diceAnim,setDiceAnim]=useState(false);
   const [suggFading,setSuggFading]=useState(false);
   const [suggKey,setSuggKey]=useState(0);
@@ -728,28 +730,37 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     fetch("/api/suggestions",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({lang,text})}).catch(()=>{});
   };
 
+  const SUGG_COUNT=4;
   const shuffle=(arr)=>{const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
-  const computeSuggPicks=()=>{
+
+  // Build a shuffled pool of {text,kind} interleaving normal + altruistic (1 in 4)
+  const buildPool=(tLang,gSugg,dismissed)=>{
     const localSet=new Set(recents.map(r=>r.toLowerCase()));
-    const dismissed=new Set(dismissedAlts.map(s=>s.toLowerCase()));
-    const filter=(arr)=>arr.filter(s=>!localSet.has(s.toLowerCase())&&!dismissed.has(s.toLowerCase()));
-    // Merge hardcoded + dynamic normal suggestions, deduplicated
-    const hardcoded=new Set((t.phSugg||[]).map(s=>s.toLowerCase()));
-    const dynamicNormal=globalSugg.filter(s=>!hardcoded.has(s.toLowerCase()));
-    const np=shuffle(filter([...(t.phSugg||[]),...dynamicNormal]));
-    const ap=shuffle(filter(t.altruisticSugg||[]));
-    const count=2+Math.floor(Math.random()*3);
-    const nc=Math.min(Math.ceil(count/2),np.length);
-    const ac=Math.min(count-nc,ap.length);
-    const picks=[];
-    for(let i=0;i<Math.max(nc,ac);i++){
-      if(i<nc)picks.push({text:np[i],kind:"normal"});
-      if(i<ac)picks.push({text:ap[i],kind:"alt"});
+    const dis=new Set(dismissed.map(s=>s.toLowerCase()));
+    const ok=(s)=>!localSet.has(s.toLowerCase())&&!dis.has(s.toLowerCase());
+    const hardcoded=new Set((tLang.phSugg||[]).map(s=>s.toLowerCase()));
+    const normal=shuffle([...(tLang.phSugg||[]),...gSugg.filter(s=>!hardcoded.has(s.toLowerCase()))].filter(ok));
+    const alt=shuffle((tLang.altruisticSugg||[]).filter(ok));
+    // Interleave: every 4th slot is altruistic if available, rest normal
+    const pool=[];let ni=0,ai=0;
+    const total=normal.length+alt.length;
+    for(let i=0;pool.length<total;i++){
+      if(ai<alt.length&&(i%4===3||ni>=normal.length)){pool.push({text:alt[ai++],kind:"alt"});}
+      else if(ni<normal.length){pool.push({text:normal[ni++],kind:"normal"});}
+      else break;
     }
-    return picks;
+    return pool;
   };
 
-  useEffect(()=>{setSuggPicks(computeSuggPicks());},[t,recents,dismissedAlts]);// eslint-disable-line react-hooks/exhaustive-deps
+  const picksFromPool=(pool,offset)=>pool.slice(offset,offset+SUGG_COUNT);
+
+  // Rebuild pool when language, global suggestions or dismissed list changes
+  useEffect(()=>{
+    const pool=buildPool(t,globalSugg,dismissedAlts);
+    setSuggPool(pool);
+    setSuggOffset(0);
+    setSuggPicks(picksFromPool(pool,0));
+  },[t,globalSugg,dismissedAlts]);// eslint-disable-line react-hooks/exhaustive-deps
 
   const chipRow={display:"flex",alignItems:"center",width:"100%",overflow:"hidden"};
   const delBtn=(onClick)=><button onClick={(e)=>{e.stopPropagation();onClick();}} style={{flexShrink:0,background:"none",border:"none",padding:"10px 14px",color:c.tm,cursor:"pointer",fontSize:16,opacity:0.5,lineHeight:1}} title="Remove">×</button>;
@@ -785,7 +796,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
       <div style={{marginTop:10,border:"1px solid "+c.cb,borderRadius:10,overflow:"hidden"}}>
         <div style={{background:c.sb,borderBottom:"1px solid "+c.cb,padding:"8px 12px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <span style={{fontSize:13,fontWeight:600,color:c.tf,display:"inline-flex",alignItems:"center",gap:5}}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:"block",flexShrink:0}}><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>{t.suggLabel||"Pick a suggestion"}</span>
-          <button onClick={()=>{setDiceAnim(true);setTimeout(()=>setDiceAnim(false),600);setSuggFading(true);setTimeout(()=>{setSuggPicks(computeSuggPicks());setSuggKey(k=>k+1);setSuggFading(false);},150);}} style={{background:"none",border:"none",cursor:"pointer",opacity:0.7,padding:"0 2px",lineHeight:1,color:c.tf,display:"inline-flex",alignItems:"center",justifyContent:"center"}} title="Randomize"><span className={diceAnim?"dice-roll":""}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="15.5" cy="15.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="8.5" cy="15.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></span></button>
+          <button onClick={()=>{setDiceAnim(true);setTimeout(()=>setDiceAnim(false),600);setSuggFading(true);setTimeout(()=>{setSuggOffset(prev=>{const next=(prev+SUGG_COUNT)>=suggPool.length?0:prev+SUGG_COUNT;setSuggPicks(picksFromPool(suggPool,next));return next;});setSuggKey(k=>k+1);setSuggFading(false);},150);}} style={{background:"none",border:"none",cursor:"pointer",opacity:0.7,padding:"0 2px",lineHeight:1,color:c.tf,display:"inline-flex",alignItems:"center",justifyContent:"center"}} title="Randomize"><span className={diceAnim?"dice-roll":""}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="15.5" cy="15.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="8.5" cy="15.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></span></button>
         </div>
         <div key={suggKey} className={suggFading?"sugg-fading":"sugg-list"} style={{display:"flex",flexDirection:"column",gap:0}}>
           {suggPicks.map((s,i)=>(
