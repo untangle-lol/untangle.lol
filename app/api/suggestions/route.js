@@ -3,7 +3,8 @@ import fs from "fs";
 import path from "path";
 
 const DATA_FILE = "/data/suggestions.json";
-const MAX_PER_LANG = 20;
+const MAX_PER_LANG = 500;
+const GET_SAMPLE   = 30;
 const VALID_LANGS = new Set(["en", "nl", "de", "fr", "es", "ar", "zh", "hi", "pt", "bn", "ru", "id", "ja", "sw", "tr"]);
 const MAX_LEN = 120;
 
@@ -36,7 +37,14 @@ export async function GET(request) {
     return NextResponse.json({ error: "invalid lang" }, { status: 400 });
   }
   const store = load();
-  return NextResponse.json({ suggestions: store[lang] ?? [] });
+  const all = store[lang] ?? [];
+  // Return a random sample so clients see variety without receiving the full pool
+  const sample = all.length <= GET_SAMPLE ? all : all
+    .map(s => ({ s, r: Math.random() }))
+    .sort((a, b) => a.r - b.r)
+    .slice(0, GET_SAMPLE)
+    .map(x => x.s);
+  return NextResponse.json({ suggestions: sample });
 }
 
 // DELETE /api/suggestions  { lang, text }

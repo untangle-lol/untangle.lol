@@ -731,8 +731,13 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
   const shuffle=(arr)=>{const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
   const computeSuggPicks=()=>{
     const localSet=new Set(recents.map(r=>r.toLowerCase()));
-    const np=shuffle((t.phSugg||[]).filter(s=>!localSet.has(s.toLowerCase())&&!dismissedAlts.includes(s)));
-    const ap=shuffle((t.altruisticSugg||[]).filter(s=>!localSet.has(s.toLowerCase())&&!dismissedAlts.includes(s)));
+    const dismissed=new Set(dismissedAlts.map(s=>s.toLowerCase()));
+    const filter=(arr)=>arr.filter(s=>!localSet.has(s.toLowerCase())&&!dismissed.has(s.toLowerCase()));
+    // Merge hardcoded + dynamic normal suggestions, deduplicated
+    const hardcoded=new Set((t.phSugg||[]).map(s=>s.toLowerCase()));
+    const dynamicNormal=globalSugg.filter(s=>!hardcoded.has(s.toLowerCase()));
+    const np=shuffle(filter([...(t.phSugg||[]),...dynamicNormal]));
+    const ap=shuffle(filter(t.altruisticSugg||[]));
     const count=2+Math.floor(Math.random()*3);
     const nc=Math.min(Math.ceil(count/2),np.length);
     const ac=Math.min(count-nc,ap.length);
