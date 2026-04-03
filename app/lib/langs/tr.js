@@ -36,7 +36,7 @@ const tr = {
   altruismPopupMsgRepeat:"Hedefin başkalarına yardımcı oluyor — harika! Planını paylaş ve birini ilhamlandır.",
   altruismShareCta:"Bu planı paylaş ve +2 ücretsiz soru kazan",
   analyticsNote:"Anonim kullanım istatistikleri topluyoruz (çerez yok, kişisel veri yok).",
-  signIn:"Google ile giriş yap",signInSub:"Hedeflerinizi tüm cihazlarınızda kaydedin",signOut:"Çıkış yap",
+  signIn:"Giriş yap",signInSub:"Hedeflerinizi tüm cihazlarınızda kaydedin",signOut:"Çıkış yap",
   profile:"Profil",terms:"Koşullar",privacy:"Gizlilik",stats:"İstatistikler",donate:"Bağış yap",donateMsg:"Bağışınız dünyayı biraz daha iyi yapar",revenue:"Gelir",revTotal:"Toplam gelir",revEmpty:"Henüz işlem yok.",revMore:"Daha fazla yükle",
   share:"Paylaş",shareCopy:"Kopyala",shareCopied:"Kopyalandı!",shareMsg:"untangle.lol'daki eylem planıma göz atın:",
   altruismLoadingMsg:"Başkaları için harika bir şey yapıyorsunuz.",

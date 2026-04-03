@@ -36,7 +36,7 @@ const sw = {
   altruismPopupMsgRepeat:"Lengo lako linasaidia wengine — vizuri sana! Shiriki mpango wako na umhamasishe mtu.",
   altruismShareCta:"Shiriki mpango huu na upate +2 maswali bure",
   analyticsNote:"Tunakusanya takwimu za matumizi zisizo na jina (hakuna vidakuzi, hakuna data ya kibinafsi).",
-  signIn:"Ingia na Google",signInSub:"Hifadhi malengo yako kwenye vifaa vyote",signOut:"Toka",
+  signIn:"Ingia",signInSub:"Hifadhi malengo yako kwenye vifaa vyote",signOut:"Toka",
   profile:"Wasifu",terms:"Masharti",privacy:"Faragha",stats:"Takwimu",donate:"Changia",donateMsg:"Mchango wako unafanya dunia kuwa bora zaidi",revenue:"Mapato",revTotal:"Mapato yote",revEmpty:"Bado hakuna miamala.",revMore:"Pakia zaidi",
   share:"Shiriki",shareCopy:"Nakili",shareCopied:"Imenakiliwa!",shareMsg:"Angalia mpango wangu wa hatua kwenye untangle.lol:",
   altruismLoadingMsg:"Unafanya kitu cha ajabu kwa wengine.",

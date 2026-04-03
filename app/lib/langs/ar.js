@@ -36,7 +36,7 @@ const ar = {
   altruismPopupMsgRepeat:"هدفك يساعد الآخرين — رائع! شارك خطتك وألهم شخصاً ما.",
   altruismShareCta:"شارك هذه الخطة واحصل على +2 أسئلة مجانية",
   analyticsNote:"نجمع إحصائيات استخدام مجهولة (بدون كوكيز أو بيانات شخصية).",
-  signIn:"تسجيل الدخول بـ Google",signInSub:"احفظ أهدافك على جميع أجهزتك",signOut:"تسجيل الخروج",
+  signIn:"تسجيل الدخول",signInSub:"احفظ أهدافك على جميع أجهزتك",signOut:"تسجيل الخروج",
   profile:"الملف الشخصي",terms:"الشروط",privacy:"الخصوصية",stats:"الإحصائيات",donate:"تبرع",donateMsg:"تبرعك يجعل العالم أفضل قليلاً",revenue:"الإيرادات",revTotal:"إجمالي الإيرادات",revEmpty:"لا توجد معاملات بعد.",revMore:"تحميل المزيد",
   share:"مشاركة",shareCopy:"نسخ",shareCopied:"تم النسخ!",shareMsg:"اطلع على خطة العمل الخاصة بي على untangle.lol:",
   altruismLoadingMsg:"أنت تفعل شيئاً رائعاً للآخرين.",

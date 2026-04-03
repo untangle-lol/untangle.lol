@@ -36,7 +36,7 @@ const zh = {
   altruismPopupMsgRepeat:"你的目标在帮助他人——太棒了！分享你的计划，激励他人。",
   altruismShareCta:"分享此计划，获得 +2 个免费提问",
   analyticsNote:"我们收集匿名使用统计数据（无 Cookie，无个人数据）。",
-  signIn:"使用 Google 登录",signInSub:"在所有设备上保存你的目标",signOut:"退出登录",
+  signIn:"登录",signInSub:"在所有设备上保存你的目标",signOut:"退出登录",
   profile:"个人资料",terms:"条款",privacy:"隐私",stats:"统计",donate:"捐赠",donateMsg:"您的捐赠让世界变得更美好",revenue:"收入",revTotal:"总收入",revEmpty:"暂无交易。",revMore:"加载更多",
   share:"分享",shareCopy:"复制",shareCopied:"已复制！",shareMsg:"查看我在 untangle.lol 上的行动计划：",
   altruismLoadingMsg:"你正在为他人做一件美好的事。",

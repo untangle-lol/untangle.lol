@@ -36,7 +36,7 @@ const id = {
   altruismPopupMsgRepeat:"Tujuanmu membantu orang lain — keren! Bagikan rencanamu dan inspirasi seseorang.",
   altruismShareCta:"Bagikan rencana ini dan dapatkan +2 pertanyaan gratis",
   analyticsNote:"Kami mengumpulkan statistik penggunaan anonim (tanpa cookie, tanpa data pribadi).",
-  signIn:"Masuk dengan Google",signInSub:"Simpan tujuanmu di semua perangkat",signOut:"Keluar",
+  signIn:"Masuk",signInSub:"Simpan tujuanmu di semua perangkat",signOut:"Keluar",
   profile:"Profil",terms:"Ketentuan",privacy:"Privasi",stats:"Statistik",donate:"Donasi",donateMsg:"Donasi Anda membuat dunia sedikit lebih baik",revenue:"Pendapatan",revTotal:"Total pendapatan",revEmpty:"Belum ada transaksi.",revMore:"Muat lebih banyak",
   share:"Bagikan",shareCopy:"Salin",shareCopied:"Tersalin!",shareMsg:"Lihat rencana aksi saya di untangle.lol:",
   altruismLoadingMsg:"Kamu sedang melakukan sesuatu yang luar biasa untuk orang lain.",

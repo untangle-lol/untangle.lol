@@ -36,7 +36,7 @@ const fr = {
   altruismPopupMsgRepeat:"Ton objectif aide les autres — super ! Partage ton plan et inspire quelqu'un.",
   altruismShareCta:"Partage ce plan et gagne +2 questions gratuites",
   analyticsNote:"Nous collectons des statistiques d'utilisation anonymes (sans cookies ni données personnelles).",
-  signIn:"Se connecter avec Google",signInSub:"Sauvegarde tes objectifs sur tous tes appareils",signOut:"Déconnexion",
+  signIn:"Se connecter",signInSub:"Sauvegarde tes objectifs sur tous tes appareils",signOut:"Déconnexion",
   profile:"Profil",terms:"CGU",privacy:"Confidentialité",stats:"Statistiques",donate:"Faire un don",donateMsg:"Votre don contribue à un monde meilleur",revenue:"Revenus",revTotal:"Total des revenus",revEmpty:"Aucune transaction pour l'instant.",revMore:"Charger plus",
   share:"Partager",shareCopy:"Copier",shareCopied:"Copié !",shareMsg:"Découvre mon plan d'action sur untangle.lol :",
   altruismLoadingMsg:"Tu fais quelque chose de merveilleux pour les autres.",

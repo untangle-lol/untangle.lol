@@ -36,7 +36,7 @@ const en = {
   altruismPopupMsgRepeat:"Your goal helps others — great! Share your plan and inspire someone.",
   altruismShareCta:"Share this plan and earn +2 free questions",
   analyticsNote:"We collect anonymous usage statistics (no cookies, no personal data).",
-  signIn:"Sign in with Google",signInSub:"Save your goals across all devices",signOut:"Sign out",
+  signIn:"Log in",signInSub:"Save your goals across all devices",signOut:"Sign out",
   profile:"Profile",terms:"Terms",privacy:"Privacy",stats:"Stats",donate:"Donate",donateMsg:"Your donation makes the world a little better",revenue:"Revenue",revTotal:"Total income",revEmpty:"No transactions yet.",revMore:"Load more",
   share:"Share",shareCopy:"Copy",shareCopied:"Copied!",shareMsg:"Check out my action plan on untangle.lol:",
   altruismLoadingMsg:"You're doing something wonderful for others.",
