@@ -587,7 +587,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
           if(!r.ok)throw new Error("proxy fail");
           const d=await r.json();if(d.error)throw new Error(d.error);
           tx=d.text;inputTokens=d.inputTokens||0;outputTokens=d.outputTokens||0;
-          if(typeof d.creditsRemaining==="number")setCredits(d.creditsRemaining);
+          if(typeof d.creditsRemaining==="number"){setCredits(d.creditsRemaining);ls.set(activeCreditsKey(),String(d.creditsRemaining));ls.set(KEYS.creditsTs,String(Date.now()));}
         }
         ps=JSON.parse(tx.replace(/```json\s?|```/g,"").trim());
         if(!ps.titel||!ps.stappen)throw new Error("bad");
@@ -596,7 +596,6 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
       const isAltruistic=ps.altruistic===true;
       if(isAltruistic)setLoadingAltruistic(true);
       setSteps(ps);
-      if(!valid&&!fromCache)deductCredit();
       if(!fromCache)setUsage(prev=>{const next={calls:prev.calls+1,inputTokens:prev.inputTokens+inputTokens,outputTokens:prev.outputTokens+outputTokens,costUsd:prev.costUsd+calcCost(inputTokens,outputTokens)};ls.set(KEYS.usage,JSON.stringify(next));return next;});
       const trimmed=inp.trim();
       setRecents(prev=>{const next=[trimmed,...prev.filter(r=>r!==trimmed)].slice(0,5);ls.set(recentsKey(lang),JSON.stringify(next));return next;});
@@ -635,14 +634,13 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
         if(!r.ok)throw new Error("proxy fail");
         const d=await r.json();if(d.error)throw new Error(d.error);
         tx=d.text;inputTokens=d.inputTokens||0;outputTokens=d.outputTokens||0;
-        if(typeof d.creditsRemaining==="number")setCredits(d.creditsRemaining);
+        if(typeof d.creditsRemaining==="number"){setCredits(d.creditsRemaining);ls.set(activeCreditsKey(),String(d.creditsRemaining));ls.set(KEYS.creditsTs,String(Date.now()));}
       }
       const ps=JSON.parse(tx.replace(/```json\s?|```/g,"").trim());
       if(!ps.titel||!ps.stappen)throw new Error("bad");
       const isAltruistic=ps.altruistic===true;
       if(isAltruistic)setLoadingAltruistic(true);
       setSteps(ps);
-      if(!valid)deductCredit();
       setUsage(prev=>{const next={calls:prev.calls+1,inputTokens:prev.inputTokens+inputTokens,outputTokens:prev.outputTokens+outputTokens,costUsd:prev.costUsd+calcCost(inputTokens,outputTokens)};ls.set(KEYS.usage,JSON.stringify(next));return next;});
       const trimmedWish=woopData.wish.trim();
       fetch("/api/suggestions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({lang,text:trimmedWish})})
@@ -1493,7 +1491,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
             {ae?.isAltruistic&&!ae?.altruismBonusClaimed&&nextAltruismBonus>0&&(
               <div style={{marginBottom:10,padding:"10px 14px",borderRadius:10,background:"rgba(245,197,24,0.1)",border:"1px solid rgba(245,197,24,0.3)",display:"flex",alignItems:"center",gap:8}}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="#f5c518" style={{display:"block",flexShrink:0}}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                <span style={{fontSize:12,color:"#f5c518",fontWeight:500,flex:1}}>{t.altruismPopupMsg}</span>
+                <span style={{fontSize:12,color:"#f5c518",fontWeight:500,flex:1}}>{(t.altruismShareCta||"Share this plan and earn +{n} free questions").replace(/\+\d+/,`+${nextAltruismBonus}`)}</span>
                 <button onClick={()=>doShare(steps)} style={{flexShrink:0,padding:"3px 8px",background:"rgba(245,197,24,0.15)",border:"1px solid rgba(245,197,24,0.4)",borderRadius:5,fontSize:11,fontWeight:600,color:"#f5c518",cursor:"pointer",whiteSpace:"nowrap"}}>
                   {t.share} →
                 </button>

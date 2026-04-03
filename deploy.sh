@@ -61,15 +61,21 @@ docker run -d \
   "$IMAGE:new"
 
 echo "[deploy] waiting for new container to be healthy..."
-for i in $(seq 1 30); do
+CONTAINER_IP=$(docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$NEW_CONTAINER" 2>/dev/null || echo "")
+for i in $(seq 1 60); do
   STATUS=$(docker inspect --format='{{.State.Status}}' "$NEW_CONTAINER" 2>/dev/null || echo "missing")
-  if [ "$STATUS" = "running" ]; then
-    # Give Next.js a moment to fully boot before cutting over
-    sleep 3
+  if [ "$STATUS" = "exited" ] || [ "$STATUS" = "missing" ]; then
+    echo "[deploy] ERROR: new container crashed (status: $STATUS), aborting"
+    docker logs --tail=20 "$NEW_CONTAINER" 2>/dev/null || true
+    docker rm -f "$NEW_CONTAINER" || true
+    exit 1
+  fi
+  if [ -n "$CONTAINER_IP" ] && curl -sf --max-time 2 "http://$CONTAINER_IP:3000/" -o /dev/null 2>/dev/null; then
+    echo "[deploy] new container is healthy after ${i}s"
     break
   fi
-  if [ "$i" -eq 30 ]; then
-    echo "[deploy] ERROR: new container did not start in time, aborting"
+  if [ "$i" -eq 60 ]; then
+    echo "[deploy] ERROR: new container did not become healthy in 60s, aborting"
     docker rm -f "$NEW_CONTAINER" || true
     exit 1
   fi

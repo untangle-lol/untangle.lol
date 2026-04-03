@@ -6,9 +6,13 @@ import { getDb } from "./db.js";
 
 const FREE_CREDITS = 3;
 
-/** Ensure a credits row exists for this email; return current balance. */
+/** Ensure a user row and a credits row exist for this email; return current balance. */
 export function initCredits(email) {
   const db = getDb();
+  // Ensure user exists (FK requirement) before touching credits
+  db.prepare(
+    `INSERT OR IGNORE INTO users (email, name) VALUES (?, ?)`
+  ).run(email, email.split("@")[0]);
   db.prepare(
     `INSERT OR IGNORE INTO credits (email, balance) VALUES (?, ?)`
   ).run(email, FREE_CREDITS);
