@@ -1,6 +1,7 @@
 import App from "../components/App";
 
 export const metadata = {
+  title: "Get More Questions — untangle.lol",
   description:
     "Buy more questions to keep generating AI action plans on untangle.lol. Secure payment via Mollie. €0.25 per question.",
   robots: { index: true, follow: true },

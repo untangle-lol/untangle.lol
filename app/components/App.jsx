@@ -297,32 +297,25 @@ const [lang,setLang]=useState(null);
   const VW_HASH={home:'',lang:'lang',dash:'dashboard',new_goal:'new',woop_input:'woop',byok:'key',no_credits:'payment',manage_auth:'settings',feedback:'feedback',terms:'terms',privacy:'privacy',donate:'donate'};
   const HASH_VW=Object.fromEntries(Object.entries(VW_HASH).map(([k,v])=>[v,k]));
 
-  const PAGE_TITLES={
-    home:'Untangle.lol — Free AI To-Do List & Goal Planner',
-    lang:'Choose Language — untangle.lol',
-    dash:'My Plans — untangle.lol',
-    new_goal:'New Plan — untangle.lol',
-    woop_input:'WOOP Goal Setting — untangle.lol',
-    byok:'API Key — untangle.lol',
-    no_credits:'Get More Questions — untangle.lol',
-    manage_auth:'Account & Settings — untangle.lol',
-    feedback:'Feedback — untangle.lol',
-    terms:'Terms of Service — untangle.lol',
-    privacy:'Privacy Policy — untangle.lol',
-    donate:'Support untangle.lol',
-    result:'Your Plan — untangle.lol',
-    loading:'Generating Plan… — untangle.lol',
-  };
-
-  // Sync view → URL + document.title
+  // Sync view → URL + document.title (single source of truth — no second effect needed)
   useEffect(()=>{
     if(isPoppingState.current){isPoppingState.current=false;return;}
     if(!ready||vw==='loading'||vw==='splash'||vw==='result')return;
     const h=VW_HASH[vw];if(h===undefined)return;
     const target=h?'/'+h:'/';
     if(window.location.pathname!==(h?'/'+h:'/'))window.history.pushState({vw},'',target);
-    if(PAGE_TITLES[vw])document.title=PAGE_TITLES[vw];
-  },[vw,ready]);// eslint-disable-line react-hooks/exhaustive-deps
+    const s=' — untangle.lol';
+    const titles={
+      home:t.pageTitle||('untangle.lol'+s),
+      woop_input:(t.woopTitle||'WOOP')+s,
+      no_credits:(t.payTitle||'Get more questions')+s,
+      donate:(t.donate||'Donate')+s,
+      terms:(t.terms||'Terms')+s,
+      privacy:(t.privacy||'Privacy')+s,
+      feedback:(t.fbTitle||'Feedback')+s,
+    };
+    document.title=titles[vw]||(t.pageTitle||('untangle.lol'+s));
+  },[vw,ready,t]);// eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle browser back/forward navigation
   useEffect(()=>{
@@ -421,8 +414,6 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     setReady(true);
   })();},[]);
 
-  // Update document title on language or view change (overrides any Next.js route metadata)
-  useEffect(()=>{if(t.pageTitle)document.title=t.pageTitle;},[t.pageTitle,vw]);
 
   // Load lang-scoped recents whenever lang changes
   useEffect(()=>{
@@ -997,7 +988,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
           {showCred&&(
             <Row
               icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>}
-              label={<span>{credits} <span style={{color:c.tf,fontWeight:400}}>{t.credFree||"free questions"}</span></span>}
+              label={<span>{credits} <span style={{color:c.tf,fontWeight:400}}>{t.cred||"questions"} {t.remaining||"remaining"}</span></span>}
               right={<span onClick={()=>{close();setVw("no_credits");}} style={{fontSize:12,fontWeight:600,color:c.ac,cursor:"pointer",padding:"3px 8px",background:c.ab,border:"1px solid "+c.abr,borderRadius:6}}>{t.topUp||"Buy"}</span>}
             />
           )}

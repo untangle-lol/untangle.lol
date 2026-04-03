@@ -1,6 +1,7 @@
 import App from "../components/App";
 
 export const metadata = {
+  title: "WOOP Goal Method — untangle.lol",
   description:
     "Use the WOOP method (Wish, Outcome, Obstacle, Plan) to set and achieve your goals with AI support on untangle.lol.",
   robots: { index: true, follow: true },
