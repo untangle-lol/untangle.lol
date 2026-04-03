@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import confetti from "canvas-confetti";
 import LANGS from "../lib/langs/index.js";
 import FeedbackWidget from "./FeedbackWidget.jsx";
@@ -272,6 +272,7 @@ const [lang,setLang]=useState(null);
     else{clearTimeout(taClearTimer.current);setTaClearConfirm(false);setInp("");}
   };
   const userRef=useRef(null);
+  const fpRef=useRef(null);
   const zone=useMemo(()=>tz(),[]);
 
   const t=lang?LANGS.find(l=>l.code===lang)||LANGS[1]:LANGS[1];
@@ -340,6 +341,15 @@ const [lang,setLang]=useState(null);
     if(vw&&vw!=="splash"&&vw!=="loading"&&vw!=="result")ls.set(KEYS.view,vw);
   },[vw]);
 
+
+  // Load fingerprint async (lazy import keeps SSR bundle clean)
+  useEffect(()=>{
+    import("@fingerprintjs/fingerprintjs")
+      .then(FingerprintJS=>FingerprintJS.default.load())
+      .then(fp=>fp.get())
+      .then(result=>{fpRef.current=result.visitorId;})
+      .catch(()=>{});
+  },[]);
 
   // Boot
   useEffect(()=>{(async()=>{
@@ -540,9 +550,8 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     // Honeypot — bots fill hidden fields
     if(honeypot)return;
     const {valid}=getCredential();
-    if(!valid){
-      if(credits<=0){utrack("no_credits_reached",{from:"goal"});setVw("no_credits");return;}
-    }
+    // Guest credit pre-check (UI only — server is authoritative via fingerprint)
+    if(!valid&&credits<=0){utrack("no_credits_reached",{from:"goal"});setVw("no_credits");return;}
     setBusy(true);setErr(null);setSteps(null);setVw("loading");setLoadingAltruistic(false);
     utrack("goal_submitted",{lang,mode:valid?"byok":"free"});
     try{
@@ -556,10 +565,12 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
           const r=await callAPI([{role:"user",content:prompt(inp.trim())}],1000);
           tx=r.text;inputTokens=r.inputTokens;outputTokens=r.outputTokens;
         }else{
-          const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:prompt(inp.trim())}],lang})});
+          const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:prompt(inp.trim())}],lang,fp:fpRef.current})});
+          if(r.status===402){utrack("no_credits_reached",{from:"goal_fp"});setVw("no_credits");setBusy(false);return;}
           if(!r.ok)throw new Error("proxy fail");
           const d=await r.json();if(d.error)throw new Error(d.error);
           tx=d.text;inputTokens=d.inputTokens||0;outputTokens=d.outputTokens||0;
+          if(typeof d.creditsRemaining==="number")setCredits(d.creditsRemaining);
         }
         ps=JSON.parse(tx.replace(/```json\s?|```/g,"").trim());
         if(!ps.titel||!ps.stappen)throw new Error("bad");
@@ -592,9 +603,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     if(!woopData.wish.trim()||!woopData.outcome.trim()||!woopData.obstacle.trim()||!woopData.plan.trim()||busy)return;
     if(honeypot)return;
     const {valid}=getCredential();
-    if(!valid){
-      if(credits<=0){utrack("no_credits_reached",{from:"woop"});setVw("no_credits");return;}
-    }
+    if(!valid&&credits<=0){utrack("no_credits_reached",{from:"woop"});setVw("no_credits");return;}
     setBusy(true);setErr(null);setSteps(null);setVw("loading");setLoadingAltruistic(false);
     utrack("woop_submitted",{lang,mode:valid?"byok":"free"});
     try{
@@ -604,10 +613,12 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
         const r=await callAPI([{role:"user",content:msgContent}],1200);
         tx=r.text;inputTokens=r.inputTokens;outputTokens=r.outputTokens;
       }else{
-        const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:msgContent}],lang})});
+        const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:msgContent}],lang,fp:fpRef.current})});
+        if(r.status===402){utrack("no_credits_reached",{from:"woop_fp"});setVw("no_credits");setBusy(false);return;}
         if(!r.ok)throw new Error("proxy fail");
         const d=await r.json();if(d.error)throw new Error(d.error);
         tx=d.text;inputTokens=d.inputTokens||0;outputTokens=d.outputTokens||0;
+        if(typeof d.creditsRemaining==="number")setCredits(d.creditsRemaining);
       }
       const ps=JSON.parse(tx.replace(/```json\s?|```/g,"").trim());
       if(!ps.titel||!ps.stappen)throw new Error("bad");
