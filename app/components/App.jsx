@@ -263,7 +263,6 @@ const [lang,setLang]=useState(null);
   const [suggFading,setSuggFading]=useState(false);
   const [suggKey,setSuggKey]=useState(0);
   const isPoppingState=useRef(false);
-  const [dismissedAlts,setDismissedAlts]=useState([]);
   const [taFocused,setTaFocused]=useState(false);
   const [taClearConfirm,setTaClearConfirm]=useState(false);
   const taClearTimer=useRef(null);
@@ -725,23 +724,16 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
   const delRecent=(text)=>{
     setRecents(prev=>{const next=prev.filter(r=>r!==text);ls.set(recentsKey(lang),JSON.stringify(next));return next;});
   };
-  const delGlobal=(text)=>{
-    setGlobalSugg(prev=>prev.filter(s=>s!==text));
-    fetch("/api/suggestions",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({lang,text})}).catch(()=>{});
-  };
-
   const SUGG_COUNT=4;
   const shuffle=(arr)=>{const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
 
   // Build a shuffled pool of {text,kind} interleaving normal + altruistic (1 in 4)
-  const buildPool=(tLang,gSugg,dismissed)=>{
+  const buildPool=(tLang,gSugg)=>{
     const localSet=new Set(recents.map(r=>r.toLowerCase()));
-    const dis=new Set(dismissed.map(s=>s.toLowerCase()));
-    const ok=(s)=>!localSet.has(s.toLowerCase())&&!dis.has(s.toLowerCase());
+    const ok=(s)=>!localSet.has(s.toLowerCase());
     const hardcoded=new Set((tLang.phSugg||[]).map(s=>s.toLowerCase()));
     const normal=shuffle([...(tLang.phSugg||[]),...gSugg.filter(s=>!hardcoded.has(s.toLowerCase()))].filter(ok));
     const alt=shuffle((tLang.altruisticSugg||[]).filter(ok));
-    // Interleave: every 4th slot is altruistic if available, rest normal
     const pool=[];let ni=0,ai=0;
     const total=normal.length+alt.length;
     for(let i=0;pool.length<total;i++){
@@ -752,15 +744,25 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     return pool;
   };
 
-  const picksFromPool=(pool,offset)=>pool.slice(offset,offset+SUGG_COUNT);
-
-  // Rebuild pool when language, global suggestions or dismissed list changes
+  // Rebuild pool when language or global suggestions change
   useEffect(()=>{
-    const pool=buildPool(t,globalSugg,dismissedAlts);
+    const pool=buildPool(t,globalSugg);
     setSuggPool(pool);
-    setSuggOffset(0);
-    setSuggPicks(picksFromPool(pool,0));
-  },[t,globalSugg,dismissedAlts]);// eslint-disable-line react-hooks/exhaustive-deps
+    setSuggOffset(SUGG_COUNT);
+    setSuggPicks(pool.slice(0,SUGG_COUNT));
+  },[t,globalSugg]);// eslint-disable-line react-hooks/exhaustive-deps
+
+  // Replace a single suggestion slot with the next item from the pool
+  const replaceSugg=(idx)=>{
+    setSuggPool(pool=>{
+      setSuggOffset(off=>{
+        const next=off<pool.length?off:0;
+        setSuggPicks(picks=>{const p=[...picks];p[idx]=pool[next]??picks[idx];return p;});
+        return next+1;
+      });
+      return pool;
+    });
+  };
 
   const chipRow={display:"flex",alignItems:"center",width:"100%",overflow:"hidden"};
   const delBtn=(onClick)=><button onClick={(e)=>{e.stopPropagation();onClick();}} style={{flexShrink:0,background:"none",border:"none",padding:"10px 14px",color:c.tm,cursor:"pointer",fontSize:16,opacity:0.5,lineHeight:1}} title="Remove">×</button>;
@@ -808,7 +810,7 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
                 }
                 <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{s.text}</span>
               </button>
-              {delBtn(()=>setDismissedAlts(d=>[...d,s.text]))}
+              {delBtn(()=>replaceSugg(i))}
             </div>
           ))}
         </div>
