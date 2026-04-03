@@ -69,25 +69,52 @@ const BATCHES = [
   ["hi","id","ja","ru","sw","tr","zh"],
 ];
 
+const LANG_EXAMPLES = {
+  nl: `"Ik wil stoppen met dingen uitstellen — begin ik morgen wel mee", "Ik wil elke week boodschappen doen voor de buurvrouw", "Ik wil eindelijk leren hoe ik een belastingaangifte invul"`,
+  en: `"I want to finally use my gym membership instead of paying for guilt", "I want to teach my elderly neighbor how to video call their grandkids", "I want to spend less time doomscrolling and more time outside"`,
+  de: `"Ich möchte endlich meinen Keller ausmisten und nicht mehr vertagen", "Ich möchte älteren Menschen in meiner Nachbarschaft beim Einkaufen helfen", "Ich möchte weniger Zeit mit dem Handy verbringen"`,
+  fr: `"Je veux arrêter de remettre à demain ce que je peux faire après-demain", "Je veux aider les personnes âgées de mon quartier avec leurs courses", "Je veux enfin apprendre à cuisiner autre chose que des pâtes"`,
+  es: `"Quiero dejar de procrastinar, empezando mañana sin falta", "Quiero hacer la compra para los vecinos mayores de mi barrio", "Quiero aprender a decir que no sin sentirme culpable"`,
+  pt: `"Quero parar de procrastinar, começo amanhã com certeza", "Quero ajudar os idosos da minha rua com as compras", "Quero aprender a cozinhar algo além de arroz e feijão"`,
+  ar: `"أريد التوقف عن تأجيل الأمور، سأبدأ غداً بالتأكيد", "أريد مساعدة كبار السن في حيّي على التسوق", "أريد تعلم كيفية إدارة ميزانيتي الشهرية"`,
+  bn: `"আমি আর দেরি না করে আজ থেকেই শুরু করতে চাই", "আমি আমার পাড়ার বয়স্কদের সাহায্য করতে চাই", "আমি প্রতিদিন একটু হলেও বাংলা সাহিত্য পড়তে চাই"`,
+  hi: `"मैं कल से नहीं, आज से ही बदलाव शुरू करना चाहता हूं", "मैं अपने मोहल्ले के बुजुर्गों की मदद करना चाहता हूं", "मैं सोशल मीडिया कम देखना और किताबें ज़्यादा पढ़ना चाहता हूं"`,
+  id: `"Saya ingin berhenti menunda-nunda, mulai besok pagi", "Saya ingin membantu tetangga lansia berbelanja setiap minggu", "Saya ingin lebih sering memasak sendiri daripada pesan online"`,
+  ja: `"先延ばしをやめて、今日から少しずつ始めたい", "近所のお年寄りの買い物を手伝いたい", "スマホを見る時間を減らして、本をもっと読みたい"`,
+  ru: `"Я хочу перестать откладывать дела на потом — начну завтра, точно", "Я хочу помогать пожилым соседям с покупками", "Я хочу научиться готовить что-то кроме яичницы"`,
+  sw: `"Nataka kuacha kuahirisha kazi, nitaanza kesho bila shaka", "Nataka kusaidia wazee wa mtaa wangu kufanya manunuzi", "Nataka kujifunza kupika vyakula vipya"`,
+  tr: `"Erteleme alışkanlığımı bırakmak istiyorum, yarın kesinlikle başlayacağım", "Mahallemdeki yaşlılara alışveriş konusunda yardım etmek istiyorum", "Telefonu daha az kullanıp daha fazla kitap okumak istiyorum"`,
+  zh: `"我想停止拖延，明天一定开始", "我想每周帮助社区里的老人买菜", "我想少刷手机，多读书"`,
+};
+
 function makePrompt(langs) {
   const keys = langs.map(l => `"${l}":["..."]`).join(",");
-  return `Generate exactly 20 goal suggestions per language. First person singular. Mix these categories across the 20 suggestions:
-- 6 altruistic (helping others, volunteering, community, charity, caregiving)
+  const exampleBlock = langs
+    .filter(l => LANG_EXAMPLES[l])
+    .map(l => `${l}: ${LANG_EXAMPLES[l]}`)
+    .join("\n");
+
+  return `Generate exactly 20 goal suggestions per language. Each suggestion must feel like it was written by a native speaker of that language — do NOT translate from English or any other language. Write directly in each language as a native would naturally express themselves.
+
+Mix these categories across the 20 suggestions per language:
+- 6 altruistic (helping others, volunteering, community, caregiving — rooted in local culture)
 - 5 personal growth / health / wellbeing
 - 3 career / finance
-- 3 funny or meme-able (absurd, self-aware, internet-culture flavoured — but still framed as a real goal)
+- 3 funny or self-aware (relatable, a little absurd, internet-generation humour — native feel)
 - 3 creativity / relationships
 
-Use natural, colloquial phrasing for each language. The funny ones should feel like something a real person would type, not a joke setup.
+Rules:
+- First person singular
+- 5–15 words per suggestion
+- Specific and actionable
+- Culturally grounded — reference things real people in that culture actually do or think about
+- The funny ones must land in that language, not feel like a translated joke
+
+Native-feel examples per language (use as tone reference only, do not copy):
+${exampleBlock}
 
 Return only valid JSON, no markdown, no explanation:
-{${keys}}
-
-Each suggestion: first person, 5–15 words, specific and actionable.
-nl funny example: "Ik wil stoppen met dingen uitstellen door dit later te doen"
-en funny example: "I want to become a morning person starting next Monday"
-nl altruistic example: "Ik wil elke week boodschappen doen voor een oudere buur"
-en altruistic example: "I want to teach my neighbor how to use a smartphone"`;
+{${keys}}`;
 }
 
 // ── API call ──────────────────────────────────────────────────────────────────

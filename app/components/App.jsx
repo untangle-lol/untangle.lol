@@ -548,9 +548,9 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
     }
   };
 
-  const prompt=(ui)=>`You are a friendly, humorous coach. You are the AI behind Untangle.lol.\nRespond ENTIRELY in ${t.label}.\nGoal: "${ui}"\nPRINCIPLES: Wellbeing, honesty, sustainability.\nSTYLE: doable today/this week, casual, emoji in title, specific, 3-5 steps.\nAlso set "altruistic":true if the goal is primarily about helping or benefiting OTHER people OR building community — this includes volunteering, caregiving, charity, supporting others in need, starting a club or group, organizing community events, neighborhood initiatives, or any goal whose main beneficiary is a group of people beyond just yourself — otherwise false.\nJSON only, no markdown:\n{"titel":"Summary","altruistic":false,"stappen":[{"nummer":1,"actie":"Emoji + title","toelichting":"1-2 sentences"}]}`;
+  const prompt=(ui)=>`You are a friendly, humorous coach. You are the AI behind Untangle.lol.\nWrite as a native ${t.label} speaker — natural, colloquial, culturally grounded. Do NOT translate from English; think and write directly in ${t.label} as locals actually speak.\nGoal: "${ui}"\nPRINCIPLES: Wellbeing, honesty, sustainability.\nSTYLE: doable today/this week, casual, emoji in title, specific, 3-5 steps.\nAlso set "altruistic":true if the goal is primarily about helping or benefiting OTHER people OR building community — this includes volunteering, caregiving, charity, supporting others in need, starting a club or group, organizing community events, neighborhood initiatives, or any goal whose main beneficiary is a group of people beyond just yourself — otherwise false.\nJSON only, no markdown:\n{"titel":"Summary","altruistic":false,"stappen":[{"nummer":1,"actie":"Emoji + title","toelichting":"1-2 sentences"}]}`;
 
-  const promptWoop=(w)=>`You are a friendly, humorous coach. You are the AI behind Untangle.lol.\nRespond ENTIRELY in ${t.label}.\nThe user has completed a WOOP exercise:\n- Wish: "${w.wish}"\n- Outcome: "${w.outcome}"\n- Obstacle: "${w.obstacle}"\n- Plan (if-then): "${w.plan}"\nPRINCIPLES: Wellbeing, honesty, sustainability.\nSTYLE: doable today/this week, casual, emoji in title, specific, 3-5 action steps. The last step MUST be the user's if-then plan turned into a concrete action.\nAlso set "altruistic":true if the wish is primarily about helping or benefiting OTHER people — otherwise false.\nJSON only, no markdown:\n{"titel":"Summary emoji","altruistic":false,"stappen":[{"nummer":1,"actie":"Emoji + title","toelichting":"1-2 sentences"}]}`;
+  const promptWoop=(w)=>`You are a friendly, humorous coach. You are the AI behind Untangle.lol.\nWrite as a native ${t.label} speaker — natural, colloquial, culturally grounded. Do NOT translate from English; think and write directly in ${t.label} as locals actually speak.\nThe user has completed a WOOP exercise:\n- Wish: "${w.wish}"\n- Outcome: "${w.outcome}"\n- Obstacle: "${w.obstacle}"\n- Plan (if-then): "${w.plan}"\nPRINCIPLES: Wellbeing, honesty, sustainability.\nSTYLE: doable today/this week, casual, emoji in title, specific, 3-5 action steps. The last step MUST be the user's if-then plan turned into a concrete action.\nAlso set "altruistic":true if the wish is primarily about helping or benefiting OTHER people — otherwise false.\nJSON only, no markdown:\n{"titel":"Summary emoji","altruistic":false,"stappen":[{"nummer":1,"actie":"Emoji + title","toelichting":"1-2 sentences"}]}`;
 
   const deductCredit=()=>{
     if(userRef.current){
@@ -1632,11 +1632,8 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
 
           {/* Header */}
           <div style={{marginTop:48,marginBottom:20,textAlign:"center"}}>
-            <div style={{display:"flex",alignItems:"baseline",gap:8,marginBottom:4,justifyContent:"center"}}>
-              <h1 style={{fontSize:22,fontWeight:700,color:c.tx,margin:0,letterSpacing:"-0.02em"}}>{t.woopTitle||"WOOP"}</h1>
-              <a href="https://woopmylife.org/en/science" target="_blank" rel="noopener noreferrer" style={{color:c.ac,fontSize:10,textDecoration:"none",opacity:0.75,letterSpacing:"0.05em",fontWeight:600}}>{t.woopLink||"science ↗"}</a>
-            </div>
-            <p style={{color:c.tf,fontSize:13,margin:0,lineHeight:1.5}}>{t.woopSub||""}</p>
+            <h1 style={{fontSize:22,fontWeight:700,color:c.tx,margin:"0 0 4px",letterSpacing:"-0.02em"}}>{t.woopTitle||"WOOP"}</h1>
+            <p style={{color:c.tf,fontSize:13,margin:0,lineHeight:1.5}}>{t.woopSub||""}{" "}<a href="https://woopmylife.org/en/science" target="_blank" rel="noopener noreferrer" style={{color:c.ac,fontSize:11,textDecoration:"none",fontWeight:600,whiteSpace:"nowrap"}}>{t.woopLink||"science ↗"}</a></p>
           </div>
 
           {/* Chapter-style progress bar */}
