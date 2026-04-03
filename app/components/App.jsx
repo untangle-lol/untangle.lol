@@ -1186,19 +1186,40 @@ const langSv=ls.get("untangle_lang");if(langSv)setLang(langSv);
       // Login wall
       if(auth!=="in") return (
         <div dir={dir} style={sx.pg}><div className="uw" style={sx.w}>
-          <div style={{...sx.cd,textAlign:"center",padding:"40px 24px",display:"flex",flexDirection:"column",alignItems:"center",gap:16}}>
-            <div style={{width:56,height:56,borderRadius:16,background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"center",justifyContent:"center",color:c.ac}}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <div style={{...sx.cd,padding:"28px 24px 24px",display:"flex",flexDirection:"column",alignItems:"center",gap:14}}>
+            <div style={{width:48,height:48,borderRadius:14,background:c.ab,border:"1px solid "+c.abr,display:"flex",alignItems:"center",justifyContent:"center",color:c.ac,flexShrink:0}}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </div>
-            <div>
-              <h2 style={{fontSize:20,fontWeight:700,color:c.tx,margin:"0 0 6px"}}>{t.payLoginRequired||"Sign in to buy questions"}</h2>
-              <p style={{fontSize:14,color:c.tm,lineHeight:1.6,margin:0}}>{t.payLoginDesc||"Create a free account to purchase questions and keep them across devices."}</p>
+            <div style={{textAlign:"center"}}>
+              <h2 style={{fontSize:18,fontWeight:700,color:c.tx,margin:"0 0 4px"}}>{t.payLoginRequired||"Sign in to buy questions"}</h2>
+              <p style={{fontSize:13,color:c.tm,lineHeight:1.5,margin:0}}>{t.payLoginDesc||"Create a free account to purchase questions and keep them across devices."}</p>
             </div>
-            <a href="/api/auth/google" style={{display:"inline-flex",alignItems:"center",gap:10,padding:"12px 24px",background:c.card,border:"1px solid "+c.cb,borderRadius:10,fontSize:14,fontWeight:600,color:c.tx,textDecoration:"none",marginTop:4}}>
+            <a href="/api/auth/google" style={{display:"inline-flex",alignItems:"center",gap:10,padding:"10px 20px",background:c.card,border:"1px solid "+c.cb,borderRadius:10,fontSize:13,fontWeight:600,color:c.tx,textDecoration:"none",width:"100%",justifyContent:"center",boxSizing:"border-box"}}>
               <svg width="16" height="16" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
               {t.signIn}
             </a>
-            <button onClick={()=>setVw("home")} style={{...sx.bg,marginTop:0}}>{t.back}</button>
+            <div style={{display:"flex",alignItems:"center",gap:10,width:"100%"}}>
+              <div style={{flex:1,height:1,background:c.cb}}/>
+              <span style={{fontSize:11,color:c.tf,fontWeight:500}}>{t.magicOr||"or"}</span>
+              <div style={{flex:1,height:1,background:c.cb}}/>
+            </div>
+            {magicState==="sent"?(
+              <div style={{textAlign:"center",padding:"4px 0"}}>
+                <div style={{fontSize:22,marginBottom:6}}>✉️</div>
+                <p style={{margin:"0 0 2px",fontSize:13,fontWeight:600,color:c.tx}}>{t.magicSentTitle||"Check your inbox"}</p>
+                <p style={{margin:0,fontSize:12,color:c.tm}}>{t.magicSentMsg||"We sent a login link to"} <strong>{magicEmail}</strong></p>
+                <button onClick={()=>{setMagicState("idle");setMagicEmail("");}} style={{marginTop:10,background:"none",border:"none",color:c.ac,fontSize:12,cursor:"pointer",padding:0,fontFamily:"inherit"}}>{t.magicRetry||"Use a different address"}</button>
+              </div>
+            ):(
+              <form onSubmit={sendMagicLink} style={{display:"flex",gap:8,width:"100%"}}>
+                <input type="email" value={magicEmail} onChange={e=>setMagicEmail(e.target.value)} placeholder={t.magicPh||"your@email.com"} disabled={magicState==="loading"} style={{flex:1,padding:"9px 12px",borderRadius:8,border:"1px solid "+(magicState==="error"||magicState==="ratelimit"?"#ef4444":c.cb),background:c.card,color:c.tx,fontSize:13,fontFamily:"inherit",outline:"none",minWidth:0}}/>
+                <button type="submit" disabled={magicState==="loading"||!magicEmail.trim()} style={{flexShrink:0,padding:"9px 14px",borderRadius:8,background:c.ac,color:"#fff",border:"none",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",opacity:(magicState==="loading"||!magicEmail.trim())?0.6:1}}>{magicState==="loading"?"…":(t.magicBtn||"Send link")}</button>
+              </form>
+            )}
+            {(magicState==="error"||magicState==="ratelimit")&&(
+              <p style={{margin:"-6px 0 0",fontSize:11,color:"#ef4444",alignSelf:"flex-start"}}>{magicState==="ratelimit"?(t.magicRateLimit||"Too many attempts. Try again later."):(t.magicError||"Something went wrong. Try again.")}</p>
+            )}
+            <button onClick={()=>setVw("home")} style={{...sx.bg,marginTop:0,width:"100%"}}>{t.back}</button>
           </div>
         <BottomBar/><style>{GS}</style></div></div>
       );
