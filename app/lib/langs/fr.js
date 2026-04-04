@@ -86,5 +86,8 @@ const fr = {
   dWName:"Bon retour, {name} !",
   pageTitle:"untangle.lol — Planificateur d'objectifs IA gratuit",
   madeBy:"Rendu possible par Bach Software",
+  magicOr:"ou",magicPh:"votre@email.fr",magicBtn:"Envoyer le lien",
+  magicSentTitle:"Vérifiez votre boîte mail",magicSentMsg:"Nous avons envoyé un lien de connexion à",magicRetry:"Utiliser une autre adresse",
+  magicError:"Une erreur s'est produite. Réessayez.",magicRateLimit:"Trop de tentatives. Réessayez plus tard.",
 };
 export default fr;

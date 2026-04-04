@@ -86,5 +86,8 @@ const ru = {
   dWName:"С возвращением, {name}!",
   pageTitle:"untangle.lol — Бесплатный ИИ-планировщик целей",
   madeBy:"Реализовано при поддержке Bach Software",
+  magicOr:"или",magicPh:"your@email.com",magicBtn:"Отправить ссылку",
+  magicSentTitle:"Проверьте почту",magicSentMsg:"Мы отправили ссылку для входа на",magicRetry:"Использовать другой адрес",
+  magicError:"Что-то пошло не так. Попробуйте снова.",magicRateLimit:"Слишком много попыток. Попробуйте позже.",
 };
 export default ru;

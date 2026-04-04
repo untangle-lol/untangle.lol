@@ -86,5 +86,8 @@ const de = {
   dWName:"Willkommen zurück, {name}!",
   pageTitle:"untangle.lol — Kostenloser KI-Zielplaner",
   madeBy:"Ermöglicht durch Bach Software",
+  magicOr:"oder",magicPh:"deine@email.de",magicBtn:"Link senden",
+  magicSentTitle:"Prüf deinen Posteingang",magicSentMsg:"Wir haben einen Login-Link gesendet an",magicRetry:"Andere E-Mail-Adresse verwenden",
+  magicError:"Etwas ist schiefgelaufen. Versuche es erneut.",magicRateLimit:"Zu viele Versuche. Versuche es später erneut.",
 };
 export default de;

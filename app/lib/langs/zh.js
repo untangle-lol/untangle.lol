@@ -86,5 +86,8 @@ const zh = {
   dWName:"欢迎回来，{name}！",
   pageTitle:"untangle.lol — 免费 AI 目标规划工具",
   madeBy:"由 Bach Software 提供支持",
+  magicOr:"或",magicPh:"your@email.com",magicBtn:"发送链接",
+  magicSentTitle:"查看您的收件箱",magicSentMsg:"我们已向以下地址发送了登录链接：",magicRetry:"使用其他地址",
+  magicError:"出现错误，请重试。",magicRateLimit:"尝试次数过多，请稍后再试。",
 };
 export default zh;

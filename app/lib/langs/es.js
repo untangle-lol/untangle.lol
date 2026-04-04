@@ -86,5 +86,8 @@ const es = {
   dWName:"¡Bienvenido de nuevo, {name}!",
   pageTitle:"untangle.lol — Planificador de metas con IA gratis",
   madeBy:"Posible gracias a Bach Software",
+  magicOr:"o",magicPh:"tu@email.com",magicBtn:"Enviar enlace",
+  magicSentTitle:"Revisa tu bandeja de entrada",magicSentMsg:"Enviamos un enlace de acceso a",magicRetry:"Usar otra dirección",
+  magicError:"Algo salió mal. Inténtalo de nuevo.",magicRateLimit:"Demasiados intentos. Inténtalo más tarde.",
 };
 export default es;

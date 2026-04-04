@@ -86,5 +86,8 @@ const hi = {
   dWName:"वापस स्वागत है, {name}!",
   pageTitle:"untangle.lol — निःशुल्क AI लक्ष्य योजनाकार",
   madeBy:"Bach Software द्वारा संभव बनाया गया",
+  magicOr:"या",magicPh:"your@email.com",magicBtn:"लिंक भेजें",
+  magicSentTitle:"अपना इनबॉक्स देखें",magicSentMsg:"हमने लॉगिन लिंक भेजा है",magicRetry:"दूसरा पता उपयोग करें",
+  magicError:"कुछ गलत हो गया। फिर से कोशिश करें।",magicRateLimit:"बहुत अधिक प्रयास। बाद में कोशिश करें।",
 };
 export default hi;

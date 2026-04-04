@@ -86,5 +86,8 @@ const ar = {
   dWName:"مرحباً بعودتك، {name}!",
   pageTitle:"untangle.lol — مخطط أهداف ذكاء اصطناعي مجاني",
   madeBy:"بدعم من Bach Software",
+  magicOr:"أو",magicPh:"بريدك@email.com",magicBtn:"إرسال الرابط",
+  magicSentTitle:"تحقق من بريدك الوارد",magicSentMsg:"أرسلنا رابط تسجيل الدخول إلى",magicRetry:"استخدام عنوان آخر",
+  magicError:"حدث خطأ ما. حاول مرة أخرى.",magicRateLimit:"محاولات كثيرة جداً. حاول لاحقاً.",
 };
 export default ar;

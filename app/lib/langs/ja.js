@@ -86,5 +86,8 @@ const ja = {
   dWName:"おかえりなさい、{name}さん！",
   pageTitle:"untangle.lol — 無料 AI ゴールプランナー",
   madeBy:"Bach Softwareによって実現",
+  magicOr:"または",magicPh:"your@email.com",magicBtn:"リンクを送る",
+  magicSentTitle:"受信トレイを確認してください",magicSentMsg:"ログインリンクを送信しました：",magicRetry:"別のアドレスを使用",
+  magicError:"エラーが発生しました。もう一度お試しください。",magicRateLimit:"試行回数が多すぎます。後でお試しください。",
 };
 export default ja;

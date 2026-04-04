@@ -86,5 +86,8 @@ const sw = {
   dWName:"Karibu tena, {name}!",
   pageTitle:"untangle.lol — Mpangilio wa Malengo wa AI bure",
   madeBy:"Imewezeshwa na Bach Software",
+  magicOr:"au",magicPh:"your@email.com",magicBtn:"Tuma kiungo",
+  magicSentTitle:"Angalia kikasha chako",magicSentMsg:"Tulituma kiungo cha kuingia kwa",magicRetry:"Tumia anwani nyingine",
+  magicError:"Kuna hitilafu. Jaribu tena.",magicRateLimit:"Majaribio mengi mno. Jaribu baadaye.",
 };
 export default sw;

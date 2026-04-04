@@ -86,5 +86,8 @@ const tr = {
   dWName:"Tekrar hoş geldiniz, {name}!",
   pageTitle:"untangle.lol — Ücretsiz Yapay Zeka Hedef Planlayıcı",
   madeBy:"Bach Software tarafından mümkün kılındı",
+  magicOr:"veya",magicPh:"your@email.com",magicBtn:"Link gönder",
+  magicSentTitle:"Gelen kutunu kontrol et",magicSentMsg:"Giriş bağlantısı gönderdik:",magicRetry:"Farklı adres kullan",
+  magicError:"Bir şeyler yanlış gitti. Tekrar dene.",magicRateLimit:"Çok fazla deneme. Daha sonra tekrar dene.",
 };
 export default tr;

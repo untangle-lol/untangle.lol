@@ -86,5 +86,8 @@ const bn = {
   dWName:"স্বাগতম আবার, {name}!",
   pageTitle:"untangle.lol — বিনামূল্যে AI লক্ষ্য পরিকল্পনাকারী",
   madeBy:"Bach Software দ্বারা সম্ভব হয়েছে",
+  magicOr:"অথবা",magicPh:"your@email.com",magicBtn:"লিঙ্ক পাঠান",
+  magicSentTitle:"আপনার ইনবক্স দেখুন",magicSentMsg:"আমরা একটি লগইন লিঙ্ক পাঠিয়েছি",magicRetry:"অন্য ঠিকানা ব্যবহার করুন",
+  magicError:"কিছু একটা ভুল হয়েছে। আবার চেষ্টা করুন।",magicRateLimit:"অনেক বেশি চেষ্টা। পরে আবার চেষ্টা করুন।",
 };
 export default bn;

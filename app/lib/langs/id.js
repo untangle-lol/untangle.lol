@@ -86,5 +86,8 @@ const id = {
   dWName:"Selamat datang kembali, {name}!",
   pageTitle:"untangle.lol — Perencana Tujuan AI Gratis",
   madeBy:"Dimungkinkan oleh Bach Software",
+  magicOr:"atau",magicPh:"email@anda.com",magicBtn:"Kirim tautan",
+  magicSentTitle:"Periksa kotak masuk Anda",magicSentMsg:"Kami mengirimkan tautan masuk ke",magicRetry:"Gunakan alamat lain",
+  magicError:"Terjadi kesalahan. Coba lagi.",magicRateLimit:"Terlalu banyak percobaan. Coba lagi nanti.",
 };
 export default id;
