@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
 
 const LANGS = ["nl","en","de","fr","es","pt","ar","bn","hi","id","ja","ru","sw","tr","zh"];
 
@@ -31,5 +31,5 @@ export const metadata = {
 };
 
 export default function DonatePage() {
-  redirect("/#donate");
+  permanentRedirect("/donate/en");
 }
